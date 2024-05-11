@@ -2,13 +2,16 @@
 /**
  * Plugin Name: Woo Sub Member Directory
  * Description: A plugin to create a member directory for Woo Subscriptions
- * Version: 1.0
+ * Version: 1.0.0
  * Author: Alexsoluweb
  * Author URI: https://alexsoluweb.ca
  * Text Domain: wsmd
  * Domain Path: /languages
  * License: Unlicense
  */
+
+use WSMD\WSMD;
+use WSMD\WSMD_Helpers;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,7 +28,6 @@ function wsmd_load_textdomain() {
     load_plugin_textdomain( 'wsmd', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
 
-
 // Activation hook
 register_activation_hook( __FILE__, 'wsmd_activate' );
 function wsmd_activate() {
@@ -39,3 +41,14 @@ function wsmd_deactivate() {
     // Code to run on deactivation
     // For example: Clean up settings, etc.
 }
+
+// Composer autoload
+require_once WSMD_PATH . 'vendor/autoload.php';
+
+// Initialize the plugin
+WSMD::init();
+
+// Add test code here
+add_action('init', function(){
+   //
+});
