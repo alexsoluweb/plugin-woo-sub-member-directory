@@ -1,0 +1,17 @@
+{
+    "name": "alexsoluweb/woo-sub-member-directory",
+    "type": "wordpress-plugin",
+    "authors": [
+        {
+            "name": "Alexandre Gravel Ménard",
+            "email": "alexgm@alexsoluweb.ca"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "WSMD\\": "includes/"
+        }
+    },
+    "require": {}
+}
