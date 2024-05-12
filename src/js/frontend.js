@@ -1,7 +1,9 @@
 import '../scss/frontend.scss'
-import Sample from './frontend/Sample';
+import GoogleMap from './frontend/GoogleMap';
 
 // Main entry point
 document.addEventListener('DOMContentLoaded', () => {
-	Sample.init();
+    GoogleMap.init();
 });
+
+

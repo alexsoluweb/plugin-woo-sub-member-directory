@@ -31,22 +31,27 @@ class WSMD_Helpers{
     /**
      * Check if a user is a Member Directory
      * 
-     * @param bool True if the user is a Member Directory, false otherwise
+     * @param int $user_id The user ID to check
      * 
      * @return bool True if the user is a Member Directory, false otherwise
      */
     public static function is_member_directory($user_id){
+        // Retrieve settings and the specific subscription products considered for the Member Directory
+        $settings = WSMD_Settings::get_settings();
+        $wsmd_subscription_products = isset($settings['wsmd_subscription_products']) ? $settings['wsmd_subscription_products'] : [];
 
-        // Retrieve the settings
-        $settings = WSMD::get_instance()->settings->get_settings();
-
-        // Check if the user is a Member Directory, if empty means any user can be a Member Directory
-        if( !isset($settings['wsmd_subscription_products']) || !is_array($settings['wsmd_subscription_products']) ){
-            return true;
+        // Return false if no products are configured
+        if (empty($wsmd_subscription_products)) {
+            return false;
         }
 
-        // TODO: Check if the user is a Member Directory
+        // Check if the user has an active subscription for any of the specified products
+        foreach ($wsmd_subscription_products as $product_id) {
+            if (wcs_user_has_subscription($user_id, $product_id, array('active', 'pending-cancel'))) {
+                return true;
+            }
+        }
 
-        return true;
+        return false;
     }
 }

@@ -44,7 +44,7 @@ class WSMD_Settings{
                 'type'     => 'multiselect',
                 'class'    => 'wc-enhanced-select',
                 'desc_tip' => true,
-                'desc'     => __( 'Select the product subscription(s) that will be considered for the Member Directory. If empty, any will be considered.', 'wsmd' ),
+                'desc'     => __( 'Select the product subscription(s) that will be considered for the Member Directory.', 'wsmd' ),
                 'id'       => 'wsmd_subscription_products',
                 'options'  => WSMD_Helpers::get_woo_subscriptions_products(),
                 'custom_attributes' => array(
@@ -71,14 +71,24 @@ class WSMD_Settings{
     }
 
     /**
-     * Get the settings
+     * Get the custom settings in Woocommerce
+     * 
+     * @param string $key The key of the setting to retrieve: \
+     * wsmd_subscription_products, \
+     * wsmd_google_maps_api_key
      *
-     * @return array
+     * @return Mixed If the key is empty, return all the settings, \
+     * otherwise return the setting value, or an empty string if the key does not exist.
      */
-    public function get_settings(){
-        return array(
-            'wsmd_subscription_products' => get_option( 'wsmd_subscription_products', array() ),
-            'wsmd_google_maps_api_key' => get_option( 'wsmd_google_maps_api_key', '' ),
-        );
+    public static function get_settings($key = ''){
+
+        if( empty($key) ){
+            return array(
+                'wsmd_subscription_products' => get_option( 'wsmd_subscription_products', '' ),
+                'wsmd_google_maps_api_key' => get_option( 'wsmd_google_maps_api_key', '' ),
+            );
+        }else{
+            return get_option( $key, '' );
+        }
     }
 }

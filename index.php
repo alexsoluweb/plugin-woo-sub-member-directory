@@ -7,11 +7,8 @@
  * Author URI: https://alexsoluweb.ca
  * Text Domain: wsmd
  * Domain Path: /languages
- * License: Unlicense
+ * License: UNLICENSED
  */
-
-use WSMD\WSMD;
-use WSMD\WSMD_Helpers;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -28,27 +25,27 @@ function wsmd_load_textdomain() {
     load_plugin_textdomain( 'wsmd', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
 
-// Activation hook
-register_activation_hook( __FILE__, 'wsmd_activate' );
-function wsmd_activate() {
-    // Code to run on activation
-    // For example: Create database tables, initialize options, etc.
-}
+// Add settings action links to the plugins page
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), function( $links ) {
+    $settings_link = '<a href="' . admin_url( 'admin.php?page=wc-settings&tab=wsmd' ) . '">' . __( 'Settings', 'wsmd' ) . '</a>';
+    array_unshift( $links, $settings_link );
+    return $links;
+} );
 
-// Deactivation hook
-register_deactivation_hook( __FILE__, 'wsmd_deactivate' );
-function wsmd_deactivate() {
-    // Code to run on deactivation
-    // For example: Clean up settings, etc.
-}
+// Activation hook, code to run on activation.
+register_activation_hook( __FILE__, function() {
+    WSMD\WSMD_Dashboard::add_endpoint();
+    flush_rewrite_rules();
+});
+
+// Deactivation hook, code to run on deactivation.
+register_deactivation_hook( __FILE__, function() {
+    WSMD\WSMD_Dashboard::remove_endpoint();
+    flush_rewrite_rules();
+});
 
 // Composer autoload
 require_once WSMD_PATH . 'vendor/autoload.php';
 
 // Initialize the plugin
-WSMD::init();
-
-// Add test code here
-add_action('init', function(){
-   //
-});
+WSMD\WSMD::init();

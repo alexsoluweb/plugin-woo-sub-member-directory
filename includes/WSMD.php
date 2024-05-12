@@ -15,26 +15,23 @@ class WSMD{
     private static $instance = null;
     
     /**
-     * The Woo settings object
-     *
-     * @var WSMD_Settings
-     */
-    public $settings = null;
-
-    
-    /**
      * The constructor
      */
     private function __construct(){
-        add_action( 'plugins_loaded', function(){
-            // Check if the plugin dependencies are met, otherwise stop the plugin
-            if(!$this->check_plugin_dependencies()) return;
-            // Load the Woocommerce settings
-            $this->settings = new WSMD_Settings();
-        } );
 
-        // Add the user class
+        // Check if the plugin dependencies are met, otherwise stop the plugin
+        add_action( 'plugins_loaded', function(){
+            if(!$this->check_plugin_dependencies()) return;
+        } );
+        
+        // Woocommerce settings
+        new WSMD_Settings();
+        // User class
         new WSMD_Users();
+        // Dashboard class
+        new WSMD_Dashboard();
+        // AJAX class
+        new WSMD_AJAX();
     }
 
     /**

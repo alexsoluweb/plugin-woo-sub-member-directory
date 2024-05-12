@@ -1,0 +1,56 @@
+#wsmd-dashboard{
+
+    #wsmd-form{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+
+        > *{
+            width: calc(50% - 0.5rem);
+        }
+
+        #wsmd-map{
+            height: 0;
+            width: 100%;
+    
+            &.init{
+                height: 400px;
+            }
+        }
+
+        #wsmd-form-message{
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 1rem;
+
+            &.error{
+                border: 1px solid red;
+            }
+
+            &.success{
+                border: 1px solid green;
+            }
+
+            &.loading{
+                &:before{
+                    content: '';
+                    display: inline-block;
+                    width: 20px;
+                    height: 20px;
+                    border: 2px solid #333;
+                    border-top-color: transparent;
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                    margin: 0 auto;
+                }
+
+                @keyframes spin {
+                    to {
+                        transform: rotate(360deg);
+                    }
+                }
+            }
+        }
+    }
+}
