@@ -25,9 +25,9 @@ class WSMD{
         } );
         
         // Woocommerce settings
-        new WSMD_Settings();
+        new WSMD_Woo_Settings();
         // User class
-        new WSMD_Users();
+        new WSMD_User_Settings();
         // Dashboard class
         new WSMD_Dashboard();
         // AJAX class

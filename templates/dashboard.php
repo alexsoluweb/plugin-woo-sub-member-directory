@@ -15,7 +15,7 @@
                 . ' This information will be displayed in the member directory.'
                 . ' Once you have filled in your details, click the "Geo-code my location" button to generate your coordinates.'
                 . ' It will try to automatically generate your coordinates based on your adress information.'
-                . ' If needed, you will be able to drag the marker on the map to adjust the exact coordinates.'
+                . ' You can also drag the marker on the map to adjust your coordinates.'
                 . ' Once you are happy with the marker location, click the "Save Settings" button to save your details.'
             , 'wsmd');
         ?>

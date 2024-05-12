@@ -37,7 +37,7 @@ class WSMD_Helpers{
      */
     public static function is_member_directory($user_id){
         // Retrieve settings and the specific subscription products considered for the Member Directory
-        $settings = WSMD_Settings::get_settings();
+        $settings = WSMD_Woo_Settings::get_settings();
         $wsmd_subscription_products = isset($settings['wsmd_subscription_products']) ? $settings['wsmd_subscription_products'] : [];
 
         // Return false if no products are configured

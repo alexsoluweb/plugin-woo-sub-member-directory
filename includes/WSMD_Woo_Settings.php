@@ -5,7 +5,7 @@ namespace WSMD;
 /**
  * Settings in Woocommerce 
  */
-class WSMD_Settings{
+class WSMD_Woo_Settings{
 
     public function __construct(){
 

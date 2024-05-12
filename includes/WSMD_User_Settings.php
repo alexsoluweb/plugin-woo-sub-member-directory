@@ -3,9 +3,9 @@
 namespace WSMD;
 
 /**
- * User class for the plugin
+ * User settings for the Member Directory
  */
-class WSMD_Users
+class WSMD_User_Settings
 {
 
     public function __construct()

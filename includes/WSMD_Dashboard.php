@@ -75,7 +75,7 @@ class WSMD_Dashboard {
             echo '<p>' . __('You are not a Member Directory.', 'wsmd') . '<br>';
             echo __('Please subscribe to a membership plan to access the Member Directory.', 'wsmd') . '</p>';
 
-            $product_ids = WSMD_Settings::get_settings('wsmd_subscription_products');
+            $product_ids = WSMD_Woo_Settings::get_settings('wsmd_subscription_products');
 
             // Display the subscription products
             if ($product_ids) {
@@ -92,7 +92,7 @@ class WSMD_Dashboard {
             load_template(WSMD_PATH . 'templates/dashboard.php', true, 
                 array(
                     'current_user' => $current_user,
-                    'user_settings' => WSMD_Users::get_user_settings($current_user->ID),
+                    'user_settings' => WSMD_User_Settings::get_user_settings($current_user->ID),
                 ),
             );
         }
@@ -115,7 +115,7 @@ class WSMD_Dashboard {
             // Load the dashboard styles
             wp_enqueue_style('wsmd-dashboard', WSMD_URL . 'assets/css/dashboard.css', array(), $style_version);
             // Load Google Maps API v3
-            wp_enqueue_script('wsmd-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . WSMD_Settings::get_settings('wsmd_google_maps_api_key'), array(), null, true);
+            wp_enqueue_script('wsmd-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . WSMD_Woo_Settings::get_settings('wsmd_google_maps_api_key'), array(), null, true);
             // Load the dashboard script
             wp_enqueue_script('wsmd-dashboard', WSMD_URL . 'assets/js/dashboard.js', array('wsmd-google-maps'), $script_version, true);
         }

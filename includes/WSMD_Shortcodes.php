@@ -25,7 +25,7 @@ class WSMD_Shortcodes
             $style_version = filemtime(WSMD_PATH . 'assets/css/member-directory.css');
             $script_version = filemtime(WSMD_PATH . 'assets/js/member-directory.js');
             wp_enqueue_style('wsmd-member-directory', WSMD_URL . 'assets/css/member-directory.css', array(), $style_version);
-            wp_enqueue_script('wsmd-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . WSMD_Settings::get_settings('wsmd_google_maps_api_key'), array(), null, true);
+            wp_enqueue_script('wsmd-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . WSMD_Woo_Settings::get_settings('wsmd_google_maps_api_key'), array(), null, true);
             wp_enqueue_script('wsmd-member-directory', WSMD_URL . 'assets/js/member-directory.js', array('wsmd-google-maps'), $script_version, true);
         }
     }

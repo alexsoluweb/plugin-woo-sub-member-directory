@@ -2,11 +2,18 @@
 
 namespace WSMD;
 
+/**
+ * AJAX functions for the plugin
+ */
 class WSMD_AJAX{
     public function __construct(){
         add_action('wp_ajax_wsmd_dashboard_save_user_settings', array($this, 'dashboard_save_user_settings'));
+        add_action('wp_ajax_wsmd_member_directory_get_members', array($this, 'member_directory_get_members'));
     }
 
+    /**
+     * Save user settings
+     */
     public function dashboard_save_user_settings(){
 
         // Check nonce
@@ -23,10 +30,30 @@ class WSMD_AJAX{
             ));
         }
 
-        WSMD_Users::save_user_settings(get_current_user_id());
+        WSMD_User_Settings::save_user_settings(get_current_user_id());
 
         wp_send_json_success(array(
             'message' => __('Settings saved successfully', 'wsmd')
         ));
     }
+
+    /**
+     * Get members for member directory
+     */
+    public function member_directory_get_members(){
+
+        // Check nonce
+        if(!check_ajax_referer('wsmd_member_directory_get_members', 'nonce', false)){
+            wp_send_json_error(array(
+                'message' => __('Invalid nonce', 'wsmd')
+            ));
+        }
+
+        // $members = WSMD_Helpers::get_members();
+
+        // wp_send_json_success(array(
+        //     'members' => $members
+        // ));
+    }
+
 }
