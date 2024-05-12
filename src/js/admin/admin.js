@@ -1,4 +1,4 @@
-import '../scss/admin.scss'
+import '../../scss/admin.scss'
 
 // Main entry point
 document.addEventListener('DOMContentLoaded', () => {

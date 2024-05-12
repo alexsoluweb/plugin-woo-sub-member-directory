@@ -37,7 +37,7 @@
         <input type="text" name="wsmd_postal_zip_code" placeholder="<?php esc_attr_e('Postal/Zip code', 'wsmd'); ?>" value="<?php echo esc_attr($args['user_settings']['wsmd_postal_zip_code']); ?>">
         <input type="text" name="wsmd_country" placeholder="<?php esc_attr_e('Country', 'wsmd'); ?>" value="<?php echo esc_attr($args['user_settings']['wsmd_country']); ?>">
         <div id="wsmd-map"></div>
-        <button id="wsmd-geocode-address" class="button"><?php _e('Geo-code my location', 'wsmd'); ?></button>
+        <button id="wsmd-geocode-address" class="button"><?php _e('Geo-code my address', 'wsmd'); ?></button>
         <button id="wsmd-save-settings" class="button"><?php _e('Save Settings', 'wsmd'); ?></button>
         <div id="wsmd-form-message"></div>
     </form>

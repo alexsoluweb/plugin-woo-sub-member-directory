@@ -32,6 +32,8 @@ class WSMD{
         new WSMD_Dashboard();
         // AJAX class
         new WSMD_AJAX();
+        // Shortcodes class
+        new WSMD_Shortcodes();
     }
 
     /**

@@ -1,4 +1,6 @@
-export default class GoogleMap {
+import '../../scss/dashboard.scss';
+
+class Dashboard {
   static init() {
 
     // Get the dashboard element
@@ -103,3 +105,8 @@ export default class GoogleMap {
     });
   }
 }
+
+// Main entry point
+document.addEventListener('DOMContentLoaded', () => {
+  Dashboard.init();
+});

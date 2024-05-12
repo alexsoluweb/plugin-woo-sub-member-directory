@@ -13,7 +13,6 @@ class WSMD_Dashboard {
         add_filter('woocommerce_account_menu_items', array($this, 'add_member_directory_tab'));
         add_filter('the_title', array($this, 'change_endpoint_title'));
         add_action('woocommerce_account_wsmd_dashboard_endpoint', array($this, 'wsmd_dashboard_page'));
-        // Enqueue scripts and styles
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
     }
 
@@ -105,15 +104,20 @@ class WSMD_Dashboard {
      */
     public function enqueue_scripts() {
         global $wp;
+
+        if (!is_a($wp, 'WP')) {
+            return;
+        }
+
         if (is_account_page() && is_user_logged_in() && isset($wp->query_vars['wsmd_dashboard'])) {
-            $style_version = filemtime(WSMD_PATH . 'assets/css/frontend.css');
-            $script_version = filemtime(WSMD_PATH . 'assets/js/frontend.js');
+            $style_version = filemtime(WSMD_PATH . 'assets/css/dashboard.css');
+            $script_version = filemtime(WSMD_PATH . 'assets/js/dashboard.js');
             // Load the dashboard styles
-            wp_enqueue_style('wsmd-dashboard', WSMD_URL . 'assets/css/frontend.css', array(), $style_version);
+            wp_enqueue_style('wsmd-dashboard', WSMD_URL . 'assets/css/dashboard.css', array(), $style_version);
             // Load Google Maps API v3
             wp_enqueue_script('wsmd-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . WSMD_Settings::get_settings('wsmd_google_maps_api_key'), array(), null, true);
             // Load the dashboard script
-            wp_enqueue_script('wsmd-dashboard', WSMD_URL . 'assets/js/frontend.js', array('wsmd-google-maps'), $script_version, true);
+            wp_enqueue_script('wsmd-dashboard', WSMD_URL . 'assets/js/dashboard.js', array('wsmd-google-maps'), $script_version, true);
         }
     }
 }
