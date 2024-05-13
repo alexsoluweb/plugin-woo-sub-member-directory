@@ -12,9 +12,10 @@
         #wsmd-map{
             height: 0;
             width: 100%;
+            aspect-ratio: 16/9;
     
             &.init{
-                height: 400px;
+                height: auto;
             }
         }
 

@@ -30,6 +30,9 @@ class WSMD_Shortcodes
         }
     }
 
+    /**
+     * Render the member directory shortcode
+     */
     public function render_member_directory_shortcode($atts)
     {
         $args = shortcode_atts(array(

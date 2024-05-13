@@ -9,7 +9,9 @@
     "dev": "webpack --mode development --watch",
     "clean": "rm -rf ./assets/ ./node_modules"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@googlemaps/markerclusterer": "^2.5.3"
+  },
   "devDependencies": {
     "@types/jquery": "^3.5.14",
     "@types/webpack-env": "^1.18.0",

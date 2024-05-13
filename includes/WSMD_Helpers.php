@@ -54,4 +54,32 @@ class WSMD_Helpers{
 
         return false;
     }
+
+    /**
+     * Get the members for the Member Directory
+     * 
+     * @return array The members
+     */
+    public static function get_members(){
+
+        $members = [];
+        
+        // Get all users
+        $users = get_users([
+            'role__in' => ['subscriber', 'customer'],
+            'fields' => ['ID'],
+            'number' => -1
+        ]);
+
+        // Loop through users
+        foreach ($users as $user) {
+            $user_id = $user->ID;
+            if (self::is_member_directory($user_id)) {
+                $members[$user_id] = WSMD_User_Settings::get_user_settings($user_id);
+            }
+        }
+
+        // Return the members
+        return $members;
+    }
 }

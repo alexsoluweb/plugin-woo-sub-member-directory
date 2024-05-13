@@ -1,6 +1,12 @@
 import '../../scss/dashboard.scss';
 
 class Dashboard {
+
+  /**
+   * Init application
+   * 
+   * @returns {void}
+  */
   static init() {
 
     // Get the dashboard element
