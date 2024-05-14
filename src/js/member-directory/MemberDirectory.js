@@ -1,4 +1,4 @@
-import '../../scss/member-directory.scss'
+import '../../scss/member-directory.scss';
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import mapStyles, { svgMarker } from "../map-style";
 
@@ -86,16 +86,13 @@ class MemberDirectory {
     const end = this.memberListOffset + this.memberListPerPage;
     const membersToDisplay = this.memberList.slice(start, end);
 
-    // Hide the load more button if there are no more members to display
-    if (membersToDisplay.length > 0) {
-      this.memberDirectory.querySelector('#wsmd-member-list-load-more').style.display = 'block';
-    }else{
-      this.memberDirectory.querySelector('#wsmd-member-list-load-more').style.display = 'none';
-    }
-
-    membersToDisplay.forEach(member => {
+    membersToDisplay.forEach((member, index) => {
       const memberItem = document.createElement('div');
       memberItem.classList.add('wsmd-member-item');
+      memberItem.style.opacity = '0';
+      memberItem.style.transform = 'translateY(100px)';
+      memberItem.style.transition = `opacity 0.5s ease ${index * 0.1}s, transform 0.5s ease ${index * 0.1}s`;
+
       memberItem.innerHTML = `
         <div class="wsmd-member-item-header">
           <h3 class="wsmd-member-item-company">${member.wsmd_company}</h3>
@@ -121,11 +118,24 @@ class MemberDirectory {
           </div>
         </div>
       `;
+
       memberList.appendChild(memberItem);
+
+      // Trigger reflow for the animation to start
+      window.getComputedStyle(memberItem).transform;
+      memberItem.style.opacity = '1';
+      memberItem.style.transform = 'translateY(0)';
     });
 
     // Update the offset for the next load
     this.memberListOffset += this.memberListPerPage;
+
+    // Check if there are more members to load
+    if (this.memberListOffset >= this.memberList.length) {
+      this.memberDirectory.querySelector('#wsmd-member-list-load-more').style.display = 'none';
+    }else{
+      this.memberDirectory.querySelector('#wsmd-member-list-load-more').style.display = 'block';
+    }
   }
 
   /**
