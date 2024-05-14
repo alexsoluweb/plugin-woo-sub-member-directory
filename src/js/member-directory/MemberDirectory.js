@@ -1,6 +1,6 @@
 import '../../scss/member-directory.scss'
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
-import mapStyles,{svgMarker} from "../map-style";
+import mapStyles, { svgMarker } from "../map-style";
 
 class MemberDirectory {
 
@@ -17,7 +17,10 @@ class MemberDirectory {
   static markers = [];
   /** @type {Array<Object>} */
   static memberList = null;
-
+  /** @type {number} */
+  static memberListOffset = 0;
+  /** @type {number} */
+  static memberListPerPage = 9;
 
   /**
    * Init application
@@ -36,20 +39,27 @@ class MemberDirectory {
     this.formMessage = this.form.querySelector('#wsmd-form-message');
 
     // fetch the members data
-    this.fetchMembersData()
+    this.fetchMembersData();
     // Init Map Places service
     this.initMapPlacesService();
 
     // Listen for event when members data is ready
     document.addEventListener('wsmd-members-data-ready', (e) => {
-      this.initMemberList();
+      this.randomizeMemberList();
+      this.displayMembers();
       this.initGoogleMap();
+    });
+
+    // Pagination event listener
+    this.memberDirectory.querySelector('#wsmd-member-list-load-more').addEventListener('click', (e) => {
+      e.preventDefault();
+      this.loadMoreMembers();
     });
 
     // Button for "Search my location"
     this.form.querySelector('#wsmd-my-location').addEventListener('click', (e) => {
       e.preventDefault();
-      this.handleSearchNearMe()
+      this.handleSearchNearMe();
     });
 
     // Prevent the form from submitting
@@ -59,13 +69,31 @@ class MemberDirectory {
   }
 
   /**
-   * Initialize the member list
+   * Randomize the member list
    * @returns {void}
    */
-  static initMemberList() {
-    const memberList = this.memberDirectory.querySelector('#wsmd-member-list');
+  static randomizeMemberList() {
+    this.memberList.sort(() => Math.random() - 0.5);
+  }
 
-    this.memberList.forEach(member => {
+  /**
+   * Display the member list based on the current offset and limit
+   * @returns {void}
+   */
+  static displayMembers() {
+    const memberList = this.memberDirectory.querySelector('#wsmd-member-list');
+    const start = this.memberListOffset;
+    const end = this.memberListOffset + this.memberListPerPage;
+    const membersToDisplay = this.memberList.slice(start, end);
+
+    // Hide the load more button if there are no more members to display
+    if (membersToDisplay.length > 0) {
+      this.memberDirectory.querySelector('#wsmd-member-list-load-more').style.display = 'block';
+    }else{
+      this.memberDirectory.querySelector('#wsmd-member-list-load-more').style.display = 'none';
+    }
+
+    membersToDisplay.forEach(member => {
       const memberItem = document.createElement('div');
       memberItem.classList.add('wsmd-member-item');
       memberItem.innerHTML = `
@@ -95,6 +123,17 @@ class MemberDirectory {
       `;
       memberList.appendChild(memberItem);
     });
+
+    // Update the offset for the next load
+    this.memberListOffset += this.memberListPerPage;
+  }
+
+  /**
+   * Load more members and append them to the list
+   * @returns {void}
+   */
+  static loadMoreMembers() {
+    this.displayMembers();
   }
 
   /**
@@ -139,11 +178,10 @@ class MemberDirectory {
     }
   }
 
-
   /**
    * Initialize the Google Map Places Service
    * @returns {void}
-  */
+   */
   static initMapPlacesService() {
     /** @type {HTMLInputElement} */
     const input = this.form.querySelector('#wsmd-search-address');
@@ -171,7 +209,6 @@ class MemberDirectory {
     });
   }
 
-
   /**
    * Get the nearest marker to a given latitude and longitude
    * @param {number} lat
@@ -193,11 +230,10 @@ class MemberDirectory {
     return nearestMarker;
   }
 
-
   /**
    * Initialize the Google Map 
    * @returns {void}
-  */
+   */
   static initGoogleMap() {
 
     // Create a new map
@@ -279,7 +315,6 @@ class MemberDirectory {
     this.map.fitBounds(bounds);
   }
 
-
   /**
    * Fetch members data from AJAX endpoint
    * @returns {void}
@@ -310,7 +345,6 @@ class MemberDirectory {
       });
   }
 }
-
 
 // Main entry point
 document.addEventListener('DOMContentLoaded', () => {

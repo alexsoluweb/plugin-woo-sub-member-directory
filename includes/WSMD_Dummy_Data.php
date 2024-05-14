@@ -510,7 +510,63 @@ class WSMD_Dummy_Data{
                 'wsmd_website' => 'http://ottawaresearch.com',
                 'wsmd_phone' => '613-555-0216',
                 'wsmd_email' => 'scientist@ottawaresearch.com'
-            ]
+            ],
+            '37' => [
+                'wsmd_visibility' => 'default',
+                'wsmd_geocode' => '46.123123, -72.123123',
+                'wsmd_occupation' => 'Software Engineer',
+                'wsmd_company' => 'Tech Innovators',
+                'wsmd_address' => '123 Innovation Lane',
+                'wsmd_city' => 'Québec City',
+                'wsmd_province_state' => 'Québec',
+                'wsmd_postal_zip_code' => 'G1A 2B3',
+                'wsmd_country' => 'Canada',
+                'wsmd_website' => 'http://techinnovators.com',
+                'wsmd_phone' => '418-555-0234',
+                'wsmd_email' => 'info@techinnovators.com'
+            ],
+            '38' => [
+                'wsmd_visibility' => 'default',
+                'wsmd_geocode' => '45.987654, -73.456789',
+                'wsmd_occupation' => 'Data Analyst',
+                'wsmd_company' => 'Data Insights',
+                'wsmd_address' => '456 Analytics Ave',
+                'wsmd_city' => 'Montréal',
+                'wsmd_province_state' => 'Québec',
+                'wsmd_postal_zip_code' => 'H3A 2K4',
+                'wsmd_country' => 'Canada',
+                'wsmd_website' => 'http://datainsights.com',
+                'wsmd_phone' => '514-555-0456',
+                'wsmd_email' => 'contact@datainsights.com'
+            ],
+            '39' => [
+                'wsmd_visibility' => 'default',
+                'wsmd_geocode' => '45.345678, -72.234567',
+                'wsmd_occupation' => 'Marketing Manager',
+                'wsmd_company' => 'Market Leaders',
+                'wsmd_address' => '789 Strategy St',
+                'wsmd_city' => 'Sherbrooke',
+                'wsmd_province_state' => 'Québec',
+                'wsmd_postal_zip_code' => 'J1K 3G5',
+                'wsmd_country' => 'Canada',
+                'wsmd_website' => 'http://marketleaders.com',
+                'wsmd_phone' => '819-555-0678',
+                'wsmd_email' => 'info@marketleaders.com'
+            ],
+            '40' => [
+                'wsmd_visibility' => 'default',
+                'wsmd_geocode' => '46.654321, -71.876543',
+                'wsmd_occupation' => 'Product Manager',
+                'wsmd_company' => 'Product Masters',
+                'wsmd_address' => '321 Product Blvd',
+                'wsmd_city' => 'Lévis',
+                'wsmd_province_state' => 'Québec',
+                'wsmd_postal_zip_code' => 'G6V 4H8',
+                'wsmd_country' => 'Canada',
+                'wsmd_website' => 'http://productmasters.com',
+                'wsmd_phone' => '418-555-0890',
+                'wsmd_email' => 'contact@productmasters.com'
+            ]            
         ];
     }
 }

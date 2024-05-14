@@ -126,19 +126,10 @@
             }
         }
 
-        #wsmd-member-list-pagination {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
+        #wsmd-member-list-load-more{
+            display: none;
             margin-top: 2rem;
-
-            #wsmd-member-list-prev {
-                // visibility: hidden;
-            }
-
-            #wsmd-member-list-next {
-                //
-            }
+            align-self: center;
         }
     }
 }

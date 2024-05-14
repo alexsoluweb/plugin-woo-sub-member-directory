@@ -20,9 +20,6 @@
         <div id="wsmd-member-list">
             <!-- Member items will be dynamically populated here -->
         </div>
-        <div id="wsmd-member-list-pagination">
-            <button id="wsmd-member-list-prev"><?php esc_html_e('Previous', 'wsmd'); ?></button>
-            <button id="wsmd-member-list-next"><?php esc_html_e('Next', 'wsmd'); ?></button>
-        </div>
+        <button id="wsmd-member-list-load-more"><?php esc_html_e('Load more', 'wsmd'); ?></button>
     </div>
 </div>
