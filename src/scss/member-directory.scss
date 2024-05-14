@@ -92,6 +92,11 @@
             .wsmd-member-item{
                 border: 1px solid #ccc;
                 padding: 1rem;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: #f5f5f5;
+                }
 
                 .wsmd-member-item-header{
                     display: flex;

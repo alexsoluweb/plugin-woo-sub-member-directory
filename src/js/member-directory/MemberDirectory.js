@@ -37,17 +37,14 @@ class MemberDirectory {
 
     this.form = this.memberDirectory.querySelector('#wsmd-form');
     this.formMessage = this.form.querySelector('#wsmd-form-message');
-
-    // fetch the members data
-    this.fetchMembersData();
-    // Init Map Places service
-    this.initMapPlacesService();
-
+    this.fetchMembersData(); // Fetch members data
+    
     // Listen for event when members data is ready
     document.addEventListener('wsmd-members-data-ready', (e) => {
       this.randomizeMemberList();
       this.displayMembers();
       this.initGoogleMap();
+      this.initMapPlacesService();
     });
 
     // Pagination event listener
@@ -56,7 +53,7 @@ class MemberDirectory {
       this.loadMoreMembers();
     });
 
-    // Button for "Search my location"
+    // Button "Search my location" event listener
     this.form.querySelector('#wsmd-my-location').addEventListener('click', (e) => {
       e.preventDefault();
       this.handleSearchNearMe();
@@ -168,8 +165,21 @@ class MemberDirectory {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           };
+
+          // Reorder the member list by proximity to the user's location
+          this.memberList.sort((a, b) => {
+            const distanceA = this.calculateDistance(userLocation.lat, userLocation.lng, parseFloat(a.wsmd_geocode.split(',')[0]), parseFloat(a.wsmd_geocode.split(',')[1]));
+            const distanceB = this.calculateDistance(userLocation.lat, userLocation.lng, parseFloat(b.wsmd_geocode.split(',')[0]), parseFloat(b.wsmd_geocode.split(',')[1]));
+            return distanceA - distanceB;
+          });
+
+          // Display the reordered member list
+          this.memberListOffset = 0;
+          this.displayMembers(true);
+
           const nearestMarker = this.getNearestMarker(userLocation.lat, userLocation.lng);
 
+          // Pan to the nearest marker, or to the user's location
           if (nearestMarker) {
             this.map.panTo(nearestMarker.getPosition());
             this.map.setZoom(12);
@@ -177,6 +187,7 @@ class MemberDirectory {
             this.map.panTo(userLocation);
             this.map.setZoom(12);
           }
+
           this.form.classList.remove('loading');
         },
         () => {
@@ -210,7 +221,7 @@ class MemberDirectory {
         this.formMessage.classList.add('error');
         this.formMessage.innerHTML = 'No details available for input: ' + place.name;
         return;
-      }else{
+      } else {
         this.formMessage.classList.remove('error');
         this.formMessage.innerHTML = '';
       }
@@ -383,7 +394,6 @@ class MemberDirectory {
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          // Custom event to handle the data
           const event = new CustomEvent('wsmd-members-data-ready');
           this.memberList = Object.values(data.data.members);
           document.dispatchEvent(event);
