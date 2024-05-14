@@ -36,7 +36,6 @@ class MemberDirectory {
     this.form = this.memberDirectory.querySelector('#wsmd-form');
     this.formMessage = this.form.querySelector('#wsmd-form-message');
     this.fetchMembersData();
-
     this.setupEventListeners();
   }
 
@@ -66,8 +65,7 @@ class MemberDirectory {
       e.preventDefault();
     });
 
-    const memberList = this.memberDirectory.querySelector('#wsmd-member-list');
-    memberList.addEventListener('click', (e) => {
+    this.memberDirectory.querySelector('#wsmd-member-list').addEventListener('click', (e) => {
       this.handleMemberItemClick(e);
     });
   }
@@ -122,6 +120,12 @@ class MemberDirectory {
     membersToDisplay.forEach((member, index) => {
       const memberItem = this.createMemberItem(member, index);
       memberList.appendChild(memberItem);
+
+      // Trigger reflow for the animation to start
+      requestAnimationFrame(() => {
+        memberItem.style.opacity = '1';
+        memberItem.style.transform = 'translateY(0)';
+      });
     });
 
     this.memberListOffset += this.memberListPerPage;
@@ -167,10 +171,6 @@ class MemberDirectory {
         </div>
       </div>
     `;
-
-    window.getComputedStyle(memberItem).transform;
-    memberItem.style.opacity = '1';
-    memberItem.style.transform = 'translateY(0)';
 
     return memberItem;
   }
