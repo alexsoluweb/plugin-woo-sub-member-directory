@@ -9,6 +9,7 @@ class WSMD_AJAX{
     public function __construct(){
         add_action('wp_ajax_wsmd_dashboard_save_user_settings', array($this, 'dashboard_save_user_settings'));
         add_action('wp_ajax_wsmd_member_directory_get_members', array($this, 'member_directory_get_members'));
+        add_action('wp_ajax_nopriv_wsmd_member_directory_get_members', array($this, 'member_directory_get_members'));
     }
 
     /**
@@ -41,13 +42,6 @@ class WSMD_AJAX{
      * Get members for member directory
      */
     public function member_directory_get_members(){
-
-        // Check nonce
-        if(!check_ajax_referer('wsmd_member_directory_get_members', 'nonce', false)){
-            wp_send_json_error(array(
-                'message' => __('Invalid nonce', 'wsmd')
-            ));
-        }
 
         // $members = WSMD_Helpers::get_members();
         $members = WSMD_Dummy_Data::get_members();

@@ -188,73 +188,73 @@ class WSMD_User_Settings
     {
         // Sanitize and save the fields visibility
         if (isset($_POST['wsmd_visibility'])) {
-            $_POST['wsmd_visibility'] = sanitize_text_field($_POST['wsmd_visibility']);
+            $_POST['wsmd_visibility'] = sanitize_text_field(wp_unslash($_POST['wsmd_visibility']));
             update_user_meta($user_id, 'wsmd_visibility', $_POST['wsmd_visibility']);
         }
 
         // Sanitize and save the fields geolocation
         if (isset($_POST['wsmd_geocode'])) {
-            $_POST['wsmd_geocode'] = sanitize_text_field($_POST['wsmd_geocode']);
+            $_POST['wsmd_geocode'] = sanitize_text_field(wp_unslash($_POST['wsmd_geocode']));
             update_user_meta($user_id, 'wsmd_geocode', $_POST['wsmd_geocode']);
         }
 
         // Sanitize and save the fields occupation
         if (isset($_POST['wsmd_occupation'])) {
-            $_POST['wsmd_occupation'] = sanitize_text_field($_POST['wsmd_occupation']);
+            $_POST['wsmd_occupation'] = sanitize_text_field(wp_unslash($_POST['wsmd_occupation']));
             update_user_meta($user_id, 'wsmd_occupation', $_POST['wsmd_occupation']);
         }
 
         // Sanitize and save the fields company
         if (isset($_POST['wsmd_company'])) {
-            $_POST['wsmd_company'] = sanitize_text_field($_POST['wsmd_company']);
+            $_POST['wsmd_company'] = sanitize_text_field(wp_unslash($_POST['wsmd_company']));
             update_user_meta($user_id, 'wsmd_company', $_POST['wsmd_company']);
         }
 
         // Sanitize and save the fields address
         if (isset($_POST['wsmd_address'])) {
-            $_POST['wsmd_address'] = sanitize_text_field($_POST['wsmd_address']);
+            $_POST['wsmd_address'] = sanitize_text_field(wp_unslash($_POST['wsmd_address']));
             update_user_meta($user_id, 'wsmd_address', $_POST['wsmd_address']);
         }
 
         // Sanitize and save the fields city
         if (isset($_POST['wsmd_city'])) {
-            $_POST['wsmd_city'] = sanitize_text_field($_POST['wsmd_city']);
+            $_POST['wsmd_city'] = sanitize_text_field(wp_unslash($_POST['wsmd_city']));
             update_user_meta($user_id, 'wsmd_city', $_POST['wsmd_city']);
         }
 
         // Sanitize and save the fields province/state
         if (isset($_POST['wsmd_province_state'])) {
-            $_POST['wsmd_province_state'] = sanitize_text_field($_POST['wsmd_province_state']);
+            $_POST['wsmd_province_state'] = sanitize_text_field(wp_unslash($_POST['wsmd_province_state']));
             update_user_meta($user_id, 'wsmd_province_state', $_POST['wsmd_province_state']);
         }
 
         // Sanitize and save the fields postal code/zip
         if (isset($_POST['wsmd_postal_zip_code'])) {
-            $_POST['wsmd_postal_zip_code'] = sanitize_text_field($_POST['wsmd_postal_zip_code']);
+            $_POST['wsmd_postal_zip_code'] = sanitize_text_field(wp_unslash($_POST['wsmd_postal_zip_code']));
             update_user_meta($user_id, 'wsmd_postal_zip_code', $_POST['wsmd_postal_zip_code']);
         }
 
         // Sanitize and save the fields country
         if (isset($_POST['wsmd_country'])) {
-            $_POST['wsmd_country'] = sanitize_text_field($_POST['wsmd_country']);
+            $_POST['wsmd_country'] = sanitize_text_field(wp_unslash($_POST['wsmd_country']));
             update_user_meta($user_id, 'wsmd_country', $_POST['wsmd_country']);
         }
 
         // Sanitize and save the fields website
         if (isset($_POST['wsmd_website'])) {
-            $_POST['wsmd_website'] = sanitize_text_field($_POST['wsmd_website']);
+            $_POST['wsmd_website'] = sanitize_text_field(wp_unslash($_POST['wsmd_website']));
             update_user_meta($user_id, 'wsmd_website', $_POST['wsmd_website']);
         }
 
         // Sanitize and save the fields phone
         if (isset($_POST['wsmd_phone'])) {
-            $_POST['wsmd_phone'] = sanitize_text_field($_POST['wsmd_phone']);
+            $_POST['wsmd_phone'] = sanitize_text_field(wp_unslash($_POST['wsmd_phone']));
             update_user_meta($user_id, 'wsmd_phone', $_POST['wsmd_phone']);
         }
 
         // Sanitize and save the fields email
         if (isset($_POST['wsmd_email'])) {
-            $_POST['wsmd_email'] = sanitize_text_field($_POST['wsmd_email']);
+            $_POST['wsmd_email'] = sanitize_text_field(wp_unslash($_POST['wsmd_email']));
             update_user_meta($user_id, 'wsmd_email', $_POST['wsmd_email']);
         }
     }

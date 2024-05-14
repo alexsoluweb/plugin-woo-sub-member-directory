@@ -1,18 +1,18 @@
 @import 'global-styles.scss';
 
-#wsmd-member-directory{
+#wsmd-member-directory {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 
-    #wsmd-form{
+    #wsmd-form {
         margin: 0;
         display: flex;
         align-items: center;
         gap: 1rem;
 
-        &.loading{
-            &:after{
+        &.loading {
+            &:after {
                 content: '';
                 display: inline-block;
                 width: 20px;
@@ -30,38 +30,47 @@
             }
         }
 
-        #wsmd-search-address{
+        #wsmd-search-address {
             width: 400px;
             max-width: 100%;
         }
 
-        #wsmd-form-message{
+        #wsmd-form-message {
             margin: 0;
         }
     }
 
-    #wsmd-map{
+    #wsmd-map {
         width: 100%;
         aspect-ratio: 16/9;
 
-        .wsmd-map-info-window{
+        .wsmd-map-info-window {
             padding: 0.5rem;
 
-            hr{
-                //
-            }
+            .wsmd-map-info-window-header{
+                display: flex;
+                flex-direction: column;
 
-            .wsmd-map-info-window-contact{
+                .wsmd-map-info-window-company{
+                    font-weight: 600;
+                    margin-bottom: 0.25rem;
+                }
+                
+                .wsmd-map-info-window-occupation{
+                    font-style: italic;
+                }
+            }
+            .wsmd-map-info-window-body {
                 display: flex;
                 flex-direction: column;
                 gap: 0.5rem;
-                
-                > *{
+
+                > * {
                     display: flex;
                     align-items: center;
                     gap: 0.5rem;
 
-                    marker{
+                    marker {
                         width: 1rem;
                     }
                 }
@@ -69,9 +78,67 @@
         }
     }
 
-    #wsmd-member-list{
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
+    #wsmd-member-list-container {
+        display: flex;
+        flex-direction: column;
         gap: 1rem;
+        margin-top: 1rem;
+
+        #wsmd-member-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+
+            .wsmd-member-item{
+                border: 1px solid #ccc;
+                padding: 1rem;
+
+                .wsmd-member-item-header{
+                    display: flex;
+                    flex-direction: column;
+                    
+                    .wsmd-member-item-company{
+                        font-weight: 600;
+                        margin-bottom: 0.25rem;
+                    }
+
+                    .wsmd-member-item-occupation{
+                        font-style: italic;
+                    }
+                }
+
+                .wsmd-member-item-body {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                    line-height: 1.35;
+
+                    > * {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+
+                        marker {
+                            width: 1rem;
+                        }
+                    }
+                }
+            }
+        }
+
+        #wsmd-member-list-pagination {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+
+            #wsmd-member-list-prev {
+                // visibility: hidden;
+            }
+
+            #wsmd-member-list-next {
+                //
+            }
+        }
     }
 }

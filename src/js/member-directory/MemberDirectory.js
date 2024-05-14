@@ -15,6 +15,8 @@ class MemberDirectory {
   static formMessage = null;
   /** @type {Array<google.maps.Marker>} */
   static markers = [];
+  /** @type {Array<Object>} */
+  static memberList = null;
 
 
   /**
@@ -38,11 +40,10 @@ class MemberDirectory {
     // Init Map Places service
     this.initMapPlacesService();
 
-    // Listen for the custom event
+    // Listen for event when members data is ready
     document.addEventListener('wsmd-members-data-ready', (e) => {
-      /* @ts-ignore */
-      const members = Object.values(e.detail);
-      this.initGoogleMap(members);
+      this.initMemberList();
+      this.initGoogleMap();
     });
 
     // Button for "Search my location"
@@ -57,6 +58,44 @@ class MemberDirectory {
     });
   }
 
+  /**
+   * Initialize the member list
+   * @returns {void}
+   */
+  static initMemberList() {
+    const memberList = this.memberDirectory.querySelector('#wsmd-member-list');
+
+    this.memberList.forEach(member => {
+      const memberItem = document.createElement('div');
+      memberItem.classList.add('wsmd-member-item');
+      memberItem.innerHTML = `
+        <div class="wsmd-member-item-header">
+          <h3 class="wsmd-member-item-company">${member.wsmd_company}</h3>
+          <p class="wsmd-member-item-occupation">${member.wsmd_occupation}</p>
+        </div>
+        <hr>
+        <div class="wsmd-member-item-body">
+          <div class="wsmd-member-item-address">
+            <marker class="wsmd-icon-map-marker"></marker>
+            ${member.wsmd_address}, ${member.wsmd_city}, ${member.wsmd_province_state}, ${member.wsmd_country}, ${member.wsmd_postal_zip_code}
+          </div>
+          <div class="wsmd-member-item-website">
+            <marker class="wsmd-icon-external-link"></marker>
+            ${member.wsmd_website}
+          </div>
+          <div class="wsmd-member-item-phone">
+            <marker class="wsmd-icon-phone"></marker>
+            ${member.wsmd_phone}
+          </div>
+          <div class="wsmd-member-item-email">
+            <marker class="wsmd-icon-email"></marker>
+            ${member.wsmd_email}
+          </div>
+        </div>
+      `;
+      memberList.appendChild(memberItem);
+    });
+  }
 
   /**
    * Handle the search near me button
@@ -156,11 +195,10 @@ class MemberDirectory {
 
 
   /**
-   * Initialize the Google Map
-   * @param {Array} members 
+   * Initialize the Google Map 
    * @returns {void}
   */
-  static initGoogleMap(members) {
+  static initGoogleMap() {
 
     // Create a new map
     this.map = new google.maps.Map(document.querySelector('#wsmd-map'), {
@@ -179,7 +217,7 @@ class MemberDirectory {
     const bounds = new google.maps.LatLngBounds();
 
     // Map through the members and create markers
-    this.markers = members.map(member => {
+    this.markers = this.memberList.map(member => {
 
       // Create a new marker
       const marker = new google.maps.Marker({
@@ -201,10 +239,12 @@ class MemberDirectory {
         //Set the content of the info window
         infoWindow.setContent(`
           <div class="wsmd-map-info-window">
-            <h3 class="wsmd-map-info-window-company">${member.wsmd_company}</h3>
-            <p class="wsmd-map-info-window-occupation">${member.wsmd_occupation}</p>
+            <div class="wsmd-map-info-window-header">
+              <h3 class="wsmd-map-info-window-company">${member.wsmd_company}</h3>
+              <p class="wsmd-map-info-window-occupation">${member.wsmd_occupation}</p>
+            </div>
             <hr>
-            <p class="wsmd-map-info-window-contact">
+            <div class="wsmd-map-info-window-body">
               <span class="wsmd-map-info-window-address">
                 <marker class="wsmd-icon-map-marker"></marker>
                 ${member.wsmd_address}, ${member.wsmd_city}, ${member.wsmd_province_state}, ${member.wsmd_country}, ${member.wsmd_postal_zip_code}
@@ -221,7 +261,7 @@ class MemberDirectory {
                 <marker class="wsmd-icon-email"></marker>
                 ${member.wsmd_email}
               </span>
-            </p>
+            </div>
           </div>
         `);
 
@@ -256,13 +296,16 @@ class MemberDirectory {
       .then(data => {
         if (data.success) {
           // Custom event to handle the data
-          const event = new CustomEvent('wsmd-members-data-ready', { detail: data.data.members });
+          const event = new CustomEvent('wsmd-members-data-ready');
+          this.memberList = Object.values(data.data.members);
           document.dispatchEvent(event);
         } else {
+          this.formMessage.classList.add('error');
           this.formMessage.innerHTML = data.data.message;
         }
       })
       .catch((error) => {
+        this.formMessage.classList.add('error');
         this.formMessage.innerHTML = 'An error occurred while fetching members data';
       });
   }
