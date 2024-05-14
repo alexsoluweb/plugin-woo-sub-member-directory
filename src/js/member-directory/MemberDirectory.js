@@ -1,7 +1,21 @@
 import '../../scss/member-directory.scss'
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
+import mapStyles,{svgMarker} from "../map-style";
 
 class MemberDirectory {
+
+  // Properties
+  /** @type {HTMLDivElement} */
+  static memberDirectory = null;
+  /** @type {google.maps.Map} */
+  static map = null;
+  /** @type {HTMLFormElement} */
+  static form = null;
+  /** @type {HTMLParagraphElement} */
+  static formMessage = null;
+  /** @type {Array<google.maps.Marker>} */
+  static markers = [];
+
 
   /**
    * Init application
@@ -9,7 +23,6 @@ class MemberDirectory {
    */
   static init() {
 
-    // Get the member directory element
     this.memberDirectory = document.querySelector('#wsmd-member-directory');
 
     // Check if the member directory element exists
@@ -22,13 +35,125 @@ class MemberDirectory {
 
     // fetch the members data
     this.fetchMembersData()
+    // Init Map Places service
+    this.initMapPlacesService();
 
     // Listen for the custom event
-    document.addEventListener('wsmd-members-data-ready', (event) => {
-      const members = Object.values(event.detail);
+    document.addEventListener('wsmd-members-data-ready', (e) => {
+      /* @ts-ignore */
+      const members = Object.values(e.detail);
       this.initGoogleMap(members);
     });
+
+    // Button for "Search my location"
+    this.form.querySelector('#wsmd-my-location').addEventListener('click', (e) => {
+      e.preventDefault();
+      this.handleSearchNearMe()
+    });
+
+    // Prevent the form from submitting
+    this.form.addEventListener('submit', (e) => {
+      e.preventDefault();
+    });
   }
+
+
+  /**
+   * Handle the search near me button
+   * @returns {void}
+   */
+  static handleSearchNearMe() {
+    this.form.classList.add('loading');
+    this.formMessage.classList.remove('error');
+    this.formMessage.innerHTML = '';
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          const nearestMarker = this.getNearestMarker(userLocation.lat, userLocation.lng);
+
+          if (nearestMarker) {
+            this.map.panTo(nearestMarker.getPosition());
+            this.map.setZoom(12);
+          } else {
+            this.map.panTo(userLocation);
+            this.map.setZoom(12);
+          }
+          this.form.classList.remove('loading');
+        },
+        () => {
+          // User denied the request for Geolocation, or something else went wrong
+          this.formMessage.innerHTML = 'Error: The Geolocation service failed.';
+          this.formMessage.classList.add('error');
+          this.form.classList.remove('loading');
+        }
+      );
+    } else {
+      // Browser doesn't support Geolocation
+      this.formMessage.innerHTML = 'Error: Your browser doesn\'t support geolocation.';
+      this.formMessage.classList.add('error');
+      this.form.classList.remove('loading');
+    }
+  }
+
+
+  /**
+   * Initialize the Google Map Places Service
+   * @returns {void}
+  */
+  static initMapPlacesService() {
+    /** @type {HTMLInputElement} */
+    const input = this.form.querySelector('#wsmd-search-address');
+    const autocomplete = new google.maps.places.Autocomplete(input);
+
+    autocomplete.addListener('place_changed', () => {
+      const place = autocomplete.getPlace();
+      if (!place.geometry) {
+        console.log("Returned place contains no geometry");
+        return;
+      }
+
+      const lat = place.geometry.location.lat();
+      const lng = place.geometry.location.lng();
+      const nearestMarker = this.getNearestMarker(lat, lng);
+
+      // Pan to the nearest marker, or to the searched location
+      if (nearestMarker) {
+        this.map.panTo(nearestMarker.getPosition());
+        this.map.setZoom(12);
+      } else {
+        this.map.panTo({ lat, lng });
+        this.map.setZoom(12);
+      }
+    });
+  }
+
+
+  /**
+   * Get the nearest marker to a given latitude and longitude
+   * @param {number} lat
+   * @param {number} lng
+   * @returns {google.maps.Marker}
+   */
+  static getNearestMarker(lat, lng) {
+    let nearestMarker = null;
+    let minDistance = Infinity;
+
+    this.markers.forEach(marker => {
+      const d = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(lat, lng), marker.getPosition());
+      if (d < minDistance) {
+        minDistance = d;
+        nearestMarker = marker;
+      }
+    });
+
+    return nearestMarker;
+  }
+
 
   /**
    * Initialize the Google Map
@@ -38,9 +163,13 @@ class MemberDirectory {
   static initGoogleMap(members) {
 
     // Create a new map
-    const map = new google.maps.Map(document.querySelector('#wsmd-map'), {
+    this.map = new google.maps.Map(document.querySelector('#wsmd-map'), {
       center: { lat: 0, lng: 0 },
       zoom: 2,
+      styles: mapStyles,
+      mapTypeControlOptions: {
+        mapTypeIds: ['roadmap'] // Disable satellite option
+      }
     });
 
     // Create a new info window
@@ -49,47 +178,67 @@ class MemberDirectory {
     // Create a new bounds
     const bounds = new google.maps.LatLngBounds();
 
-    // Loop through the members data
-    // members.forEach(member => {
-    const markers = members.map(member => {   
+    // Map through the members and create markers
+    this.markers = members.map(member => {
 
       // Create a new marker
       const marker = new google.maps.Marker({
-        position: { 
+        position: {
           lat: parseFloat(member.wsmd_geocode.split(',')[0]),
           lng: parseFloat(member.wsmd_geocode.split(',')[1]),
         },
-        map: map,
-        title: member.name,
+        map: this.map,
+        title: member.wsmd_company,
+        icon: svgMarker,
       });
 
       // Add the marker to the bounds
-      bounds.extend(marker.position);
+      bounds.extend(marker.getPosition());
 
       // Add a click event listener to the marker
       marker.addListener('click', () => {
+
+        //Set the content of the info window
         infoWindow.setContent(`
-          <div>
-            <h3>${member.wsmd_occupation}</h3>
-            <p>${member.wsmd_company}</p>
-            <p>${member.wsmd_address}, ${member.wsmd_city}, ${member.wsmd_province_state}, ${member.wsmd_country}, ${member.wsmd_postal_zip_code}</p>
-            <p>${member.wsmd_website}</p>
-            <p>${member.wsmd_phone}</p>
-            <p>${member.wsmd_email}</p>
+          <div class="wsmd-map-info-window">
+            <h3 class="wsmd-map-info-window-company">${member.wsmd_company}</h3>
+            <p class="wsmd-map-info-window-occupation">${member.wsmd_occupation}</p>
+            <hr>
+            <p class="wsmd-map-info-window-contact">
+              <span class="wsmd-map-info-window-address">
+                <marker class="wsmd-icon-map-marker"></marker>
+                ${member.wsmd_address}, ${member.wsmd_city}, ${member.wsmd_province_state}, ${member.wsmd_country}, ${member.wsmd_postal_zip_code}
+              </span>
+              <span class="wsmd-map-info-window-website">
+                <marker class="wsmd-icon-external-link"></marker>
+                ${member.wsmd_website}
+              </span>
+              <span class="wsmd-map-info-window-phone">
+                <marker class="wsmd-icon-phone"></marker>
+                ${member.wsmd_phone}
+              </span>
+              <span class="wsmd-map-info-window-email">
+                <marker class="wsmd-icon-email"></marker>
+                ${member.wsmd_email}
+              </span>
+            </p>
           </div>
         `);
-        infoWindow.open(map, marker);
+
+        // Open the info window
+        infoWindow.open(this.map, marker)
       });
 
       return marker;
     });
 
     // Create a new marker cluster
-    new MarkerClusterer({ markers, map });
+    new MarkerClusterer({ markers: this.markers, map: this.map });
 
     // Fit the map to the bounds
-    map.fitBounds(bounds);
+    this.map.fitBounds(bounds);
   }
+
 
   /**
    * Fetch members data from AJAX endpoint
@@ -118,6 +267,7 @@ class MemberDirectory {
       });
   }
 }
+
 
 // Main entry point
 document.addEventListener('DOMContentLoaded', () => {

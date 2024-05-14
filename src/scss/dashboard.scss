@@ -1,3 +1,5 @@
+@import 'global-styles.scss';
+
 #wsmd-dashboard{
 
     #wsmd-form{
@@ -23,15 +25,6 @@
             width: 100%;
             display: flex;
             justify-content: center;
-            padding: 1rem;
-
-            &.error{
-                border: 1px solid red;
-            }
-
-            &.success{
-                border: 1px solid green;
-            }
 
             &.loading{
                 &:before{

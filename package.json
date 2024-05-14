@@ -13,6 +13,7 @@
     "@googlemaps/markerclusterer": "^2.5.3"
   },
   "devDependencies": {
+    "@types/google.maps": "^3.55.8",
     "@types/jquery": "^3.5.14",
     "@types/webpack-env": "^1.18.0",
     "autoprefixer": "^10.4.7",

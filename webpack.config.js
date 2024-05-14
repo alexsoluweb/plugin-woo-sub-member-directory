@@ -48,21 +48,12 @@ module.exports = {
         injectCss: true,
       }
     ),
-    // Copy images and fonts to assets folder
+    // Copy images to assets folder
     new CopyWebpackPlugin({
       patterns: [
         {
           from: "src/images",
           to: "images",
-          globOptions: {
-            ignore: ["**/*.gitkeep"],
-            ignore: ["**/optimized/**/*.*"],
-          },
-          noErrorOnMissing: true,
-        },
-        {
-          from: "src/fonts",
-          to: "fonts",
           globOptions: {
             ignore: ["**/*.gitkeep"],
           },
@@ -95,7 +86,7 @@ module.exports = {
           {
             loader: "css-loader",
             options: {
-              url: false, // Disable url() resolving
+              // url: false, // Disable url() resolving
             },
           },
           "postcss-loader",
@@ -112,9 +103,8 @@ module.exports = {
         ],
       },
       // Fonts
-      // @see https://fontsource.org/docs/getting-started
       {
-        test: /[\\/](fonts|@fontsource)[\\/].*\.(svg|woff|woff2|eot|ttf|otf)$/i,
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
         type: "asset/resource",
         generator: {
           filename: "./fonts/[name][ext]",

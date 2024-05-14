@@ -1,4 +1,5 @@
 import '../../scss/dashboard.scss';
+import mapStyles,{svgMarker} from "../map-style";
 
 class Dashboard {
 
@@ -31,14 +32,16 @@ class Dashboard {
     // Create a map object and specify the DOM element for display.
     let map = new google.maps.Map(form.querySelector('#wsmd-map'), {
       center: { lat: userLat, lng: userLng },
-      zoom: 6
+      zoom: 6,
+      styles: mapStyles,
     });
 
     // Create a marker and set its position.
     let marker = new google.maps.Marker({
       position: { lat: userLat, lng: userLng },
       map: map,
-      draggable: true
+      draggable: true,
+      // icon: svgMarker,
     });
 
     // Add a listener for the marker drag
