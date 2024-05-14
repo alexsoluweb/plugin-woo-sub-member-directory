@@ -78,13 +78,19 @@ class MemberDirectory {
 
   /**
    * Display the member list based on the current offset and limit
+   * @param {boolean} $reset - Reset the list
    * @returns {void}
    */
-  static displayMembers() {
+  static displayMembers($reset = false) {
     const memberList = this.memberDirectory.querySelector('#wsmd-member-list');
     const start = this.memberListOffset;
     const end = this.memberListOffset + this.memberListPerPage;
     const membersToDisplay = this.memberList.slice(start, end);
+
+    // Reset the list
+    if ($reset) {
+      memberList.innerHTML = '';
+    }
 
     membersToDisplay.forEach((member, index) => {
       const memberItem = document.createElement('div');
@@ -133,7 +139,7 @@ class MemberDirectory {
     // Check if there are more members to load
     if (this.memberListOffset >= this.memberList.length) {
       this.memberDirectory.querySelector('#wsmd-member-list-load-more').style.display = 'none';
-    }else{
+    } else {
       this.memberDirectory.querySelector('#wsmd-member-list-load-more').style.display = 'block';
     }
   }
@@ -199,13 +205,30 @@ class MemberDirectory {
 
     autocomplete.addListener('place_changed', () => {
       const place = autocomplete.getPlace();
+      
       if (!place.geometry) {
-        console.log("Returned place contains no geometry");
+        this.formMessage.classList.add('error');
+        this.formMessage.innerHTML = 'No details available for input: ' + place.name;
         return;
+      }else{
+        this.formMessage.classList.remove('error');
+        this.formMessage.innerHTML = '';
       }
 
       const lat = place.geometry.location.lat();
       const lng = place.geometry.location.lng();
+
+      // Reorder the member list by proximity to the searched location
+      this.memberList.sort((a, b) => {
+        const distanceA = this.calculateDistance(lat, lng, parseFloat(a.wsmd_geocode.split(',')[0]), parseFloat(a.wsmd_geocode.split(',')[1]));
+        const distanceB = this.calculateDistance(lat, lng, parseFloat(b.wsmd_geocode.split(',')[0]), parseFloat(b.wsmd_geocode.split(',')[1]));
+        return distanceA - distanceB;
+      });
+
+      // Display the reordered member list
+      this.memberListOffset = 0;
+      this.displayMembers(true);
+
       const nearestMarker = this.getNearestMarker(lat, lng);
 
       // Pan to the nearest marker, or to the searched location
@@ -238,6 +261,26 @@ class MemberDirectory {
     });
 
     return nearestMarker;
+  }
+
+  /**
+   * Calculate the distance between two points using the Haversine formula
+   * @param {number} lat1
+   * @param {number} lng1
+   * @param {number} lat2
+   * @param {number} lng2
+   * @returns {number} Distance in kilometers
+   */
+  static calculateDistance(lat1, lng1, lat2, lng2) {
+    const R = 6371; // Radius of the Earth in kilometers
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
   }
 
   /**
