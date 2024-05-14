@@ -34,6 +34,8 @@ class WSMD{
         new WSMD_AJAX();
         // Shortcodes class
         new WSMD_Shortcodes();
+        // Taxonomy class
+        new WSMD_Taxonomy();
     }
 
     /**

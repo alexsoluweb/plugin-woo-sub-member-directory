@@ -61,6 +61,13 @@ class WSMD_Woo_Settings{
                 'desc'     => __( 'Enter your Google Maps API Key.', 'wsmd' ),
                 'id'       => 'wsmd_google_maps_api_key'
             ),
+            // Edit taxonomies link
+            'wsmd_info_edit_taxonomy' => array(
+                'name'     => __( 'Taxonomies', 'wsmd' ),
+                'type'     => 'info',
+                'id'       => 'wsmd_info_edit_taxonomy',
+                'text'     => '<a href="' . admin_url() . 'edit-tags.php?taxonomy=wsmd-taxonomy">' . __('Edit here', 'wsmd') . '</a>',
+            ),
             'section_end' => array(
                 'type'     => 'sectionend',
                 'id'       => 'wsmd_section_end'
