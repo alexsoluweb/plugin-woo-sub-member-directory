@@ -23,6 +23,8 @@ class MemberDirectory {
   static memberListOffset = 0;
   /** @type {number} */
   static memberListPerPage = 9;
+  /** @type {google.maps.Marker|null} */
+  static activeMarker = null; // Track the currently active marker
 
   /**
    * Init application
@@ -64,6 +66,31 @@ class MemberDirectory {
     // Prevent the form from submitting
     this.form.addEventListener('submit', (e) => {
       e.preventDefault();
+    });
+
+    // Event delegation for member item clicks
+    const memberList = this.memberDirectory.querySelector('#wsmd-member-list');
+    memberList.addEventListener('click', (e) => {
+      const memberItem = e.target.closest('.wsmd-member-item');
+      if (memberItem) {
+        const memberId = memberItem.dataset.memberId;
+        const marker = this.memberIdToMarkerMap.get(memberId);
+        if (marker) {
+          this.map.panTo(marker.getPosition());
+          this.map.setZoom(12);
+          // Scroll to the top of the google map
+          window.scrollTo({ top: this.memberDirectory.querySelector('#wsmd-map').offsetTop, behavior: 'smooth' });
+          
+          // Stop the previous marker's bounce animation
+          if (this.activeMarker) {
+            this.activeMarker.setAnimation(null);
+          }
+
+          // Make the current marker bounce
+          marker.setAnimation(google.maps.Animation.BOUNCE);
+          this.activeMarker = marker;
+        }
+      }
     });
   }
 
@@ -126,15 +153,6 @@ class MemberDirectory {
       `;
 
       memberList.appendChild(memberItem);
-
-      // Add click event listener to center map on marker
-      memberItem.addEventListener('click', () => {
-        const marker = this.memberIdToMarkerMap.get(member.wsmd_id);
-        if (marker) {
-          this.map.panTo(marker.getPosition());
-          this.map.setZoom(12);
-        }
-      });
 
       // Trigger reflow for the animation to start
       window.getComputedStyle(memberItem).transform;
