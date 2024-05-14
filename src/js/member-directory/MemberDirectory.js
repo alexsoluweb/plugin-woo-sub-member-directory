@@ -15,6 +15,8 @@ class MemberDirectory {
   static formMessage = null;
   /** @type {Array<google.maps.Marker>} */
   static markers = [];
+  /** @type {Map<string, google.maps.Marker>} */
+  static memberIdToMarkerMap = new Map();
   /** @type {Array<Object>} */
   static memberList = null;
   /** @type {number} */
@@ -92,6 +94,7 @@ class MemberDirectory {
     membersToDisplay.forEach((member, index) => {
       const memberItem = document.createElement('div');
       memberItem.classList.add('wsmd-member-item');
+      memberItem.dataset.memberId = member.wsmd_id; // Set data-member-id attribute
       memberItem.style.opacity = '0';
       memberItem.style.transform = 'translateY(100px)';
       memberItem.style.transition = `opacity 0.5s ease ${index * 0.1}s, transform 0.5s ease ${index * 0.1}s`;
@@ -123,6 +126,15 @@ class MemberDirectory {
       `;
 
       memberList.appendChild(memberItem);
+
+      // Add click event listener to center map on marker
+      memberItem.addEventListener('click', () => {
+        const marker = this.memberIdToMarkerMap.get(member.wsmd_id);
+        if (marker) {
+          this.map.panTo(marker.getPosition());
+          this.map.setZoom(12);
+        }
+      });
 
       // Trigger reflow for the animation to start
       window.getComputedStyle(memberItem).transform;
@@ -330,6 +342,9 @@ class MemberDirectory {
         icon: svgMarker,
       });
 
+      // Add the marker to the memberIdToMarkerMap
+      this.memberIdToMarkerMap.set(member.wsmd_id, marker);
+
       // Add the marker to the bounds
       bounds.extend(marker.getPosition());
 
@@ -395,7 +410,10 @@ class MemberDirectory {
       .then(data => {
         if (data.success) {
           const event = new CustomEvent('wsmd-members-data-ready');
-          this.memberList = Object.values(data.data.members);
+          this.memberList = Object.keys(data.data.members).map(key => ({
+            wsmd_id: key,
+            ...data.data.members[key]
+          }));
           document.dispatchEvent(event);
         } else {
           this.formMessage.classList.add('error');
