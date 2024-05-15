@@ -34,13 +34,13 @@ add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), function( $lin
 
 // Activation hook, code to run on activation.
 register_activation_hook( __FILE__, function() {
-    WSMD\WSMD_Dashboard::add_endpoint();
+    WSMD\WSMD_Woo_Dashboard::add_endpoint();
     flush_rewrite_rules();
 });
 
 // Deactivation hook, code to run on deactivation.
 register_deactivation_hook( __FILE__, function() {
-    WSMD\WSMD_Dashboard::remove_endpoint();
+    WSMD\WSMD_Woo_Dashboard::remove_endpoint();
     flush_rewrite_rules();
 });
 

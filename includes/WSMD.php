@@ -29,7 +29,7 @@ class WSMD{
         // User class
         new WSMD_User_Settings();
         // Dashboard class
-        new WSMD_Dashboard();
+        new WSMD_Woo_Dashboard();
         // AJAX class
         new WSMD_AJAX();
         // Shortcodes class

@@ -23,8 +23,8 @@
 
     <!-- Add all user fields here -->
     <form id="wsmd-form" action="<?php echo admin_url('admin-ajax.php'); ?>">
-        <input type="hidden" name="nonce" value="<?php echo wp_create_nonce('wsmd_dashboard_save_user_settings'); ?>">
-        <input type="hidden" name="action" value="wsmd_dashboard_save_user_settings">
+        <input type="hidden" name="nonce" value="<?php echo wp_create_nonce('wsmd_woo_dashboard_save_user_settings'); ?>">
+        <input type="hidden" name="action" value="wsmd_woo_dashboard_save_user_settings">
         <input type="hidden" name="wsmd_geocode" value="<?php echo esc_attr($args['user_settings']['wsmd_geocode']); ?>">
         <input type="text" name="wsmd_occupation" placeholder="<?php esc_attr_e('Occupation', 'wsmd'); ?>" value="<?php echo esc_attr($args['user_settings']['wsmd_occupation']); ?>">
         <input type="text" name="wsmd_company" placeholder="<?php esc_attr_e('Company', 'wsmd'); ?>" value="<?php echo esc_attr($args['user_settings']['wsmd_company']); ?>">
