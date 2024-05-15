@@ -93,6 +93,7 @@ class WSMD_Dashboard {
                 array(
                     'current_user' => $current_user,
                     'user_settings' => WSMD_User_Settings::get_user_settings($current_user->ID),
+                    'terms' => WSMD_Taxonomy::get_terms(),
                 ),
             );
         }

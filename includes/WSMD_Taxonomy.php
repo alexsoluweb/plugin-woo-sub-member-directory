@@ -34,7 +34,11 @@ class WSMD_Taxonomy {
         register_taxonomy('wsmd-taxonomy', null, $args);
     }
 
-    public static function get_member_categories() {
+    /**
+     * Get all terms
+     * @return array $terms
+     */
+    public static function get_terms() {
         $terms = get_terms(array(
             'taxonomy' => 'wsmd-taxonomy',
             'hide_empty' => false

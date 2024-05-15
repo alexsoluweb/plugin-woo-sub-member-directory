@@ -4,6 +4,7 @@
  * Dashboard template
  * @var $args['current_user'] WP_User Current user
  * @var $args['user_settings'] array User settings
+ * @var $args['terms'] array User settings
  */
 ?>
 <div id="wsmd-dashboard" class="is-member-directory">
@@ -36,6 +37,13 @@
         <input type="text" name="wsmd_province_state" placeholder="<?php esc_attr_e('Province/State', 'wsmd'); ?>" value="<?php echo esc_attr($args['user_settings']['wsmd_province_state']); ?>">
         <input type="text" name="wsmd_postal_zip_code" placeholder="<?php esc_attr_e('Postal/Zip code', 'wsmd'); ?>" value="<?php echo esc_attr($args['user_settings']['wsmd_postal_zip_code']); ?>">
         <input type="text" name="wsmd_country" placeholder="<?php esc_attr_e('Country', 'wsmd'); ?>" value="<?php echo esc_attr($args['user_settings']['wsmd_country']); ?>">
+        <select name="wsmd_taxonomies[]" id="wsmd_taxonomies" multiple="multiple" data-placeholder="<?php esc_attr_e('Select taxonomies', 'wsmd'); ?>">
+            <?php foreach ($args['terms'] as $term) { ?>
+                <option value="<?php echo esc_attr($term->term_id); ?>" <?php echo in_array($term->term_id, $args['user_settings']['wsmd_taxonomies']) ? 'selected="selected"' : ''; ?>>
+                    <?php echo esc_html($term->name); ?>
+                </option>
+            <?php } ?>
+        </select>
         <div id="wsmd-map"></div>
         <button id="wsmd-geocode-address" type="button" class="button"><?php _e('Geo-code my address', 'wsmd'); ?></button>
         <button id="wsmd-save-settings" type="button" class="button"><?php _e('Save Settings', 'wsmd'); ?></button>

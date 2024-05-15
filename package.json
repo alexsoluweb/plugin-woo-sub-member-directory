@@ -10,7 +10,8 @@
     "clean": "rm -rf ./assets/ ./node_modules"
   },
   "dependencies": {
-    "@googlemaps/markerclusterer": "^2.5.3"
+    "@googlemaps/markerclusterer": "^2.5.3",
+    "tom-select": "^2.3.1"
   },
   "devDependencies": {
     "@types/google.maps": "^3.55.8",

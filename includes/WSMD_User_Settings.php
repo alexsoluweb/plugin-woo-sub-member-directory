@@ -18,7 +18,7 @@ class WSMD_User_Settings
         // add_action( 'personal_options_update', array(__CLASS__, 'save_user_settings') );
         add_action('edit_user_profile_update', array(__CLASS__, 'save_user_settings'));
 
-        // Add a new column in the user list: Active Member Directory?
+        // Add a new column in the user list: Member Directory
         add_filter('manage_users_columns', function ($columns) {
             $columns['wsmd_active'] = __('Member Directory', 'wsmd');
             return $columns;
@@ -26,6 +26,25 @@ class WSMD_User_Settings
 
         // Add the content to the new column
         add_action('manage_users_custom_column', array($this, 'add_user_column_content'), 10, 3);
+
+        // Enqueue scripts and styles
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
+    }
+
+    /**
+     * Enqueue scripts and styles.
+     */
+    public function enqueue_scripts($hook)
+    {
+        // Only load on user profile and edit user pages
+        if ('user-edit.php' != $hook && 'profile.php' != $hook) {
+            return;
+        }
+
+        $script_version = filemtime(WSMD_PATH . 'assets/js/admin-users.js');
+        $style_version = filemtime(WSMD_PATH . 'assets/css/admin-users.css');
+        wp_enqueue_script('wsmd-admin-users', WSMD_URL . 'assets/js/admin-users.js', array(), $script_version, true);
+        wp_enqueue_style('wsmd-admin-users', WSMD_URL . 'assets/css/admin-users.css', array(), $style_version);
     }
 
     /**
@@ -64,13 +83,19 @@ class WSMD_User_Settings
      */
     public function add_user_fields($user)
     {
-
         // Retrieve the user visibility settings
         $visibility = self::get_user_settings($user->ID, 'wsmd_visibility');
+
+        // Retrieve the custom taxonomy terms
+        $terms = WSMD_Taxonomy::get_terms();
+
+        // Retrieve the user's selected terms
+        $user_terms = wp_get_object_terms($user->ID, 'wsmd-taxonomy', array('fields' => 'ids'));
 
         ?>
         <h3><?php _e('Member Directory', 'wsmd'); ?></h3>
         <table class="form-table">
+            <!-- Visibility -->
             <tr>
                 <th><label for="wsmd_visibility"><?php _e('Force this member to be listed or removed in the Member Directory', 'wsmd'); ?></label></th>
                 <td>
@@ -86,6 +111,20 @@ class WSMD_User_Settings
                         <input type="radio" name="wsmd_visibility" value="removed" <?php checked($visibility, 'removed'); ?>>
                         <?php _e('Remove from the Member Directory', 'wsmd'); ?>
                     </label>
+                </td>
+            </tr>
+            <!-- Taxonomies -->
+            <tr>
+                <th><label for="wsmd_taxonomies"><?php _e('Taxonomies', 'wsmd'); ?></label></th>
+                <td>
+                    <select name="wsmd_taxonomies[]" id="wsmd_taxonomies" multiple="multiple" class="regular-text" data-placeholder="<?php esc_attr_e('Select taxonomies', 'wsmd'); ?>">
+                        <?php foreach ($terms as $term) { ?>
+                            <option value="<?php echo esc_attr($term->term_id); ?>" <?php echo in_array($term->term_id, $user_terms) ? 'selected="selected"' : ''; ?>>
+                                <?php echo esc_html($term->name); ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                    <p class="description"><?php _e('Select taxonomies for the user.', 'wsmd'); ?></p>
                 </td>
             </tr>
             <!-- Geolocation coordinates -->
@@ -257,6 +296,15 @@ class WSMD_User_Settings
             $_POST['wsmd_email'] = sanitize_text_field(wp_unslash($_POST['wsmd_email']));
             update_user_meta($user_id, 'wsmd_email', $_POST['wsmd_email']);
         }
+
+        // Save the selected taxonomy terms
+        if (isset($_POST['wsmd_taxonomies'])) {
+            $term_ids = array_map('intval', $_POST['wsmd_taxonomies']);
+            wp_set_object_terms($user_id, $term_ids, 'wsmd-taxonomy', false);
+        } else {
+            // If no terms are selected, clear the terms
+            wp_set_object_terms($user_id, array(), 'wsmd-taxonomy', false);
+        }
     }
 
     /**
@@ -265,6 +313,7 @@ class WSMD_User_Settings
      * @param int $user_id The user ID
      * @param string $key The key of the user meta to retrieve: \
      * wsmd_visibility, \
+     * wsmd_taxonomies, \
      * wsmd_geocode, \
      * wsmd_occupation, \
      * wsmd_company, \
@@ -284,6 +333,7 @@ class WSMD_User_Settings
         if (empty($key)) {
             return array(
                 'wsmd_visibility' => get_user_meta($userID, 'wsmd_visibility', true),
+                'wsmd_taxonomies' => wp_get_object_terms($userID, 'wsmd-taxonomy', array('fields' => 'ids')),
                 'wsmd_geocode' => get_user_meta($userID, 'wsmd_geocode', true),
                 'wsmd_occupation' => get_user_meta($userID, 'wsmd_occupation', true),
                 'wsmd_company' => get_user_meta($userID, 'wsmd_company', true),

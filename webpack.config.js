@@ -20,14 +20,18 @@ module.exports = {
   entry: {
     "member-directory": "./src/js/member-directory/MemberDirectory.js",
     "dashboard": "./src/js/dashboard/Dashboard.js",
-    "admin": "./src/js/admin/admin.js",
+    "admin-users": "./src/js/admin/users.js",
   },
   output: {
     filename: "js/[name].js",
     path: path.resolve(__dirname, "assets"),
     clean: true,
   },
-  resolve: {},
+  resolve: {
+    alias: {
+      '@node': path.resolve(__dirname, 'node_modules'),
+    },
+  },
   plugins: [
     // Browser Sync
     new BrowserSyncPlugin(
