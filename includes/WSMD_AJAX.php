@@ -65,9 +65,11 @@ class WSMD_AJAX
         $_POST['wsmd_country'] = $address_components['country'] ?? $country;
         $_POST['wsmd_postal_zip_code'] = $address_components['postal_code'] ?? $postal_code;
 
-        // Save user settings including the geocode
+        // Format geocode for saving
         $_POST['wsmd_geocode'] = $geocode_result['geocode']['lat'] . ',' . $geocode_result['geocode']['lng'];
-        WSMD_User_Settings::save_user_settings(get_current_user_id());
+
+        // Save user settings
+        $results = WSMD_User_Settings::save_user_settings(get_current_user_id());
 
         wp_send_json_success(array(
             'message' => __('Settings saved successfully', 'wsmd'),

@@ -7,10 +7,12 @@ namespace WSMD;
 class WSMD_User_Settings {
 
     public function __construct() {
+
         // Register fields for the user
         add_action('edit_user_profile', array($this, 'add_user_fields'), 100);
-        // Save the fields
-        add_action('edit_user_profile_update', array(__CLASS__, 'save_user_settings'));
+        
+        // Save the fields (Save mechanism only on frontend for now)
+        // add_action('edit_user_profile_update', array(__CLASS__, 'save_user_settings'));
 
         // Add a new column in the user list: Member Directory
         add_filter('manage_users_columns', function ($columns) {
@@ -90,15 +92,15 @@ class WSMD_User_Settings {
                 <th><label for="wsmd_visibility"><?php _e('Force this member to be listed or removed in the Member Directory', 'wsmd'); ?></label></th>
                 <td>
                     <label style="margin-right: 10px;">
-                        <input type="radio" name="wsmd_visibility" value="default" <?php checked($visibility, 'default'); ?>>
+                        <input type="radio" name="wsmd_visibility" value="default" <?php checked($visibility, 'default'); ?> disabled>
                         <?php _e('Default (Let the subscription decide)', 'wsmd'); ?>
                     </label>
                     <label style="margin-right: 10px;">
-                        <input type="radio" name="wsmd_visibility" value="forced" <?php checked($visibility, 'forced'); ?>>
+                        <input type="radio" name="wsmd_visibility" value="forced" <?php checked($visibility, 'forced'); ?> disabled>
                         <?php _e('Force to be listed in the Member Directory', 'wsmd'); ?>
                     </label>
                     <label>
-                        <input type="radio" name="wsmd_visibility" value="removed" <?php checked($visibility, 'removed'); ?>>
+                        <input type="radio" name="wsmd_visibility" value="removed" <?php checked($visibility, 'removed'); ?> disabled>
                         <?php _e('Remove from the Member Directory', 'wsmd'); ?>
                     </label>
                 </td>
@@ -107,7 +109,7 @@ class WSMD_User_Settings {
             <tr>
                 <th><label for="wsmd_taxonomies"><?php _e('Taxonomies', 'wsmd'); ?></label></th>
                 <td>
-                    <select name="wsmd_taxonomies[]" id="wsmd_taxonomies" multiple="multiple" class="regular-text" data-placeholder="<?php esc_attr_e('Select taxonomies', 'wsmd'); ?>">
+                    <select name="wsmd_taxonomies[]" id="wsmd_taxonomies" multiple="multiple" class="regular-text" data-placeholder="<?php esc_attr_e('Select taxonomies', 'wsmd'); ?>" disabled>
                         <?php foreach ($terms as $term) { ?>
                             <option value="<?php echo esc_attr($term->term_id); ?>" <?php echo in_array($term->term_id, $user_terms) ? 'selected="selected"' : ''; ?>>
                                 <?php echo esc_html($term->name); ?>
@@ -121,7 +123,7 @@ class WSMD_User_Settings {
             <tr>
                 <th><label for="wsmd_geocode"><?php _e('Geo-coordinates', 'wsmd'); ?></label></th>
                 <td>
-                    <input type="text" name="wsmd_geocode" id="wsmd_geocode" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_geocode', true)); ?>" class="regular-text">
+                    <input type="text" name="wsmd_geocode" id="wsmd_geocode" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_geocode', true)); ?>" class="regular-text" readonly>
                     <p class="description"><?php _e('The geo-coordinates of the user. Example: 45.5017, -73.5673', 'wsmd'); ?></p>
                 </td>
             </tr>
@@ -129,7 +131,7 @@ class WSMD_User_Settings {
             <tr>
                 <th><label for="wsmd_occupation"><?php _e('Occupation', 'wsmd'); ?></label></th>
                 <td>
-                    <input type="text" name="wsmd_occupation" id="wsmd_occupation" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_occupation', true)); ?>" class="regular-text">
+                    <input type="text" name="wsmd_occupation" id="wsmd_occupation" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_occupation', true)); ?>" class="regular-text" readonly>
                     <p class="description"><?php _e('The occupation of the user', 'wsmd'); ?></p>
                 </td>
             </tr>
@@ -137,7 +139,7 @@ class WSMD_User_Settings {
             <tr>
                 <th><label for="wsmd_company"><?php _e('Company', 'wsmd'); ?></label></th>
                 <td>
-                    <input type="text" name="wsmd_company" id="wsmd_company" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_company', true)); ?>" class="regular-text">
+                    <input type="text" name="wsmd_company" id="wsmd_company" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_company', true)); ?>" class="regular-text" readonly>
                     <p class="description"><?php _e('The company of the user', 'wsmd'); ?></p>
                 </td>
             </tr>
@@ -145,7 +147,7 @@ class WSMD_User_Settings {
             <tr>
                 <th><label for="wsmd_address"><?php _e('Address', 'wsmd'); ?></label></th>
                 <td>
-                    <input type="text" name="wsmd_address" id="wsmd_address" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_address', true)); ?>" class="regular-text">
+                    <input type="text" name="wsmd_address" id="wsmd_address" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_address', true)); ?>" class="regular-text" readonly>
                     <p class="description"><?php _e('The address of the user', 'wsmd'); ?></p>
                 </td>
             </tr>
@@ -153,7 +155,7 @@ class WSMD_User_Settings {
             <tr>
                 <th><label for="wsmd_city"><?php _e('City', 'wsmd'); ?></label></th>
                 <td>
-                    <input type="text" name="wsmd_city" id="wsmd_city" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_city', true)); ?>" class="regular-text">
+                    <input type="text" name="wsmd_city" id="wsmd_city" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_city', true)); ?>" class="regular-text" readonly>
                     <p class="description"><?php _e('The city of the user', 'wsmd'); ?></p>
                 </td>
             </tr>
@@ -161,7 +163,7 @@ class WSMD_User_Settings {
             <tr>
                 <th><label for="wsmd_province_state"><?php _e('Province/State', 'wsmd'); ?></label></th>
                 <td>
-                    <input type="text" name="wsmd_province_state" id="wsmd_province_state" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_province_state', true)); ?>" class="regular-text">
+                    <input type="text" name="wsmd_province_state" id="wsmd_province_state" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_province_state', true)); ?>" class="regular-text" readonly>
                     <p class="description"><?php _e('The province/state of the user', 'wsmd'); ?></p>
                 </td>
             </tr>
@@ -169,7 +171,7 @@ class WSMD_User_Settings {
             <tr>
                 <th><label for="wsmd_postal_zip_code"><?php _e('Postal/Zip code', 'wsmd'); ?></label></th>
                 <td>
-                    <input type="text" name="wsmd_postal_zip_code" id="wsmd_postal_zip_code" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_postal_zip_code', true)); ?>" class="regular-text">
+                    <input type="text" name="wsmd_postal_zip_code" id="wsmd_postal_zip_code" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_postal_zip_code', true)); ?>" class="regular-text" readonly>
                     <p class="description"><?php _e('The postal/zip code of the user', 'wsmd'); ?></p>
                 </td>
             </tr>
@@ -177,7 +179,7 @@ class WSMD_User_Settings {
             <tr>
                 <th><label for="wsmd_country"><?php _e('Country', 'wsmd'); ?></label></th>
                 <td>
-                    <input type="text" name="wsmd_country" id="wsmd_country" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_country', true)); ?>" class="regular-text">
+                    <input type="text" name="wsmd_country" id="wsmd_country" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_country', true)); ?>" class="regular-text" readonly>
                     <p class="description"><?php _e('The country of the user', 'wsmd'); ?></p>
                 </td>
             </tr>
@@ -185,7 +187,7 @@ class WSMD_User_Settings {
             <tr>
                 <th><label for="wsmd_website"><?php _e('Website', 'wsmd'); ?></label></th>
                 <td>
-                    <input type="text" name="wsmd_website" id="wsmd_website" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_website', true)); ?>" class="regular-text">
+                    <input type="text" name="wsmd_website" id="wsmd_website" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_website', true)); ?>" class="regular-text" readonly>
                     <p class="description"><?php _e('The website of the user', 'wsmd'); ?></p>
                 </td>
             </tr>
@@ -193,7 +195,7 @@ class WSMD_User_Settings {
             <tr>
                 <th><label for="wsmd_phone"><?php _e('Phone', 'wsmd'); ?></label></th>
                 <td>
-                    <input type="text" name="wsmd_phone" id="wsmd_phone" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_phone', true)); ?>" class="regular-text">
+                    <input type="text" name="wsmd_phone" id="wsmd_phone" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_phone', true)); ?>" class="regular-text" readonly>
                     <p class="description"><?php _e('The phone number of the user', 'wsmd'); ?></p>
                 </td>
             </tr>
@@ -201,7 +203,7 @@ class WSMD_User_Settings {
             <tr>
                 <th><label for="wsmd_email"><?php _e('Email', 'wsmd'); ?></label></th>
                 <td>
-                    <input type="text" name="wsmd_email" id="wsmd_email" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_email', true)); ?>" class="regular-text">
+                    <input type="text" name="wsmd_email" id="wsmd_email" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_email', true)); ?>" class="regular-text" readonly>
                     <p class="description"><?php _e('The email of the user', 'wsmd'); ?></p>
                 </td>
             </tr>
