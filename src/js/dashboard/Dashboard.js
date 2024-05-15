@@ -1,5 +1,5 @@
 import '../../scss/dashboard.scss';
-import mapStyles, { svgMarker } from '../map-style';
+import mapStyles from '../map-style';
 import '../../scss/tomselect.scss';
 import TomSelect from 'tom-select';
 
@@ -80,23 +80,42 @@ class Dashboard {
     })
       .then((response) => response.json())
       .then((data) => {
+
+        const responseData = data.data;
+
         if (data.success) {
-          this.showMessage(this.formMessage, 'success', data.data.message);
-          const { lat, lng } = data.data.geocode;
-          const newLocation = { lat: parseFloat(lat), lng: parseFloat(lng) };
-          this.form.querySelector('input[name="wsmd_geocode"]').value = `${lat}, ${lng}`;
-          this.map.setCenter(newLocation);
-          if (!this.marker) {
-            this.marker = this.createMarker(lat, lng);
-          } else {
-            this.marker.setPosition(newLocation);
+
+          // Show success message
+          this.showMessage(this.formMessage, 'success', responseData.message);
+
+          // Update geocode and map marker only if geocode data is present
+          if (responseData.geocode) {
+
+            const { lat, lng } = responseData.geocode;
+            const newLocation = { lat: parseFloat(lat), lng: parseFloat(lng) };
+            this.form.querySelector('input[name="wsmd_geocode"]').value = `${lat}, ${lng}`;
+            this.map.setCenter(newLocation);
+            
+            if (!this.marker) {
+              this.marker = this.createMarker(lat, lng);
+            } else {
+              this.marker.setPosition(newLocation);
+            }
           }
+
+          // Update the address fields with validated data from backend
+          const addressComponents = responseData.address_components;
+          this.form.querySelector('input[name="wsmd_address"]').value = addressComponents.street_address || '';
+          this.form.querySelector('input[name="wsmd_city"]').value = addressComponents.locality || '';
+          this.form.querySelector('input[name="wsmd_province_state"]').value = addressComponents.administrative_area_level_1 || '';
+          this.form.querySelector('input[name="wsmd_country"]').value = addressComponents.country || '';
+          this.form.querySelector('input[name="wsmd_postal_zip_code"]').value = addressComponents.postal_code || '';
         } else {
-          this.showMessage(this.formMessage, 'error', data.data.message);
+          this.showMessage(this.formMessage, 'error', responseData.message);
         }
       })
       .catch((error) => {
-        this.showMessage(this.formMessage, 'error', error);
+        this.showMessage(this.formMessage, 'error', error.toString());
       });
   }
 

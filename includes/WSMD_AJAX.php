@@ -55,6 +55,16 @@ class WSMD_AJAX
             ));
         }
 
+        // Extract address components from the API result
+        $address_components = $geocode_result['address_components'];
+
+        // Update address fields with validated data
+        $_POST['wsmd_address'] = $address_components['street_address'] ?? $address;
+        $_POST['wsmd_city'] = $address_components['locality'] ?? $city;
+        $_POST['wsmd_province_state'] = $address_components['administrative_area_level_1'] ?? $state;
+        $_POST['wsmd_country'] = $address_components['country'] ?? $country;
+        $_POST['wsmd_postal_zip_code'] = $address_components['postal_code'] ?? $postal_code;
+
         // Save user settings including the geocode
         $_POST['wsmd_geocode'] = $geocode_result['geocode']['lat'] . ',' . $geocode_result['geocode']['lng'];
         WSMD_User_Settings::save_user_settings(get_current_user_id());
@@ -62,6 +72,7 @@ class WSMD_AJAX
         wp_send_json_success(array(
             'message' => __('Settings saved successfully', 'wsmd'),
             'geocode' => $geocode_result['geocode'],
+            'address_components' => $address_components
         ));
     }
 
@@ -77,7 +88,7 @@ class WSMD_AJAX
 
         // Check if Google Places API key is set
         if (empty($api_key)) {
-            return array('error' => false, 'message' => __('Google Places API key is not set.', 'wsmd'));
+            return array('success' => false, 'message' => __('Google Places API key is not set.', 'wsmd'));
         }
 
         $api_url = "https://maps.googleapis.com/maps/api/geocode/json?address=" . urlencode($address) . "&key=$api_key";
@@ -85,18 +96,58 @@ class WSMD_AJAX
 
         // Check if response is an error or not 200
         if (is_wp_error($response) || (wp_remote_retrieve_response_code($response) !== 200)) {
-            return array('error' => false, 'message' => __('Failed to contact Google Places API.', 'wsmd'));
+            return array('success' => false, 'message' => __('Failed to contact Google Places API.', 'wsmd'));
         }
 
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
 
         if ($data['status'] !== 'OK') {
-            return array('error' => false, 'message' => __('Geocode was not successful for the following reason: ', 'wsmd') . $data['status']);
+            return array('success' => false, 'message' => __('Geocode was not successful for the following reason: ', 'wsmd') . $data['status']);
         }
 
         $location = $data['results'][0]['geometry']['location'];
-        return array('success' => true, 'geocode' => array('lat' => $location['lat'], 'lng' => $location['lng']));
+        $address_components = $this->extract_address_components($data['results'][0]['address_components']);
+        return array('success' => true, 'geocode' => array('lat' => $location['lat'], 'lng' => $location['lng']), 'address_components' => $address_components);
+    }
+
+    /**
+     * Extract address components from Google Places API result
+     * @param array $components - The address components from the API result
+     * @return array - The extracted address components
+     */
+    private function extract_address_components($components)
+    {
+        $address = array(
+            'street_address' => '',
+            'locality' => '',
+            'administrative_area_level_1' => '',
+            'country' => '',
+            'postal_code' => '',
+        );
+
+        foreach ($components as $component) {
+            if (in_array('street_number', $component['types'])) {
+                $address['street_address'] = $component['long_name'];
+            }
+            if (in_array('route', $component['types'])) {
+                $address['street_address'] .= ' ' . $component['long_name'];
+            }
+            if (in_array('locality', $component['types'])) {
+                $address['locality'] = $component['long_name'];
+            }
+            if (in_array('administrative_area_level_1', $component['types'])) {
+                $address['administrative_area_level_1'] = $component['short_name'];
+            }
+            if (in_array('country', $component['types'])) {
+                $address['country'] = $component['long_name'];
+            }
+            if (in_array('postal_code', $component['types'])) {
+                $address['postal_code'] = $component['long_name'];
+            }
+        }
+
+        return $address;
     }
 
     /**
