@@ -326,6 +326,8 @@ class WSMD_User_Settings {
             if (empty($_POST['wsmd_phone'])) {
                 update_user_meta($user_id, 'wsmd_phone', '');
             }elseif (preg_match('/^[0-9\-\(\)\/\+\s]*$/', $_POST['wsmd_phone'])) {
+                // Replace all characters except numbers with empty string
+                $_POST['wsmd_phone'] = preg_replace('/[^0-9]/', '', $_POST['wsmd_phone']);
                 update_user_meta($user_id, 'wsmd_phone', $_POST['wsmd_phone']);
             }else{
                 $results['wsmd_phone'] = __('Invalid phone number', 'wsmd');
