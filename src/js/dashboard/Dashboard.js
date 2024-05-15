@@ -55,22 +55,6 @@ class Dashboard {
     this.formMessage.innerHTML = '';
     this.formMessage.className = '';
     this.formMessage.classList.add('loading');
-
-    // Ensure all address fields are filled
-    const requiredFields = [
-      'wsmd_address',
-      'wsmd_city',
-      'wsmd_province_state',
-      'wsmd_country',
-      'wsmd_postal_zip_code',
-    ];
-
-    const missingFields = requiredFields.filter(field => !this.form.querySelector(`input[name="${field}"]`).value.trim());
-    if (missingFields.length > 0) {
-      this.showMessage(this.formMessage, 'error', 'Please fill out all address fields.');
-      return;
-    }
-
     const data = new FormData(this.form);
     const ajaxUrl = this.form.getAttribute('action');
 
@@ -84,23 +68,20 @@ class Dashboard {
         const responseData = data.data;
 
         if (data.success) {
-
           // Show success message
           this.showMessage(this.formMessage, 'success', responseData.message);
 
-          // Update geocode and map marker only if geocode data is present
-          if (responseData.geocode) {
+          // Update the geocode field with validated data from backend
+          const { lat, lng } = responseData.geocode;
+          const newLocation = { lat: parseFloat(lat), lng: parseFloat(lng) };
+          this.form.querySelector('input[name="wsmd_geocode"]').value = `${lat}, ${lng}`;
+          this.map.setCenter(newLocation);
 
-            const { lat, lng } = responseData.geocode;
-            const newLocation = { lat: parseFloat(lat), lng: parseFloat(lng) };
-            this.form.querySelector('input[name="wsmd_geocode"]').value = `${lat}, ${lng}`;
-            this.map.setCenter(newLocation);
-            
-            if (!this.marker) {
-              this.marker = this.createMarker(lat, lng);
-            } else {
-              this.marker.setPosition(newLocation);
-            }
+          // Update the marker position
+          if (!this.marker) {
+            this.marker = this.createMarker(lat, lng);
+          } else {
+            this.marker.setPosition(newLocation);
           }
 
           // Update the address fields with validated data from backend
@@ -111,10 +92,24 @@ class Dashboard {
           this.form.querySelector('input[name="wsmd_country"]').value = addressComponents.country || '';
           this.form.querySelector('input[name="wsmd_postal_zip_code"]').value = addressComponents.postal_code || '';
         } else {
-          this.showMessage(this.formMessage, 'error', responseData.message);
+
+          if(responseData.message){
+            this.showMessage(this.formMessage, 'error', responseData.message);
+          }else if(responseData.field_validation_errors){
+            const errors = responseData.field_validation_errors;
+            let errorMessages = '';
+            Object.keys(errors).forEach((field) => {
+              const fieldElement = this.form.querySelector(`input[name="${field}"]`);
+              fieldElement.classList.add('error');
+              fieldElement.setAttribute('title', errors[field]);
+              errorMessages += `<span class="error-field">${errors[field]}</span>`;
+            });
+            this.showMessage(this.formMessage, 'error', errorMessages);
+          }
         }
       })
       .catch((error) => {
+        console.error(error);
         this.showMessage(this.formMessage, 'error', error.toString());
       });
   }
@@ -130,6 +125,9 @@ class Dashboard {
       center: { lat, lng },
       zoom: 6,
       styles: mapStyles,
+      mapTypeControlOptions: {
+        mapTypeIds: ['roadmap']
+      }
     });
   }
 

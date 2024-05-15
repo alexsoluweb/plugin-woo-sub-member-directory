@@ -16,14 +16,14 @@ class WSMD_AJAX
      */
     public function dashboard_save_user_settings()
     {
-        // Check nonce
+        // Return error if nonce is invalid
         if (!check_ajax_referer('wsmd_woo_dashboard_save_user_settings', 'nonce', false)) {
             wp_send_json_error(array(
                 'message' => __('Invalid nonce', 'wsmd')
             ));
         }
 
-        // Check user logged in
+        // Return error if user is not logged in
         if (!is_user_logged_in()) {
             wp_send_json_error(array(
                 'message' => __('You must be logged in to save settings', 'wsmd')
@@ -37,18 +37,11 @@ class WSMD_AJAX
         $country = sanitize_text_field($_POST['wsmd_country']);
         $postal_code = sanitize_text_field($_POST['wsmd_postal_zip_code']);
 
-        // Check if all fields are filled
-        if (empty($address) || empty($city) || empty($state) || empty($country) || empty($postal_code)) {
-            wp_send_json_error(array(
-                'message' => __('Please fill out all address fields.', 'wsmd')
-            ));
-        }
-
         // Geocode the address using Google Places API
         $full_address = "$address, $city, $state, $country, $postal_code";
-        $geocode_result = $this->geocode_address($full_address);
+        $geocode_result = $this->geocode_address($full_address, WSMD_Helpers::get_default_site_language());
 
-        // Check if geocode was successful
+        // Return any geocode errors
         if (!$geocode_result['success']) {
             wp_send_json_error(array(
                 'message' => $geocode_result['message']
@@ -58,19 +51,49 @@ class WSMD_AJAX
         // Extract address components from the API result
         $address_components = $geocode_result['address_components'];
 
-        // Update address fields with validated data
-        $_POST['wsmd_address'] = $address_components['street_address'] ?? $address;
-        $_POST['wsmd_city'] = $address_components['locality'] ?? $city;
-        $_POST['wsmd_province_state'] = $address_components['administrative_area_level_1'] ?? $state;
-        $_POST['wsmd_country'] = $address_components['country'] ?? $country;
-        $_POST['wsmd_postal_zip_code'] = $address_components['postal_code'] ?? $postal_code;
+        // Initialize an empty array for address field errors
+        $address_field_errors = array();
 
-        // Format geocode for saving
+        // Check if any address components returned by geocode are empty, if so, invalidate the field
+        if (empty($address_components['street_address'])) {
+            $address_field_errors['wsmd_address'] = __('Invalid address', 'wsmd');
+        }
+        if (empty($address_components['locality'])) {
+            $address_field_errors['wsmd_city'] = __('Invalid city', 'wsmd');
+        }
+        if (empty($address_components['administrative_area_level_1'])) {
+            $address_field_errors['wsmd_province_state'] = __('Invalid province/state', 'wsmd');
+        }
+        if (empty($address_components['country'])) {
+            $address_field_errors['wsmd_country'] = __('Invalid country', 'wsmd');
+        }
+
+        // Return address field validation errors if any
+        if (!empty($address_field_errors)) {
+            wp_send_json_error(array(
+                'field_validation_errors' => $address_field_errors
+            ));
+        }
+
+        // Format address and geocode fields with validated data from geocode
+        $_POST['wsmd_address'] = $address_components['street_address'] ?? '';
+        $_POST['wsmd_city'] = $address_components['locality'] ?? '';
+        $_POST['wsmd_province_state'] = $address_components['administrative_area_level_1'] ?? '';
+        $_POST['wsmd_country'] = $address_components['country'] ?? '';
+        $_POST['wsmd_postal_zip_code'] = $address_components['postal_code'] ?? '';
         $_POST['wsmd_geocode'] = $geocode_result['geocode']['lat'] . ',' . $geocode_result['geocode']['lng'];
 
         // Save user settings
-        $results = WSMD_User_Settings::save_user_settings(get_current_user_id());
+        $save_user_settings_errors = WSMD_User_Settings::save_user_settings(get_current_user_id());
 
+        // Return any save user settings errors
+        if (!empty($save_user_settings_errors)) {
+            wp_send_json_error(array(
+                'field_validation_errors' => $save_user_settings_errors
+            ));
+        }
+
+        // Return success
         wp_send_json_success(array(
             'message' => __('Settings saved successfully', 'wsmd'),
             'geocode' => $geocode_result['geocode'],
@@ -81,9 +104,10 @@ class WSMD_AJAX
     /**
      * Geocode the address using Google Places API
      * @param string $address - The full address to geocode
+     * @param string $language - The language for the geocode results
      * @return array - The geocode result with 'success' and 'geocode' or 'message'
      */
-    private function geocode_address($address)
+    private function geocode_address($address, $language = 'en')
     {
         // Retrieve the Google Places API key
         $api_key = WSMD_Woo_Settings::get_settings('wsmd_google_maps_api_key');
@@ -93,7 +117,7 @@ class WSMD_AJAX
             return array('success' => false, 'message' => __('Google Places API key is not set.', 'wsmd'));
         }
 
-        $api_url = "https://maps.googleapis.com/maps/api/geocode/json?address=" . urlencode($address) . "&key=$api_key";
+        $api_url = "https://maps.googleapis.com/maps/api/geocode/json?address=" . urlencode($address) . "&key=$api_key&language=$language";
         $response = wp_remote_get($api_url);
 
         // Check if response is an error or not 200
@@ -110,6 +134,7 @@ class WSMD_AJAX
 
         $location = $data['results'][0]['geometry']['location'];
         $address_components = $this->extract_address_components($data['results'][0]['address_components']);
+
         return array('success' => true, 'geocode' => array('lat' => $location['lat'], 'lng' => $location['lng']), 'address_components' => $address_components);
     }
 

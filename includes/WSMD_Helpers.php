@@ -82,4 +82,34 @@ class WSMD_Helpers{
         // Return the members
         return $members;
     }
+
+    /**
+     * Get the current site language
+     * Support: WPML, POLYLANG or fallback to default WP language
+     * 
+     * @return string The site language
+     */
+    public static function get_current_site_language(){
+        if (defined('ICL_LANGUAGE_CODE')) {
+            return apply_filters('wpml_current_language', NULL );
+        } elseif (function_exists('pll_current_language')) {
+            return pll_current_language();
+        }else{
+            return substr(get_locale(), 0, 2);
+        }
+    }
+
+    /**
+     * Get default site language
+     * Support: WPML, POLYLANG or fallback to default WP language
+     */
+    public static function get_default_site_language(){
+        if (defined('ICL_LANGUAGE_CODE')) {
+            return apply_filters('wpml_default_language', NULL );;
+        } elseif (function_exists('pll_default_language')) {
+            return pll_default_language();
+        }else{
+            return substr(get_locale(), 0, 2);
+        }
+    }
 }

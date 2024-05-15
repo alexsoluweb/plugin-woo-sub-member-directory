@@ -10,7 +10,7 @@ class WSMD_User_Settings {
 
         // Register fields for the user
         add_action('edit_user_profile', array($this, 'add_user_fields'), 100);
-        
+
         // Save the fields (Save mechanism only on frontend for now)
         // add_action('edit_user_profile_update', array(__CLASS__, 'save_user_settings'));
 
@@ -213,131 +213,145 @@ class WSMD_User_Settings {
 
     /**
      * Save the user settings.
-     * No need to check nonce because it is already done by WordPress.
-     * @return results An array with the results of the save.
+     * 
+     * @return Array Fields that are not valid
      */
     public static function save_user_settings($user_id) {
 
         // Init results
-        $results = array(
-            'wsmd_visibility' => false,
-            'wsmd_taxonomies' => false,
-            'wsmd_geocode' => false,
-            'wsmd_occupation' => false,
-            'wsmd_company' => false,
-            'wsmd_address' => false,
-            'wsmd_city' => false,
-            'wsmd_province_state' => false,
-            'wsmd_postal_zip_code' => false,
-            'wsmd_country' => false,
-            'wsmd_website' => false,
-            'wsmd_phone' => false,
-            'wsmd_email' => false,
-        );
+        $results = array();
 
         // Sanitize and save the fields visibility
-        if (isset($_POST['wsmd_visibility'])) {
-            $_POST['wsmd_visibility'] = sanitize_text_field(wp_unslash($_POST['wsmd_visibility']));
-            update_user_meta($user_id, 'wsmd_visibility', $_POST['wsmd_visibility']);
-            $results['wsmd_visibility'] = true;
-        }
+        // if (isset($_POST['wsmd_visibility'])) {
+        //     $_POST['wsmd_visibility'] = sanitize_text_field(wp_unslash($_POST['wsmd_visibility']));
+        //     update_user_meta($user_id, 'wsmd_visibility', $_POST['wsmd_visibility']);
+        //     $results['wsmd_visibility']['success'] = true;
+        // }
 
         // Sanitize and save the fields geolocation
         if (isset($_POST['wsmd_geocode'])) {
             $_POST['wsmd_geocode'] = sanitize_text_field(wp_unslash($_POST['wsmd_geocode']));
-            update_user_meta($user_id, 'wsmd_geocode', $_POST['wsmd_geocode']);
-            $results['wsmd_geocode'] = true;
+            if (!empty($_POST['wsmd_geocode'])) {
+                update_user_meta($user_id, 'wsmd_geocode', $_POST['wsmd_geocode']);
+            }else{
+                $results['wsmd_geocode'] = __('Geocode is required', 'wsmd'); 
+            }
         }
 
         // Sanitize and save the fields occupation
         if (isset($_POST['wsmd_occupation'])) {
             $_POST['wsmd_occupation'] = sanitize_text_field(wp_unslash($_POST['wsmd_occupation']));
-            update_user_meta($user_id, 'wsmd_occupation', $_POST['wsmd_occupation']);
-            $results['wsmd_occupation'] = true;
+            if(!empty($_POST['wsmd_occupation'])){
+                update_user_meta($user_id, 'wsmd_occupation', $_POST['wsmd_occupation']);
+            }else{
+                $results['wsmd_occupation'] = __('Occupation is required', 'wsmd');
+            }
         }
 
         // Sanitize and save the fields company
         if (isset($_POST['wsmd_company'])) {
             $_POST['wsmd_company'] = sanitize_text_field(wp_unslash($_POST['wsmd_company']));
-            update_user_meta($user_id, 'wsmd_company', $_POST['wsmd_company']);
-            $results['wsmd_company'] = true;
+            if(!empty($_POST['wsmd_company'])){
+                update_user_meta($user_id, 'wsmd_company', $_POST['wsmd_company']);
+            }else{
+                $results['wsmd_company'] = __('Company is required', 'wsmd');
+            }
         }
 
         // Sanitize and save the fields address
         if (isset($_POST['wsmd_address'])) {
             $_POST['wsmd_address'] = sanitize_text_field(wp_unslash($_POST['wsmd_address']));
-            update_user_meta($user_id, 'wsmd_address', $_POST['wsmd_address']);
-            $results['wsmd_address'] = true;
+            if(!empty($_POST['wsmd_address'])){
+                update_user_meta($user_id, 'wsmd_address', $_POST['wsmd_address']);
+            }else{
+                $results['wsmd_address'] = __('Address is required', 'wsmd');
+            }
         }
 
         // Sanitize and save the fields city
         if (isset($_POST['wsmd_city'])) {
             $_POST['wsmd_city'] = sanitize_text_field(wp_unslash($_POST['wsmd_city']));
-            update_user_meta($user_id, 'wsmd_city', $_POST['wsmd_city']);
-            $results['wsmd_city'] = true;
+            if(!empty($_POST['wsmd_city'])){
+                update_user_meta($user_id, 'wsmd_city', $_POST['wsmd_city']);
+            }else{
+                $results['wsmd_city'] = __('City is required', 'wsmd');
+            }
         }
 
         // Sanitize and save the fields province/state
         if (isset($_POST['wsmd_province_state'])) {
             $_POST['wsmd_province_state'] = sanitize_text_field(wp_unslash($_POST['wsmd_province_state']));
-            update_user_meta($user_id, 'wsmd_province_state', $_POST['wsmd_province_state']);
-            $results['wsmd_province_state'] = true;
+            if(!empty($_POST['wsmd_province_state'])){
+                update_user_meta($user_id, 'wsmd_province_state', $_POST['wsmd_province_state']);
+            }else{
+                $results['wsmd_province_state'] = __('Province/State is required', 'wsmd');
+            }
         }
 
         // Sanitize and save the fields postal code/zip
         if (isset($_POST['wsmd_postal_zip_code'])) {
-            $_POST['wsmd_postal_zip_code'] = sanitize_text_field(wp_unslash($_POST['wsmd_postal_zip_code']));
-            update_user_meta($user_id, 'wsmd_postal_zip_code', $_POST['wsmd_postal_zip_code']);
-            $results['wsmd_postal_zip_code'] = true;
+            $_POST['wsmd_postal_zip_code'] = sanitize_text_field(wp_unslash($_POST['wsmd_postal_zip_code']));;
+            if(!empty($_POST['wsmd_postal_zip_code'])){
+                update_user_meta($user_id, 'wsmd_postal_zip_code', $_POST['wsmd_postal_zip_code']);
+            }else{
+                $results['wsmd_postal_zip_code'] = __('Postal/Zip code is required', 'wsmd');
+            }
         }
 
         // Sanitize and save the fields country
         if (isset($_POST['wsmd_country'])) {
             $_POST['wsmd_country'] = sanitize_text_field(wp_unslash($_POST['wsmd_country']));
-            update_user_meta($user_id, 'wsmd_country', $_POST['wsmd_country']);
-            $results['wsmd_country'] = true;
+            if(!empty($_POST['wsmd_country'])){
+                update_user_meta($user_id, 'wsmd_country', $_POST['wsmd_country']);
+            }else{
+                $results['wsmd_country'] = __('Country is required', 'wsmd');
+            }
         }
 
-        // Sanitize and save the fields website
+        // Sanitize and save the fields website (optional)
         if (isset($_POST['wsmd_website'])) {
             $_POST['wsmd_website'] = sanitize_text_field(wp_unslash($_POST['wsmd_website']));
-            // Save if the website is a valid URL
-            if (filter_var($_POST['wsmd_website'], FILTER_VALIDATE_URL)) {
+            if (empty($_POST['wsmd_website'])) {
+                update_user_meta($user_id, 'wsmd_website', '');
+            }elseif (filter_var($_POST['wsmd_website'], FILTER_VALIDATE_URL)) {
                 update_user_meta($user_id, 'wsmd_website', $_POST['wsmd_website']);
-                $results['wsmd_website'] = true;
+            }else{
+                $results['wsmd_website'] = __('Invalid URL', 'wsmd');
             }
         }
 
-        // Sanitize and save the fields phone
+        // Sanitize and save the fields phone (optional)
         if (isset($_POST['wsmd_phone'])) {
             $_POST['wsmd_phone'] = sanitize_text_field(wp_unslash($_POST['wsmd_phone']));
-            // Save if the phone is a valid phone number
-            if (preg_match('/^[0-9\-\(\)\/\+\s]*$/', $_POST['wsmd_phone'])) {
+            if (empty($_POST['wsmd_phone'])) {
+                update_user_meta($user_id, 'wsmd_phone', '');
+            }elseif (preg_match('/^[0-9\-\(\)\/\+\s]*$/', $_POST['wsmd_phone'])) {
                 update_user_meta($user_id, 'wsmd_phone', $_POST['wsmd_phone']);
-                $results['wsmd_phone'] = true;
+            }else{
+                $results['wsmd_phone'] = __('Invalid phone number', 'wsmd');
             }
         }
 
-        // Sanitize and save the fields email
+        // Sanitize and save the fields email (optional)
         if (isset($_POST['wsmd_email'])) {
             $_POST['wsmd_email'] = sanitize_text_field(wp_unslash($_POST['wsmd_email']));
-            // Save if the email is a valid email
-            if (filter_var($_POST['wsmd_email'], FILTER_VALIDATE_EMAIL)) {
+            if (empty($_POST['wsmd_email'])) {
+                update_user_meta($user_id, 'wsmd_email', '');
+            }elseif (filter_var($_POST['wsmd_email'], FILTER_VALIDATE_EMAIL)) {
                 update_user_meta($user_id, 'wsmd_email', $_POST['wsmd_email']);
-                $results['wsmd_email'] = true;
+            }else{
+                $results['wsmd_email'] = __('Invalid email', 'wsmd');
             }
         }
 
-        // Validate and save the selected taxonomy terms
+        // Sanitize and save the selected taxonomy terms (optional)
         if (isset($_POST['wsmd_taxonomies'])) {
             $term_ids = array_map('intval', $_POST['wsmd_taxonomies']);
             $valid_term_ids = self::validate_terms($term_ids, 'wsmd-taxonomy');
             wp_set_object_terms($user_id, $valid_term_ids, 'wsmd-taxonomy', false);
-            $results['wsmd_taxonomies'] = true;
         } else {
             // If no terms are selected, clear the terms
             wp_set_object_terms($user_id, array(), 'wsmd-taxonomy', false);
-            $results['wsmd_taxonomies'] = true;
         }
 
         return $results;

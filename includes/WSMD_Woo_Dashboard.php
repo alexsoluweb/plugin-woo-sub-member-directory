@@ -111,13 +111,13 @@ class WSMD_Woo_Dashboard {
         }
 
         if (is_account_page() && is_user_logged_in() && isset($wp->query_vars['wsmd_woo_dashboard'])) {
-            $site_language = get_bloginfo('language');
+            $current_site_language = WSMD_Helpers::get_current_site_language();
             $style_version = filemtime(WSMD_PATH . 'assets/css/dashboard.css');
             $script_version = filemtime(WSMD_PATH . 'assets/js/dashboard.js');
             // Load the dashboard styles
             wp_enqueue_style('wsmd-dashboard', WSMD_URL . 'assets/css/dashboard.css', array(), $style_version);
             // Load Google Maps API v3
-            wp_enqueue_script('wsmd-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . WSMD_Woo_Settings::get_settings('wsmd_google_maps_api_key') . '&libraries=places&language=' . $site_language, array(), null, true);
+            wp_enqueue_script('wsmd-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . WSMD_Woo_Settings::get_settings('wsmd_google_maps_api_key') . '&libraries=places&language=' . $current_site_language, array(), null, true);
             // Load the dashboard script
             wp_enqueue_script('wsmd-dashboard', WSMD_URL . 'assets/js/dashboard.js', array('wsmd-google-maps'), $script_version, true);
         }
