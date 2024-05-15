@@ -1,6 +1,6 @@
 import '../../scss/dashboard.scss';
 import mapStyles, { svgMarker } from '../map-style';
-import '@node/tom-select/dist/scss/tom-select.scss';
+import '../../scss/tomselect.scss';
 import TomSelect from 'tom-select';
 
 class Dashboard {
@@ -11,7 +11,9 @@ class Dashboard {
     const dashboard = document.querySelector('#wsmd-dashboard');
     if (!dashboard) return;
 
+    /** @type {HTMLFormElement} */
     const form = dashboard.querySelector('#wsmd-form');
+    /** @type {HTMLElement} */
     const formMessage = form.querySelector('#wsmd-form-message');
 
     const userLat = parseFloat(form.querySelector('input[name="wsmd_geocode"]').value.split(',')[0]) || 46.8139;

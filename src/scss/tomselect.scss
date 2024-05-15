@@ -1,0 +1,5 @@
+$select-border-radius: var(--wsmd-ts-input-border-radius, 0);
+$select-font-size: var(--wsmd-ts-input-font-size, 1rem);
+
+// Import Tom Select styles after your custom overrides
+@import '~tom-select/src/scss/tom-select.scss';

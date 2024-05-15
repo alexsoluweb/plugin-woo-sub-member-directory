@@ -1,33 +1,37 @@
 @import 'global-styles.scss';
 
-#wsmd-dashboard{
+#wsmd-dashboard {
 
-    #wsmd-form{
+    #wsmd-form {
         display: flex;
         flex-wrap: wrap;
         gap: 1rem;
 
-        > *{
+        > * {
             width: calc(50% - 0.5rem);
         }
 
-        #wsmd-map{
+        .ts-wrapper {
+            width: 100%;
+        }
+
+        #wsmd-map {
             height: 0;
             width: 100%;
             aspect-ratio: 16/9;
-    
-            &.init{
+
+            &.init {
                 height: auto;
             }
         }
 
-        #wsmd-form-message{
+        #wsmd-form-message {
             width: 100%;
             display: flex;
             justify-content: center;
 
-            &.loading{
-                &:before{
+            &.loading {
+                &:before {
                     content: '';
                     display: inline-block;
                     width: 20px;
