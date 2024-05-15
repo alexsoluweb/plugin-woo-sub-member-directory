@@ -81,15 +81,11 @@ class WSMD_AJAX
         }
 
         $api_url = "https://maps.googleapis.com/maps/api/geocode/json?address=" . urlencode($address) . "&key=$api_key";
-
         $response = wp_remote_get($api_url);
-        if (is_wp_error($response)) {
-            return array('error' => false, 'message' => __('Failed to contact Google Places API.', 'wsmd'));
-        }
 
-        // Check with Google if key is invalid
-        if (wp_remote_retrieve_response_code($response) === 403) {
-            return array('error' => false, 'message' => __('Google Places API key is invalid.', 'wsmd'));
+        // Check if response is an error or not 200
+        if (is_wp_error($response) || (wp_remote_retrieve_response_code($response) !== 200)) {
+            return array('error' => false, 'message' => __('Failed to contact Google Places API.', 'wsmd'));
         }
 
         $body = wp_remote_retrieve_body($response);
