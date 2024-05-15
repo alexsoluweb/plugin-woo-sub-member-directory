@@ -14,10 +14,6 @@
             _e(
                 'Please fill in your details below.'
                 . ' This information will be displayed in the member directory.'
-                . ' Once you have filled in your details, click the "Geo-code my location" button to generate your coordinates.'
-                . ' It will try to automatically generate your coordinates based on your adress information.'
-                . ' You can also drag the marker on the map to adjust your coordinates.'
-                . ' Once you are happy with the marker location, click the "Save Settings" button to save your details.'
             , 'wsmd');
         ?>
     </p>
@@ -45,7 +41,6 @@
             <?php } ?>
         </select>
         <div id="wsmd-map"></div>
-        <button id="wsmd-geocode-address" type="button" class="button"><?php _e('Geo-code my address', 'wsmd'); ?></button>
         <button id="wsmd-save-settings" type="button" class="button"><?php _e('Save Settings', 'wsmd'); ?></button>
         <div id="wsmd-form-message"></div>
     </form>
