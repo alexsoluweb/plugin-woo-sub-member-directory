@@ -16,13 +16,8 @@
         }
 
         #wsmd-map {
-            height: 0;
             width: 100%;
             aspect-ratio: 16/9;
-
-            &.init {
-                height: auto;
-            }
         }
 
         #wsmd-save-settings{

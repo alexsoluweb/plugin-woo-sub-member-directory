@@ -14,6 +14,9 @@
             _e(
                 'Please fill in your details below.'
                 . ' This information will be displayed in the member directory.'
+                . ' Your position on the map will be determined by the address you provide after saving your settings.'
+                . ' You can select multiple taxonomies that describe your skills and expertise.'
+                . ' You can also update your settings at any time.'
             , 'wsmd');
         ?>
     </p>

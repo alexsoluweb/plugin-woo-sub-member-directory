@@ -22,14 +22,15 @@ class Dashboard {
 
     this.form = dashboard.querySelector('#wsmd-form');
     this.formMessage = this.form.querySelector('#wsmd-form-message');
+    const geocodeValue = this.form.querySelector('input[name="wsmd_geocode"]').value;
+    const userLat = parseFloat(geocodeValue.split(',')[0]) || 46.8139;
+    const userLng = parseFloat(geocodeValue.split(',')[1]) || -71.2080;
+    this.map = this.createMap(userLat, userLng);
 
-    const userLat = parseFloat(this.form.querySelector('input[name="wsmd_geocode"]').value.split(',')[0]) || 46.8139;
-    const userLng = parseFloat(this.form.querySelector('input[name="wsmd_geocode"]').value.split(',')[1]) || -71.2080;
-
-    this.form.querySelector('#wsmd-map').classList.add('init');
-
-    this.map = this.createMap(userLat, userLng, this.form);
-    this.marker = this.createMarker(userLat, userLng, this.map);
+    // Only create marker if geocode is set
+    if (geocodeValue) {
+      this.marker = this.createMarker(userLat, userLng);
+    }
 
     this.initializeTomSelect();
     this.addEventListeners();
@@ -39,7 +40,6 @@ class Dashboard {
    * Add event listeners
    */
   static addEventListeners() {
-
     // Save settings
     this.form.querySelector('#wsmd-save-settings').addEventListener('click', (e) => {
       e.preventDefault();
@@ -86,7 +86,11 @@ class Dashboard {
           const newLocation = { lat: parseFloat(lat), lng: parseFloat(lng) };
           this.form.querySelector('input[name="wsmd_geocode"]').value = `${lat}, ${lng}`;
           this.map.setCenter(newLocation);
-          this.marker.setPosition(newLocation);
+          if (!this.marker) {
+            this.marker = this.createMarker(lat, lng);
+          } else {
+            this.marker.setPosition(newLocation);
+          }
         } else {
           this.showMessage(this.formMessage, 'error', data.data.message);
         }
@@ -100,11 +104,10 @@ class Dashboard {
    * Create Google Map
    * @param {number} lat - Latitude
    * @param {number} lng - Longitude
-   * @param {HTMLElement} form - Form element
    * @returns {google.maps.Map} - Google Map instance
    */
-  static createMap(lat, lng, form) {
-    return new google.maps.Map(form.querySelector('#wsmd-map'), {
+  static createMap(lat, lng) {
+    return new google.maps.Map(this.form.querySelector('#wsmd-map'), {
       center: { lat, lng },
       zoom: 6,
       styles: mapStyles,
@@ -115,13 +118,12 @@ class Dashboard {
    * Create Google Map Marker
    * @param {number} lat - Latitude
    * @param {number} lng - Longitude
-   * @param {google.maps.Map} map - Google Map instance
    * @returns {google.maps.Marker} - Google Map Marker instance
    */
-  static createMarker(lat, lng, map) {
+  static createMarker(lat, lng) {
     return new google.maps.Marker({
       position: { lat, lng },
-      map: map,
+      map: this.map,
     });
   }
 
