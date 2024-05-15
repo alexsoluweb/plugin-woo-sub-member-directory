@@ -44,12 +44,11 @@ class MemberDirectory {
    * @returns {void}
    */
   static setupEventListeners() {
-
     // Prevent form submission
     this.form.addEventListener('submit', (e) => {
       e.preventDefault();
     });
-    
+
     document.addEventListener('wsmd-members-data-ready', () => {
       this.randomizeMemberList();
       this.displayMembers();
@@ -57,14 +56,15 @@ class MemberDirectory {
       this.initMapPlacesService();
 
       this.memberDirectory.querySelector('#wsmd-member-list-load-more').addEventListener('click', (e) => {
+        e.preventDefault();
         this.loadMoreMembers();
       });
-  
+
       this.form.querySelector('#wsmd-my-location').addEventListener('click', (e) => {
         this.resetMarkerAnimation();
         this.handleSearchNearMe();
       });
-  
+
       this.memberDirectory.querySelector('#wsmd-member-list').addEventListener('click', (e) => {
         this.resetMarkerAnimation();
         this.handleMemberItemClick(e);
@@ -128,12 +128,13 @@ class MemberDirectory {
     membersToDisplay.forEach((member, index) => {
       const memberItem = this.createMemberItem(member, index);
       memberList.appendChild(memberItem);
-
-      // Trigger reflow for the animation to start
-      requestAnimationFrame(() => {
+      
+      // Delay the animation to wait for the DOM to render
+      setTimeout(() => {  
         memberItem.style.opacity = '1';
         memberItem.style.transform = 'translateY(0)';
-      });
+        memberItem.style.transitionDelay = `${index * 0.1}s`;
+      }, 1);
     });
 
     this.memberListOffset += this.memberListPerPage;
@@ -152,7 +153,7 @@ class MemberDirectory {
     memberItem.dataset.memberId = member.wsmd_id;
     memberItem.style.opacity = '0';
     memberItem.style.transform = 'translateY(100px)';
-    memberItem.style.transition = `opacity 0.5s ease ${index * 0.1}s, transform 0.5s ease ${index * 0.1}s`;
+    memberItem.style.transition = `opacity 0.5s ease, transform 0.5s ease`;
 
     memberItem.innerHTML = `
       <div class="wsmd-member-item-header">
