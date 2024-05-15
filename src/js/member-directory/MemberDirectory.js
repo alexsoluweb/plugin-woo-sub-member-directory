@@ -44,29 +44,31 @@ class MemberDirectory {
    * @returns {void}
    */
   static setupEventListeners() {
+
+    // Prevent form submission
+    this.form.addEventListener('submit', (e) => {
+      e.preventDefault();
+    });
+    
     document.addEventListener('wsmd-members-data-ready', () => {
       this.randomizeMemberList();
       this.displayMembers();
       this.initGoogleMap();
       this.initMapPlacesService();
-    });
 
-    this.memberDirectory.querySelector('#wsmd-member-list-load-more').addEventListener('click', (e) => {
-      e.preventDefault();
-      this.loadMoreMembers();
-    });
-
-    this.form.querySelector('#wsmd-my-location').addEventListener('click', (e) => {
-      e.preventDefault();
-      this.handleSearchNearMe();
-    });
-
-    this.form.addEventListener('submit', (e) => {
-      e.preventDefault();
-    });
-
-    this.memberDirectory.querySelector('#wsmd-member-list').addEventListener('click', (e) => {
-      this.handleMemberItemClick(e);
+      this.memberDirectory.querySelector('#wsmd-member-list-load-more').addEventListener('click', (e) => {
+        this.loadMoreMembers();
+      });
+  
+      this.form.querySelector('#wsmd-my-location').addEventListener('click', (e) => {
+        this.resetMarkerAnimation();
+        this.handleSearchNearMe();
+      });
+  
+      this.memberDirectory.querySelector('#wsmd-member-list').addEventListener('click', (e) => {
+        this.resetMarkerAnimation();
+        this.handleMemberItemClick(e);
+      });
     });
   }
 
@@ -84,13 +86,19 @@ class MemberDirectory {
         this.map.panTo(marker.getPosition());
         this.map.setZoom(12);
         window.scrollTo({ top: this.memberDirectory.querySelector('#wsmd-map').offsetTop, behavior: 'smooth' });
-
-        if (this.activeMarker) {
-          this.activeMarker.setAnimation(null);
-        }
         marker.setAnimation(google.maps.Animation.BOUNCE);
         this.activeMarker = marker;
       }
+    }
+  }
+
+  /**
+   * Reset marker animation
+   * @returns {void}
+   */
+  static resetMarkerAnimation() {
+    if (this.activeMarker) {
+      this.activeMarker.setAnimation(null);
     }
   }
 
@@ -274,6 +282,7 @@ class MemberDirectory {
     const autocomplete = new google.maps.places.Autocomplete(input);
     
     autocomplete.addListener('place_changed', () => {
+      this.resetMarkerAnimation();
       this.clearErrorMessage();
       const place = autocomplete.getPlace();
 
