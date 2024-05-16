@@ -10,6 +10,7 @@ class WSMD_User_Settings {
 
         // Register fields for the user
         add_action('edit_user_profile', array($this, 'add_user_fields'), 100);
+        add_action('show_user_profile', array($this, 'add_user_fields'), 100);
 
         // Save the fields (Save mechanism only on frontend for now)
         // add_action('edit_user_profile_update', array(__CLASS__, 'save_user_settings'));

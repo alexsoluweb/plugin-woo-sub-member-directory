@@ -3,7 +3,7 @@
  * Member Directory template
  * 
  * @var $args['shortcode_args'] Array of shortcode arguments
- * @var $args['terms'] array Available taxonomies set in the plugin settings
+ * @var $args['terms'] Array of WP_Term objects (available taxonomies)
  */
 ?>
 <div id="wsmd-member-directory">

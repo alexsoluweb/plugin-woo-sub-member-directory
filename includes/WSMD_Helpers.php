@@ -74,7 +74,7 @@ class WSMD_Helpers
             
             // Get all users
             $users = get_users([
-                'role__in' => ['subscriber', 'customer'],
+                // 'role__in' => ['subscriber', 'customer'],
                 'fields' => ['ID'],
                 'number' => -1,
                 // Get only the user that has the wsmd_geocode meta key set and not empty

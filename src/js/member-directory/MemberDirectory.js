@@ -25,6 +25,8 @@ class MemberDirectory {
   static memberListPerPage = 9;
   /** @type {google.maps.Marker|null} */
   static activeMarker = null;
+  /** @type {TomSelect} */
+  static taxonomiesSelect = null;
 
   /**
    * Initialize the application
@@ -49,10 +51,13 @@ class MemberDirectory {
     /** @type {HTMLSelectElement} */
     const selectElement = document.querySelector('#wsmd_taxonomies');
     if (selectElement) {
-      new TomSelect(selectElement, {
+      this.taxonomiesSelect = new TomSelect(selectElement, {
         placeholder: selectElement.getAttribute('data-placeholder'),
         allowEmptyOption: true,
         plugins: ['remove_button'],
+        onChange: () => {
+          this.filterMembersByTaxonomies();
+        }
       });
     }
   }
@@ -68,7 +73,6 @@ class MemberDirectory {
     });
 
     document.addEventListener('wsmd-members-data-ready', () => {
-
       this.initGoogleMap();
 
       // Dont go further if no members and display error message
@@ -98,6 +102,29 @@ class MemberDirectory {
         this.handleMemberItemClick(e);
       });
     });
+  }
+
+  /**
+   * Filter members by selected taxonomies
+   * @returns {void}
+   */
+  static filterMembersByTaxonomies() {
+    const selectedTaxonomies = this.taxonomiesSelect.getValue().map(Number);
+
+    if (selectedTaxonomies.length === 0) {
+      // Reset to display all members if no taxonomy is selected
+      this.displayMembers(true);
+      this.updateMapMarkers();
+      return;
+    }
+
+    const filteredMembers = this.memberList.filter(member => {
+      const memberTaxonomies = member.wsmd_taxonomies || [];
+      return selectedTaxonomies.some(taxonomy => memberTaxonomies.includes(taxonomy));
+    });
+
+    this.displayMembers(true, filteredMembers);
+    this.updateMapMarkers(filteredMembers);
   }
 
   /**
@@ -141,17 +168,21 @@ class MemberDirectory {
   /**
    * Display the member list
    * @param {boolean} reset - Reset the list
+   * @param {Array<Object>} [filteredMembers] - Optional filtered member list
    * @returns {void}
    */
-  static displayMembers(reset = false) {
+  static displayMembers(reset = false, filteredMembers = null) {
     const memberList = this.memberDirectory.querySelector('#wsmd-member-list');
-    const start = this.memberListOffset;
-    const end = this.memberListOffset + this.memberListPerPage;
-    const membersToDisplay = this.memberList.slice(start, end);
 
     if (reset) {
       memberList.innerHTML = '';
+      this.memberListOffset = 0;
     }
+
+    const members = filteredMembers || this.memberList;
+    const start = this.memberListOffset;
+    const end = this.memberListOffset + this.memberListPerPage;
+    const membersToDisplay = members.slice(start, end);
 
     membersToDisplay.forEach((member, index) => {
       const memberItem = this.createMemberItem(member, index);
@@ -184,37 +215,37 @@ class MemberDirectory {
     memberItem.style.transition = `opacity 0.5s ease, transform 0.5s ease`;
 
     let content = `
-    <div class="wsmd-member-item-header">
-      <h3 class="wsmd-member-item-company">${member.wsmd_company}</h3>
-      <p class="wsmd-member-item-occupation">${member.wsmd_occupation}</p>
-    </div>
-    <hr>
-    <div class="wsmd-member-item-body">
-      <div class="wsmd-member-item-address">
-        <marker class="wsmd-icon-map-marker"></marker>
-        ${member.wsmd_address}, ${member.wsmd_city}, ${member.wsmd_province_state}, ${member.wsmd_country}, ${member.wsmd_postal_zip_code}
-      </div>`;
+      <div class="wsmd-member-item-header">
+        <h3 class="wsmd-member-item-company">${member.wsmd_company}</h3>
+        <p class="wsmd-member-item-occupation">${member.wsmd_occupation}</p>
+      </div>
+      <hr>
+      <div class="wsmd-member-item-body">
+        <div class="wsmd-member-item-address">
+          <marker class="wsmd-icon-map-marker"></marker>
+          ${member.wsmd_address}, ${member.wsmd_city}, ${member.wsmd_province_state}, ${member.wsmd_country}, ${member.wsmd_postal_zip_code}
+        </div>`;
 
     if (member.wsmd_website) {
       content += `
-      <div class="wsmd-member-item-website">
-        <marker class="wsmd-icon-external-link"></marker>
-        ${member.wsmd_website}
-      </div>`;
+        <div class="wsmd-member-item-website">
+          <marker class="wsmd-icon-external-link"></marker>
+          ${member.wsmd_website}
+        </div>`;
     }
     if (member.wsmd_phone) {
       content += `
-      <div class="wsmd-member-item-phone">
-        <marker class="wsmd-icon-phone"></marker>
-        ${member.wsmd_phone}
-      </div>`;
+        <div class="wsmd-member-item-phone">
+          <marker class="wsmd-icon-phone"></marker>
+          ${member.wsmd_phone}
+        </div>`;
     }
     if (member.wsmd_email) {
       content += `
-      <div class="wsmd-member-item-email">
-        <marker class="wsmd-icon-email"></marker>
-        ${member.wsmd_email}
-      </div>`;
+        <div class="wsmd-member-item-email">
+          <marker class="wsmd-icon-email"></marker>
+          ${member.wsmd_email}
+        </div>`;
     }
 
     content += `</div>`;
@@ -223,7 +254,6 @@ class MemberDirectory {
 
     return memberItem;
   }
-
 
   /**
    * Toggle the visibility of the load more button
@@ -272,7 +302,6 @@ class MemberDirectory {
     };
 
     this.sortMemberListByDistance(userLocation.lat, userLocation.lng);
-    this.memberListOffset = 0;
     this.displayMembers(true);
 
     const nearestMarker = this.getNearestMarker(userLocation.lat, userLocation.lng);
@@ -337,7 +366,6 @@ class MemberDirectory {
       const lng = place.geometry.location.lng();
 
       this.sortMemberListByDistance(lat, lng);
-      this.memberListOffset = 0;
       this.displayMembers(true);
 
       const nearestMarker = this.getNearestMarker(lat, lng);
@@ -442,6 +470,58 @@ class MemberDirectory {
     }
   }
 
+  /**
+   * Update map markers based on the filtered members
+   * @param {Array<Object>} [filteredMembers] - Optional filtered member list
+   * @returns {void}
+   */
+  static updateMapMarkers(filteredMembers = null) {
+    const members = filteredMembers || this.memberList;
+    const bounds = new google.maps.LatLngBounds();
+
+    // Clear existing markers from the map
+    this.markers.forEach(marker => marker.setMap(null));
+    this.markers = [];
+
+    // Create new markers for filtered members
+    this.markers = members.map(member => {
+      const marker = new google.maps.Marker({
+        position: {
+          lat: parseFloat(member.wsmd_geocode.split(',')[0]),
+          lng: parseFloat(member.wsmd_geocode.split(',')[1]),
+        },
+        map: this.map,
+        title: member.wsmd_company,
+        icon: svgMarker,
+      });
+
+      this.memberIdToMarkerMap.set(member.wsmd_id, marker);
+      bounds.extend(marker.getPosition());
+
+      marker.addListener('click', () => {
+        this.openInfoWindow(infoWindow, marker, member);
+      });
+
+      return marker;
+    });
+
+    // Add marker clusterer if there are more than 1 marker
+    if (this.markers.length > 1) {
+      new MarkerClusterer({ markers: this.markers, map: this.map });
+      this.map.fitBounds(bounds);
+
+      // Add listener to limit zoom level
+      google.maps.event.addListenerOnce(this.map, 'idle', () => {
+        // Set the maximum zoom level
+        if (this.map.getZoom() > 12) {
+          this.map.setZoom(12);
+        }
+      });
+    } else if (this.markers.length === 1) {
+      this.map.setCenter(this.markers[0].getPosition());
+      this.map.setZoom(12); // Set a reasonable zoom level for a single marker
+    }
+  }
 
   /**
    * Open info window with member details
@@ -452,17 +532,17 @@ class MemberDirectory {
    */
   static openInfoWindow(infoWindow, marker, member) {
     let content = `
-    <div class="wsmd-map-info-window">
-      <div class="wsmd-map-info-window-header">
-        <h3 class="wsmd-map-info-window-company">${member.wsmd_company}</h3>
-        <p class="wsmd-map-info-window-occupation">${member.wsmd_occupation}</p>
-      </div>
-      <hr>
-      <div class="wsmd-map-info-window-body">
-        <span class="wsmd-map-info-window-address">
-          <marker class="wsmd-icon-map-marker"></marker>
-          ${member.wsmd_address}, ${member.wsmd_city}, ${member.wsmd_province_state}, ${member.wsmd_country}, ${member.wsmd_postal_zip_code}
-        </span>`;
+      <div class="wsmd-map-info-window">
+        <div class="wsmd-map-info-window-header">
+          <h3 class="wsmd-map-info-window-company">${member.wsmd_company}</h3>
+          <p class="wsmd-map-info-window-occupation">${member.wsmd_occupation}</p>
+        </div>
+        <hr>
+        <div class="wsmd-map-info-window-body">
+          <span class="wsmd-map-info-window-address">
+            <marker class="wsmd-icon-map-marker"></marker>
+            ${member.wsmd_address}, ${member.wsmd_city}, ${member.wsmd_province_state}, ${member.wsmd_country}, ${member.wsmd_postal_zip_code}
+          </span>`;
 
     if (member.wsmd_website) {
       content += `
@@ -487,13 +567,12 @@ class MemberDirectory {
     }
 
     content += `
-      </div>
-    </div>`;
+        </div>
+      </div>`;
 
     infoWindow.setContent(content);
     infoWindow.open(this.map, marker);
   }
-
 
   /**
    * Fetch members data from AJAX endpoint

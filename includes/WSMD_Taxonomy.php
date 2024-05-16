@@ -36,7 +36,7 @@ class WSMD_Taxonomy {
 
     /**
      * Get all terms
-     * @return array $terms
+     * @return array $terms Array of WP_Term objects
      */
     public static function get_terms() {
         $terms = get_terms(array(
