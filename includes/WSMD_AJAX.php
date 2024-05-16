@@ -115,7 +115,7 @@ class WSMD_AJAX
 
         // Check if Google Places API key is set
         if (empty($api_key)) {
-            return array('success' => false, 'message' => __('Google Places API key is not set.', 'wsmd'));
+            return array('success' => false, 'message' => __('Google Map API key is not set.', 'wsmd'));
         }
 
         $api_url = "https://maps.googleapis.com/maps/api/geocode/json?address=" . urlencode($address) . "&key=$api_key&language=$language";

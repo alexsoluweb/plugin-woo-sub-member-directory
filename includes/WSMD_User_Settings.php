@@ -242,7 +242,12 @@ class WSMD_User_Settings {
         if (isset($_POST['wsmd_occupation'])) {
             $_POST['wsmd_occupation'] = sanitize_text_field(wp_unslash($_POST['wsmd_occupation']));
             if(!empty($_POST['wsmd_occupation'])){
-                update_user_meta($user_id, 'wsmd_occupation', $_POST['wsmd_occupation']);
+                // Limit the occupation to 32 characters
+                if (strlen($_POST['wsmd_occupation']) > 32) {
+                    $results['wsmd_occupation'] = __('Occupation is too long (32 characters max)', 'wsmd');
+                }else{
+                    update_user_meta($user_id, 'wsmd_occupation', $_POST['wsmd_occupation']);
+                }
             }else{
                 $results['wsmd_occupation'] = __('Occupation is required', 'wsmd');
             }
@@ -252,7 +257,12 @@ class WSMD_User_Settings {
         if (isset($_POST['wsmd_company'])) {
             $_POST['wsmd_company'] = sanitize_text_field(wp_unslash($_POST['wsmd_company']));
             if(!empty($_POST['wsmd_company'])){
-                update_user_meta($user_id, 'wsmd_company', $_POST['wsmd_company']);
+                // Limit the company to 32 characters
+                if (strlen($_POST['wsmd_company']) > 32) {
+                    $results['wsmd_company'] = __('Company is too long (32 characters max)', 'wsmd');
+                }else{
+                    update_user_meta($user_id, 'wsmd_company', $_POST['wsmd_company']);
+                }
             }else{
                 $results['wsmd_company'] = __('Company is required', 'wsmd');
             }
@@ -311,12 +321,16 @@ class WSMD_User_Settings {
         // Sanitize and save the fields website (optional)
         if (isset($_POST['wsmd_website'])) {
             $_POST['wsmd_website'] = sanitize_text_field(wp_unslash($_POST['wsmd_website']));
+
             if (empty($_POST['wsmd_website'])) {
                 update_user_meta($user_id, 'wsmd_website', '');
-            }elseif (filter_var($_POST['wsmd_website'], FILTER_VALIDATE_URL)) {
+            } elseif (filter_var($_POST['wsmd_website'], FILTER_VALIDATE_URL)) {
+                // Use regex to keep only the protocol and domain
+                preg_match('/^(https?:\/\/[^\/]+)/', $_POST['wsmd_website'], $matches);
+                $_POST['wsmd_website'] = $matches[1];
                 update_user_meta($user_id, 'wsmd_website', $_POST['wsmd_website']);
-            }else{
-                $results['wsmd_website'] = __('Invalid URL', 'wsmd');
+            } else {
+                $results['wsmd_website'] = __('Invalid Website URL', 'wsmd');
             }
         }
 
