@@ -1,6 +1,8 @@
 import '../../scss/member-directory.scss';
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import mapStyles, { svgMarker } from "../map-style";
+import '../../scss/tomselect.scss';
+import TomSelect from 'tom-select';
 
 class MemberDirectory {
   /** @type {HTMLDivElement} */
@@ -37,6 +39,22 @@ class MemberDirectory {
     this.formMessage = this.form.querySelector('#wsmd-form-message');
     this.fetchMembersData();
     this.setupEventListeners();
+    this.initTomSelect();
+  }
+
+  /**
+   * Initialize Tom Select
+   */
+  static initTomSelect() {
+    /** @type {HTMLSelectElement} */
+    const selectElement = document.querySelector('#wsmd_taxonomies');
+    if (selectElement) {
+      new TomSelect(selectElement, {
+        placeholder: selectElement.getAttribute('data-placeholder'),
+        allowEmptyOption: true,
+        plugins: ['remove_button'],
+      });
+    }
   }
 
   /**
@@ -235,7 +253,7 @@ class MemberDirectory {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => this.handleGeolocationSuccess(position),
-        () => this.showErrorMessage('Error: The Geolocation service failed.'),
+        () => this.showErrorMessage('Error: Navigation geolocation failed. Please enable location services and try again.')
       );
     } else {
       this.showErrorMessage('Error: Your browser doesn\'t support geolocation.');

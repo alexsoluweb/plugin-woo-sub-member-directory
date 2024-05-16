@@ -24,7 +24,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.wsmd-icon-paper-plane-o:before {
+.wsmd-icon-paper-plane:before {
   content: "\e904";
 }
 .wsmd-icon-email:before {

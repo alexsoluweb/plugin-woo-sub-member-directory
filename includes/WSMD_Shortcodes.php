@@ -46,6 +46,7 @@ class WSMD_Shortcodes
             true,
             array(
                 'shortcode_args' => $args,
+                'terms' => WSMD_Taxonomy::get_terms(),
             ),
         );
         return ob_get_clean();

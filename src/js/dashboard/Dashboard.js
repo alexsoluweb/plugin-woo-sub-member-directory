@@ -32,7 +32,7 @@ class Dashboard {
       this.marker = this.createMarker(userLat, userLng);
     }
 
-    this.initializeTomSelect();
+    this.initTomSelect();
     this.addEventListeners();
   }
 
@@ -159,7 +159,7 @@ class Dashboard {
   /**
    * Initialize Tom Select
    */
-  static initializeTomSelect() {
+  static initTomSelect() {
     /** @type {HTMLSelectElement} */
     const selectElement = document.querySelector('#wsmd_taxonomies');
     if (selectElement) {

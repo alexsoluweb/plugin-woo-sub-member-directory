@@ -4,7 +4,7 @@
  * Dashboard template
  * @var $args['current_user'] WP_User Current user
  * @var $args['user_settings'] array User settings
- * @var $args['terms'] array User settings
+ * @var $args['terms'] array Available taxonomies set in the plugin settings
  */
 ?>
 <div id="wsmd-dashboard" class="is-member-directory">
