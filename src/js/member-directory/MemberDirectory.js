@@ -50,9 +50,19 @@ class MemberDirectory {
     });
 
     document.addEventListener('wsmd-members-data-ready', () => {
+
+      this.initGoogleMap();
+
+      // Dont go further if no members and display error message
+      if (!this.memberList.length) {
+        this.showErrorMessage('No members found');
+        this.form.querySelector('#wsmd-my-location').setAttribute('disabled', 'disabled');
+        this.form.querySelector('#wsmd-search-address').setAttribute('disabled', 'disabled');
+        return;
+      }
+
       this.randomizeMemberList();
       this.displayMembers();
-      this.initGoogleMap();
       this.initMapPlacesService();
 
       this.memberDirectory.querySelector('#wsmd-member-list-load-more').addEventListener('click', (e) => {
@@ -128,9 +138,9 @@ class MemberDirectory {
     membersToDisplay.forEach((member, index) => {
       const memberItem = this.createMemberItem(member, index);
       memberList.appendChild(memberItem);
-      
+
       // Delay the animation to wait for the DOM to render
-      setTimeout(() => {  
+      setTimeout(() => {
         memberItem.style.opacity = '1';
         memberItem.style.transform = 'translateY(0)';
         memberItem.style.transitionDelay = `${index * 0.1}s`;
@@ -155,34 +165,47 @@ class MemberDirectory {
     memberItem.style.transform = 'translateY(100px)';
     memberItem.style.transition = `opacity 0.5s ease, transform 0.5s ease`;
 
-    memberItem.innerHTML = `
-      <div class="wsmd-member-item-header">
-        <h3 class="wsmd-member-item-company">${member.wsmd_company}</h3>
-        <p class="wsmd-member-item-occupation">${member.wsmd_occupation}</p>
-      </div>
-      <hr>
-      <div class="wsmd-member-item-body">
-        <div class="wsmd-member-item-address">
-          <marker class="wsmd-icon-map-marker"></marker>
-          ${member.wsmd_address}, ${member.wsmd_city}, ${member.wsmd_province_state}, ${member.wsmd_country}, ${member.wsmd_postal_zip_code}
-        </div>
-        <div class="wsmd-member-item-website">
-          <marker class="wsmd-icon-external-link"></marker>
-          ${member.wsmd_website}
-        </div>
-        <div class="wsmd-member-item-phone">
-          <marker class="wsmd-icon-phone"></marker>
-          ${member.wsmd_phone}
-        </div>
-        <div class="wsmd-member-item-email">
-          <marker class="wsmd-icon-email"></marker>
-          ${member.wsmd_email}
-        </div>
-      </div>
-    `;
+    let content = `
+    <div class="wsmd-member-item-header">
+      <h3 class="wsmd-member-item-company">${member.wsmd_company}</h3>
+      <p class="wsmd-member-item-occupation">${member.wsmd_occupation}</p>
+    </div>
+    <hr>
+    <div class="wsmd-member-item-body">
+      <div class="wsmd-member-item-address">
+        <marker class="wsmd-icon-map-marker"></marker>
+        ${member.wsmd_address}, ${member.wsmd_city}, ${member.wsmd_province_state}, ${member.wsmd_country}, ${member.wsmd_postal_zip_code}
+      </div>`;
+
+    if (member.wsmd_website) {
+      content += `
+      <div class="wsmd-member-item-website">
+        <marker class="wsmd-icon-external-link"></marker>
+        ${member.wsmd_website}
+      </div>`;
+    }
+    if (member.wsmd_phone) {
+      content += `
+      <div class="wsmd-member-item-phone">
+        <marker class="wsmd-icon-phone"></marker>
+        ${member.wsmd_phone}
+      </div>`;
+    }
+    if (member.wsmd_email) {
+      content += `
+      <div class="wsmd-member-item-email">
+        <marker class="wsmd-icon-email"></marker>
+        ${member.wsmd_email}
+      </div>`;
+    }
+
+    content += `</div>`;
+
+    memberItem.innerHTML = content;
 
     return memberItem;
   }
+
 
   /**
    * Toggle the visibility of the load more button
@@ -281,7 +304,7 @@ class MemberDirectory {
   static initMapPlacesService() {
     const input = this.form.querySelector('#wsmd-search-address');
     const autocomplete = new google.maps.places.Autocomplete(input);
-    
+
     autocomplete.addListener('place_changed', () => {
       this.resetMarkerAnimation();
       this.clearErrorMessage();
@@ -339,8 +362,8 @@ class MemberDirectory {
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLng = (lng2 - lng1) * Math.PI / 180;
     const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-              Math.sin(dLng / 2) * Math.sin(dLng / 2);
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLng / 2) * Math.sin(dLng / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   }
@@ -383,9 +406,24 @@ class MemberDirectory {
       return marker;
     });
 
-    new MarkerClusterer({ markers: this.markers, map: this.map });
-    this.map.fitBounds(bounds);
+    // Add marker clusterer if there are more than 1 marker
+    if (this.markers.length > 1) {
+      new MarkerClusterer({ markers: this.markers, map: this.map });
+      this.map.fitBounds(bounds);
+
+      // Add listener to limit zoom level
+      google.maps.event.addListenerOnce(this.map, 'idle', () => {
+        // Set the maximum zoom level
+        if (this.map.getZoom() > 12) {
+          this.map.setZoom(12);
+        }
+      });
+    } else if (this.markers.length === 1) {
+      this.map.setCenter(this.markers[0].getPosition());
+      this.map.setZoom(12); // Set a reasonable zoom level for a single marker
+    }
   }
+
 
   /**
    * Open info window with member details
@@ -395,35 +433,49 @@ class MemberDirectory {
    * @returns {void}
    */
   static openInfoWindow(infoWindow, marker, member) {
-    infoWindow.setContent(`
-      <div class="wsmd-map-info-window">
-        <div class="wsmd-map-info-window-header">
-          <h3 class="wsmd-map-info-window-company">${member.wsmd_company}</h3>
-          <p class="wsmd-map-info-window-occupation">${member.wsmd_occupation}</p>
-        </div>
-        <hr>
-        <div class="wsmd-map-info-window-body">
-          <span class="wsmd-map-info-window-address">
-            <marker class="wsmd-icon-map-marker"></marker>
-            ${member.wsmd_address}, ${member.wsmd_city}, ${member.wsmd_province_state}, ${member.wsmd_country}, ${member.wsmd_postal_zip_code}
-          </span>
-          <span class="wsmd-map-info-window-website">
-            <marker class="wsmd-icon-external-link"></marker>
-            ${member.wsmd_website}
-          </span>
-          <span class="wsmd-map-info-window-phone">
-            <marker class="wsmd-icon-phone"></marker>
-            ${member.wsmd_phone}
-          </span>
-          <span class="wsmd-map-info-window-email">
-            <marker class="wsmd-icon-email"></marker>
-            ${member.wsmd_email}
-          </span>
-        </div>
+    let content = `
+    <div class="wsmd-map-info-window">
+      <div class="wsmd-map-info-window-header">
+        <h3 class="wsmd-map-info-window-company">${member.wsmd_company}</h3>
+        <p class="wsmd-map-info-window-occupation">${member.wsmd_occupation}</p>
       </div>
-    `);
+      <hr>
+      <div class="wsmd-map-info-window-body">
+        <span class="wsmd-map-info-window-address">
+          <marker class="wsmd-icon-map-marker"></marker>
+          ${member.wsmd_address}, ${member.wsmd_city}, ${member.wsmd_province_state}, ${member.wsmd_country}, ${member.wsmd_postal_zip_code}
+        </span>`;
+
+    if (member.wsmd_website) {
+      content += `
+        <span class="wsmd-map-info-window-website">
+          <marker class="wsmd-icon-external-link"></marker>
+          ${member.wsmd_website}
+        </span>`;
+    }
+    if (member.wsmd_phone) {
+      content += `
+        <span class="wsmd-map-info-window-phone">
+          <marker class="wsmd-icon-phone"></marker>
+          ${member.wsmd_phone}
+        </span>`;
+    }
+    if (member.wsmd_email) {
+      content += `
+        <span class="wsmd-map-info-window-email">
+          <marker class="wsmd-icon-email"></marker>
+          ${member.wsmd_email}
+        </span>`;
+    }
+
+    content += `
+      </div>
+    </div>`;
+
+    infoWindow.setContent(content);
     infoWindow.open(this.map, marker);
   }
+
 
   /**
    * Fetch members data from AJAX endpoint
