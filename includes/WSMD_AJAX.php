@@ -88,11 +88,17 @@ class WSMD_AJAX
 
         // Return any save user settings errors
         if (!empty($save_user_settings_errors)) {
+            // Set the user as not validated
+            update_user_meta(get_current_user_id(), 'wsmd_is_user_validated', '0');
+            // Return the errors
             wp_send_json_error(array(
                 'field_validation_errors' => $save_user_settings_errors
             ));
         }
-
+        
+        // Set the user as validated
+        update_user_meta(get_current_user_id(), 'wsmd_is_user_validated', '1');
+       
         // Return success
         wp_send_json_success(array(
             'message' => __('Settings saved successfully', 'wsmd'),
@@ -182,8 +188,8 @@ class WSMD_AJAX
      */
     public function member_directory_get_members()
     {
-        // $members = WSMD_Helpers::get_members();
-        $members = WSMD_Dummy_Data::get_members();
+        $members = WSMD_Helpers::get_members();
+        // $members = WSMD_Dummy_Data::get_members();
 
         wp_send_json_success(array(
             'members' => $members
