@@ -140,7 +140,8 @@ class MemberDirectory {
       if (marker) {
         this.map.panTo(marker.getPosition());
         this.map.setZoom(12);
-        window.scrollTo({ top: this.memberDirectory.querySelector('#wsmd-map').offsetTop, behavior: 'smooth' });
+        // Scroll smoothly to the top of the Google Map container
+        this.memberDirectory.querySelector('#wsmd-map').scrollIntoView({ behavior: 'smooth' });
         marker.setAnimation(google.maps.Animation.BOUNCE);
         this.activeMarker = marker;
       }
