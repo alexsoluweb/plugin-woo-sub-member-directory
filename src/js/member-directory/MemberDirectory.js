@@ -5,36 +5,21 @@ import '../../scss/tomselect.scss';
 import TomSelect from 'tom-select';
 
 class MemberDirectory {
-  /** @type {HTMLDivElement} */
   static memberDirectory = null;
-  /** @type {google.maps.Map} */
   static map = null;
-  /** @type {HTMLFormElement} */
   static form = null;
-  /** @type {HTMLParagraphElement} */
   static formMessage = null;
-  /** @type {Array<google.maps.Marker>} */
   static markers = [];
-  /** @type {Map<string, google.maps.Marker>} */
   static memberIdToMarkerMap = new Map();
-  /** @type {Array<Object>} */
   static memberList = null;
-  /** @type {number} */
   static memberListOffset = 0;
-  /** @type {number} */
   static memberListPerPage = 9;
-  /** @type {google.maps.Marker|null} */
   static activeMarker = null;
-  /** @type {TomSelect} */
   static taxonomiesSelect = null;
+  static infoWindow = null;
 
-  /**
-   * Initialize the application
-   * @returns {void}
-   */
   static init() {
     this.memberDirectory = document.querySelector('#wsmd-member-directory');
-
     if (!this.memberDirectory) return;
 
     this.form = this.memberDirectory.querySelector('#wsmd-form');
@@ -44,11 +29,7 @@ class MemberDirectory {
     this.initTomSelect();
   }
 
-  /**
-   * Initialize Tom Select
-   */
   static initTomSelect() {
-    /** @type {HTMLSelectElement} */
     const selectElement = document.querySelector('#wsmd_taxonomies');
     if (selectElement) {
       this.taxonomiesSelect = new TomSelect(selectElement, {
@@ -62,12 +43,7 @@ class MemberDirectory {
     }
   }
 
-  /**
-   * Set up event listeners
-   * @returns {void}
-   */
   static setupEventListeners() {
-    // Prevent form submission
     this.form.addEventListener('submit', (e) => {
       e.preventDefault();
     });
@@ -75,11 +51,9 @@ class MemberDirectory {
     document.addEventListener('wsmd-members-data-ready', () => {
       this.initGoogleMap();
 
-      // Dont go further if no members and display error message
       if (!this.memberList.length) {
         this.showErrorMessage('No members found');
-        this.form.querySelector('#wsmd-my-location').setAttribute('disabled', 'disabled');
-        this.form.querySelector('#wsmd-search-address').setAttribute('disabled', 'disabled');
+        this.disableFormInputs();
         return;
       }
 
@@ -104,34 +78,19 @@ class MemberDirectory {
     });
   }
 
-  /**
-   * Filter members by selected taxonomies
-   * @returns {void}
-   */
   static filterMembersByTaxonomies() {
     const selectedTaxonomies = this.taxonomiesSelect.getValue().map(Number);
-
-    if (selectedTaxonomies.length === 0) {
-      // Reset to display all members if no taxonomy is selected
-      this.displayMembers(true);
-      this.updateMapMarkers();
-      return;
-    }
-
-    const filteredMembers = this.memberList.filter(member => {
-      const memberTaxonomies = member.wsmd_taxonomies || [];
-      return selectedTaxonomies.some(taxonomy => memberTaxonomies.includes(taxonomy));
-    });
+    const filteredMembers = selectedTaxonomies.length === 0
+      ? this.memberList
+      : this.memberList.filter(member => {
+        const memberTaxonomies = member.wsmd_taxonomies || [];
+        return selectedTaxonomies.some(taxonomy => memberTaxonomies.includes(taxonomy));
+      });
 
     this.displayMembers(true, filteredMembers);
     this.updateMapMarkers(filteredMembers);
   }
 
-  /**
-   * Handle member item click to center map on marker
-   * @param {Event} e
-   * @returns {void}
-   */
   static handleMemberItemClick(e) {
     const memberItem = e.target.closest('.wsmd-member-item');
     if (memberItem) {
@@ -140,7 +99,6 @@ class MemberDirectory {
       if (marker) {
         this.map.panTo(marker.getPosition());
         this.map.setZoom(12);
-        // Scroll smoothly to the top of the Google Map container
         this.memberDirectory.querySelector('#wsmd-map').scrollIntoView({ behavior: 'smooth' });
         marker.setAnimation(google.maps.Animation.BOUNCE);
         this.activeMarker = marker;
@@ -148,33 +106,18 @@ class MemberDirectory {
     }
   }
 
-  /**
-   * Reset marker animation
-   * @returns {void}
-   */
   static resetMarkerAnimation() {
     if (this.activeMarker) {
       this.activeMarker.setAnimation(null);
     }
   }
 
-  /**
-   * Randomize the member list
-   * @returns {void}
-   */
   static randomizeMemberList() {
     this.memberList.sort(() => Math.random() - 0.5);
   }
 
-  /**
-   * Display the member list
-   * @param {boolean} reset - Reset the list
-   * @param {Array<Object>} [filteredMembers] - Optional filtered member list
-   * @returns {void}
-   */
   static displayMembers(reset = false, filteredMembers = null) {
     const memberList = this.memberDirectory.querySelector('#wsmd-member-list');
-
     if (reset) {
       memberList.innerHTML = '';
       this.memberListOffset = 0;
@@ -189,7 +132,6 @@ class MemberDirectory {
       const memberItem = this.createMemberItem(member, index);
       memberList.appendChild(memberItem);
 
-      // Delay the animation to wait for the DOM to render
       setTimeout(() => {
         memberItem.style.opacity = '1';
         memberItem.style.transform = 'translateY(0)';
@@ -198,22 +140,16 @@ class MemberDirectory {
     });
 
     this.memberListOffset += this.memberListPerPage;
-    this.toggleLoadMoreButton();
+    this.toggleLoadMoreButton(members);
   }
 
-  /**
-   * Create a member item element
-   * @param {Object} member
-   * @param {number} index
-   * @returns {HTMLElement}
-   */
-  static createMemberItem(member, index) {
+  static createMemberItem(member) {
     const memberItem = document.createElement('div');
     memberItem.classList.add('wsmd-member-item');
     memberItem.dataset.memberId = member.wsmd_id;
     memberItem.style.opacity = '0';
     memberItem.style.transform = 'translateY(100px)';
-    memberItem.style.transition = `opacity 0.5s ease, transform 0.5s ease`;
+    memberItem.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
 
     let content = `
       <div class="wsmd-member-item-header">
@@ -249,34 +185,21 @@ class MemberDirectory {
         </div>`;
     }
 
-    content += `</div>`;
-
+    content += '</div>';
     memberItem.innerHTML = content;
 
     return memberItem;
   }
 
-  /**
-   * Toggle the visibility of the load more button
-   * @returns {void}
-   */
-  static toggleLoadMoreButton() {
+  static toggleLoadMoreButton(members) {
     const loadMoreButton = this.memberDirectory.querySelector('#wsmd-member-list-load-more');
-    loadMoreButton.style.display = this.memberListOffset >= this.memberList.length ? 'none' : 'block';
+    loadMoreButton.style.display = this.memberListOffset >= members.length ? 'none' : 'block';
   }
 
-  /**
-   * Load more members
-   * @returns {void}
-   */
   static loadMoreMembers() {
     this.displayMembers();
   }
 
-  /**
-   * Handle the search near me button
-   * @returns {void}
-   */
   static handleSearchNearMe() {
     this.form.classList.add('loading');
     this.clearErrorMessage();
@@ -291,11 +214,6 @@ class MemberDirectory {
     }
   }
 
-  /**
-   * Handle successful geolocation
-   * @param {GeolocationPosition} position
-   * @returns {void}
-   */
   static handleGeolocationSuccess(position) {
     const userLocation = {
       lat: position.coords.latitude,
@@ -311,32 +229,17 @@ class MemberDirectory {
     this.form.classList.remove('loading');
   }
 
-  /**
-   * Clear error message
-   * @returns {void}
-   */
   static clearErrorMessage() {
     this.formMessage.innerHTML = '';
     this.formMessage.classList.remove('error');
   }
 
-  /**
-   * Show error message
-   * @param {string} message
-   * @returns {void}
-   */
   static showErrorMessage(message) {
     this.formMessage.innerHTML = message;
     this.formMessage.classList.add('error');
     this.form.classList.remove('loading');
   }
 
-  /**
-   * Sort member list by distance
-   * @param {number} lat
-   * @param {number} lng
-   * @returns {void}
-   */
   static sortMemberListByDistance(lat, lng) {
     this.memberList.sort((a, b) => {
       const distanceA = this.calculateDistance(lat, lng, parseFloat(a.wsmd_geocode.split(',')[0]), parseFloat(a.wsmd_geocode.split(',')[1]));
@@ -345,10 +248,6 @@ class MemberDirectory {
     });
   }
 
-  /**
-   * Initialize the Google Map Places Service
-   * @returns {void}
-   */
   static initMapPlacesService() {
     const input = this.form.querySelector('#wsmd-search-address');
     const autocomplete = new google.maps.places.Autocomplete(input);
@@ -375,12 +274,6 @@ class MemberDirectory {
     });
   }
 
-  /**
-   * Get the nearest marker to a given latitude and longitude
-   * @param {number} lat
-   * @param {number} lng
-   * @returns {google.maps.Marker}
-   */
   static getNearestMarker(lat, lng) {
     let nearestMarker = null;
     let minDistance = Infinity;
@@ -396,14 +289,6 @@ class MemberDirectory {
     return nearestMarker;
   }
 
-  /**
-   * Calculate the distance between two points using the Haversine formula
-   * @param {number} lat1
-   * @param {number} lng1
-   * @param {number} lat2
-   * @param {number} lng2
-   * @returns {number} Distance in kilometers
-   */
   static calculateDistance(lat1, lng1, lat2, lng2) {
     const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -415,10 +300,6 @@ class MemberDirectory {
     return R * c;
   }
 
-  /**
-   * Initialize the Google Map
-   * @returns {void}
-   */
   static initGoogleMap() {
     this.map = new google.maps.Map(document.querySelector('#wsmd-map'), {
       center: { lat: 0, lng: 0 },
@@ -429,7 +310,7 @@ class MemberDirectory {
       }
     });
 
-    const infoWindow = new google.maps.InfoWindow();
+    this.infoWindow = new google.maps.InfoWindow();
     const bounds = new google.maps.LatLngBounds();
 
     this.markers = this.memberList.map(member => {
@@ -447,44 +328,22 @@ class MemberDirectory {
       bounds.extend(marker.getPosition());
 
       marker.addListener('click', () => {
-        this.openInfoWindow(infoWindow, marker, member);
+        this.openInfoWindow(this.infoWindow, marker, member);
       });
 
       return marker;
     });
 
-    // Add marker clusterer if there are more than 1 marker
-    if (this.markers.length > 1) {
-      new MarkerClusterer({ markers: this.markers, map: this.map });
-      this.map.fitBounds(bounds);
-
-      // Add listener to limit zoom level
-      google.maps.event.addListenerOnce(this.map, 'idle', () => {
-        // Set the maximum zoom level
-        if (this.map.getZoom() > 12) {
-          this.map.setZoom(12);
-        }
-      });
-    } else if (this.markers.length === 1) {
-      this.map.setCenter(this.markers[0].getPosition());
-      this.map.setZoom(12); // Set a reasonable zoom level for a single marker
-    }
+    this.updateClusterAndBounds(bounds);
   }
 
-  /**
-   * Update map markers based on the filtered members
-   * @param {Array<Object>} [filteredMembers] - Optional filtered member list
-   * @returns {void}
-   */
   static updateMapMarkers(filteredMembers = null) {
     const members = filteredMembers || this.memberList;
     const bounds = new google.maps.LatLngBounds();
 
-    // Clear existing markers from the map
     this.markers.forEach(marker => marker.setMap(null));
     this.markers = [];
 
-    // Create new markers for filtered members
     this.markers = members.map(member => {
       const marker = new google.maps.Marker({
         position: {
@@ -500,37 +359,31 @@ class MemberDirectory {
       bounds.extend(marker.getPosition());
 
       marker.addListener('click', () => {
-        this.openInfoWindow(infoWindow, marker, member);
+        this.openInfoWindow(this.infoWindow, marker, member);
       });
 
       return marker;
     });
 
-    // Add marker clusterer if there are more than 1 marker
+    this.updateClusterAndBounds(bounds);
+  }
+
+  static updateClusterAndBounds(bounds) {
     if (this.markers.length > 1) {
       new MarkerClusterer({ markers: this.markers, map: this.map });
       this.map.fitBounds(bounds);
 
-      // Add listener to limit zoom level
       google.maps.event.addListenerOnce(this.map, 'idle', () => {
-        // Set the maximum zoom level
         if (this.map.getZoom() > 12) {
           this.map.setZoom(12);
         }
       });
     } else if (this.markers.length === 1) {
       this.map.setCenter(this.markers[0].getPosition());
-      this.map.setZoom(12); // Set a reasonable zoom level for a single marker
+      this.map.setZoom(12);
     }
   }
 
-  /**
-   * Open info window with member details
-   * @param {google.maps.InfoWindow} infoWindow
-   * @param {google.maps.Marker} marker
-   * @param {Object} member
-   * @returns {void}
-   */
   static openInfoWindow(infoWindow, marker, member) {
     let content = `
       <div class="wsmd-map-info-window">
@@ -575,10 +428,6 @@ class MemberDirectory {
     infoWindow.open(this.map, marker);
   }
 
-  /**
-   * Fetch members data from AJAX endpoint
-   * @returns {void}
-   */
   static fetchMembersData() {
     const data = new FormData(this.form);
     const ajaxUrl = this.form.getAttribute('action');
@@ -604,9 +453,13 @@ class MemberDirectory {
         this.showErrorMessage('An error occurred while fetching members data');
       });
   }
+
+  static disableFormInputs() {
+    this.form.querySelector('#wsmd-my-location').setAttribute('disabled', 'disabled');
+    this.form.querySelector('#wsmd-search-address').setAttribute('disabled', 'disabled');
+  }
 }
 
-// Main entry point
 document.addEventListener('DOMContentLoaded', () => {
   MemberDirectory.init();
 });
