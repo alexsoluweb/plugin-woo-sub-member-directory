@@ -77,12 +77,17 @@ class WSMD_Helpers
                 'role__in' => ['subscriber', 'customer'],
                 'fields' => ['ID'],
                 'number' => -1,
-                // Get only the user that has the wsmd_is_user_validated meta key
+                // Get only the user that has the wsmd_geocode meta key set and not empty
                 'meta_query' => [
+                    'relation' => 'AND', // AND condition
                     [
-                        'key' => 'wsmd_is_user_validated',
-                        'value' => '1',
-                        'compare' => '='
+                        'key' => 'wsmd_geocode',
+                        'compare' => 'EXISTS'
+                    ],
+                    [
+                        'key' => 'wsmd_geocode',
+                        'value' => '',
+                        'compare' => '!='
                     ]
                 ]
             ]);
