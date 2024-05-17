@@ -81,7 +81,7 @@ class MemberDirectory {
       this.initGoogleMap();
 
       if (!this.memberList.length) {
-        this.showErrorMessage('No members found');
+        this.memberDirectory.querySelector('#wsmd-member-list').innerHTML = this.memberDirectory.getAttribute('data-no-members-found-msg');
         this.disableFormInputs();
         return;
       }
@@ -121,13 +121,23 @@ class MemberDirectory {
         return selectedTaxonomies.some(taxonomy => memberTaxonomies.includes(taxonomy));
       });
 
+    // Check if there are no members to display
+    if (filteredMembers.length === 0) {
+      this.memberDirectory.querySelector('#wsmd-member-list').innerHTML = this.memberDirectory.getAttribute('data-no-members-found-msg');
+      this.memberDirectory.querySelector('#wsmd-member-list-load-more').style.display = 'none';
+      this.markers.forEach(marker => marker.setVisible(false));
+      this.updateMarkerClusterer(new google.maps.LatLngBounds());
+      this.markerClusterer = null;
+      return;
+    }
+
     this.displayMembers(true, filteredMembers);
     this.updateMapMarkers(filteredMembers);
   }
 
   /**
    * Handle member item click event
-   * @param {MouseEvent} e
+   * @param {MouseEvent} e - The mouse event
    * @returns {void}
    */
   static handleMemberItemClick(e) {
@@ -171,12 +181,14 @@ class MemberDirectory {
    */
   static displayMembers(reset = false, filteredMembers = null) {
     const memberList = this.memberDirectory.querySelector('#wsmd-member-list');
+
     if (reset) {
       memberList.innerHTML = '';
       this.memberListOffset = 0;
     }
 
     const members = filteredMembers || this.memberList;
+    
     const start = this.memberListOffset;
     const end = this.memberListOffset + this.memberListPerPage;
     const membersToDisplay = members.slice(start, end);
@@ -418,8 +430,6 @@ class MemberDirectory {
    */
   static initGoogleMap() {
     this.map = new google.maps.Map(document.querySelector('#wsmd-map'), {
-      center: { lat: 0, lng: 0 },
-      zoom: 2,
       styles: mapStyles,
       mapTypeControlOptions: {
         mapTypeIds: ['roadmap']
@@ -458,24 +468,38 @@ class MemberDirectory {
    * @returns {void}
    */
   static updateMarkerClusterer(bounds) {
+
+    // Clear existing clusters if they exist
     if (this.markerClusterer) {
       this.markerClusterer.clearMarkers();
+      this.markerClusterer.setMap(null);
+      this.markerClusterer = null;
     }
-
-    if (this.markers.length > 1) {
-      this.markerClusterer = new MarkerClusterer({ markers: this.markers, map: this.map });
+  
+    // Check if there are any markers to cluster
+    const visibleMarkers = this.markers.filter(marker => marker.getVisible());
+  
+    if (visibleMarkers.length > 1) {
+      this.markerClusterer = new MarkerClusterer({
+        markers: visibleMarkers,
+        map: this.map
+      });
       this.map.fitBounds(bounds);
-
+  
       google.maps.event.addListenerOnce(this.map, 'idle', () => {
         if (this.map.getZoom() > 12) {
           this.map.setZoom(12);
         }
       });
-    } else if (this.markers.length === 1) {
-      this.map.setCenter(this.markers[0].getPosition());
+    } else if (visibleMarkers.length === 1) {
+      this.map.setCenter(visibleMarkers[0].getPosition());
       this.map.setZoom(12);
+    } else {
+      this.map.setCenter({ lat: 0, lng: 0 });
+      this.map.setZoom(2);
     }
   }
+  
 
   /**
    * Update map markers based on the filtered members

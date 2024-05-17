@@ -6,7 +6,7 @@
  * @var $args['terms'] Array of WP_Term objects (available taxonomies)
  */
 ?>
-<div id="wsmd-member-directory">
+<div id="wsmd-member-directory" data-no-members-found-msg="<?php esc_attr_e('No results found', 'wsmd'); ?>">
     <form id="wsmd-form" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>">
         <p id="wsmd-form-message"></p>
         <div class="wsmd-filter-row search">

@@ -4,6 +4,10 @@ namespace WSMD;
 
 class WSMD_Dummy_Data {
     public static function get_members() {
+
+        // No results dummy data
+        // return [];
+
         // Québec dummy data
         return [
             '1' => [
