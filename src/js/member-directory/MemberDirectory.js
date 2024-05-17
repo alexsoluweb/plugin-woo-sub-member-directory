@@ -20,7 +20,7 @@ class MemberDirectory {
   /** @type {Object[]} */
   static memberList = null;
   /** @type {Object[]} */
-  static displayedMembers = [];
+  static displayedMembers = null;
   /** @type {number} */
   static memberListOffset = 0;
   /** @type {number} */
@@ -116,15 +116,19 @@ class MemberDirectory {
   static filterMembersByTaxonomies() {
     const selectedTaxonomies = this.taxonomiesSelect.getValue().map(Number);
 
-    const filteredMembers = selectedTaxonomies.length === 0
-      ? this.memberList
-      : this.memberList.filter(member => {
+    // If no taxonomies are selected, show all members
+    if (selectedTaxonomies.length === 0) {
+      this.displayedMembers = this.memberList;
+    } else {
+      this.displayedMembers = this.memberList.filter(member => {
         const memberTaxonomies = member.wsmd_taxonomies || [];
+        // Apply OR condition
         return selectedTaxonomies.some(taxonomy => memberTaxonomies.includes(taxonomy));
       });
+    }
 
     // Check if there are no members to display
-    if (filteredMembers.length === 0) {
+    if (this.displayedMembers.length === 0) {
       this.memberDirectory.querySelector('#wsmd-member-list-container').innerHTML = this.memberDirectory.getAttribute('data-no-members-found-msg');
       this.memberDirectory.querySelector('#wsmd-member-list-load-more').style.display = 'none';
       this.markers.forEach(marker => marker.setVisible(false));
@@ -133,9 +137,8 @@ class MemberDirectory {
       return;
     }
 
-    this.displayedMembers = filteredMembers;
-    this.displayMembers(true, filteredMembers);
-    this.updateMapMarkers(filteredMembers);
+    this.displayMembers(true, this.displayedMembers);
+    this.updateMapMarkers(this.displayedMembers);
   }
 
   /**
@@ -268,6 +271,14 @@ class MemberDirectory {
         <div class="wsmd-member-item-email">
           <marker class="wsmd-icon-email"></marker>
           ${member.wsmd_email}
+        </div>`;
+    }
+    // Show taxonomies
+    if (member.wsmd_taxonomies) {
+      content += `
+        <div class="wsmd-member-item-taxonomies">
+          <marker class="wsmd-icon-tag"></marker>
+          ${member.wsmd_taxonomies.map(taxonomy => `<span class="wsmd-member-item-taxonomy">${taxonomy}</span>`).join('')}
         </div>`;
     }
 
