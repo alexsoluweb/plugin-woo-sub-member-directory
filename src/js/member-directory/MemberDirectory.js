@@ -19,6 +19,8 @@ class MemberDirectory {
   static memberIdToMarkerMap = null;
   /** @type {Object[]} */
   static memberList = null;
+  /** @type {Object[]} */
+  static displayedMembers = [];
   /** @type {number} */
   static memberListOffset = 0;
   /** @type {number} */
@@ -81,7 +83,7 @@ class MemberDirectory {
       this.initGoogleMap();
 
       if (!this.memberList.length) {
-        this.memberDirectory.querySelector('#wsmd-member-list').innerHTML = this.memberDirectory.getAttribute('data-no-members-found-msg');
+        this.memberDirectory.querySelector('#wsmd-member-list-container').innerHTML = this.memberDirectory.getAttribute('data-no-members-found-msg');
         this.disableFormInputs();
         return;
       }
@@ -100,7 +102,7 @@ class MemberDirectory {
         this.handleSearchNearMe();
       });
 
-      this.memberDirectory.querySelector('#wsmd-member-list').addEventListener('click', (e) => {
+      this.memberDirectory.querySelector('#wsmd-member-list-container').addEventListener('click', (e) => {
         this.resetMarkerAnimation();
         this.handleMemberItemClick(e);
       });
@@ -123,7 +125,7 @@ class MemberDirectory {
 
     // Check if there are no members to display
     if (filteredMembers.length === 0) {
-      this.memberDirectory.querySelector('#wsmd-member-list').innerHTML = this.memberDirectory.getAttribute('data-no-members-found-msg');
+      this.memberDirectory.querySelector('#wsmd-member-list-container').innerHTML = this.memberDirectory.getAttribute('data-no-members-found-msg');
       this.memberDirectory.querySelector('#wsmd-member-list-load-more').style.display = 'none';
       this.markers.forEach(marker => marker.setVisible(false));
       this.updateMarkerClusterer(new google.maps.LatLngBounds());
@@ -131,6 +133,7 @@ class MemberDirectory {
       return;
     }
 
+    this.displayedMembers = filteredMembers;
     this.displayMembers(true, filteredMembers);
     this.updateMapMarkers(filteredMembers);
   }
@@ -180,6 +183,7 @@ class MemberDirectory {
    * @returns {void}
    */
   static displayMembers(reset = false, filteredMembers = null) {
+    const memberListContainer = this.memberDirectory.querySelector('#wsmd-member-list-container');
     const memberList = this.memberDirectory.querySelector('#wsmd-member-list');
 
     if (reset) {
@@ -187,7 +191,19 @@ class MemberDirectory {
       this.memberListOffset = 0;
     }
 
-    const members = filteredMembers || this.memberList;
+    const members = filteredMembers || this.displayedMembers || this.memberList;
+
+    // Clear the results number
+    const resultsElement = memberListContainer.querySelector('.wsmd-member-list-results');
+    if (resultsElement) {
+      resultsElement.remove();
+    }
+
+    // Add the results number to the member list container
+    const resultElement = document.createElement('div');
+    resultElement.classList.add('wsmd-member-list-results');
+    resultElement.innerHTML = `${members.length} results`;
+    memberListContainer.prepend(resultElement);
     
     const start = this.memberListOffset;
     const end = this.memberListOffset + this.memberListPerPage;
@@ -278,7 +294,7 @@ class MemberDirectory {
    * @returns {void}
    */
   static loadMoreMembers() {
-    this.displayMembers();
+    this.displayMembers(false, this.displayedMembers);
   }
 
   /**
@@ -468,24 +484,19 @@ class MemberDirectory {
    * @returns {void}
    */
   static updateMarkerClusterer(bounds) {
-
-    // Clear existing clusters if they exist
     if (this.markerClusterer) {
       this.markerClusterer.clearMarkers();
-      this.markerClusterer.setMap(null);
-      this.markerClusterer = null;
     }
-  
-    // Check if there are any markers to cluster
+
     const visibleMarkers = this.markers.filter(marker => marker.getVisible());
-  
+
     if (visibleMarkers.length > 1) {
       this.markerClusterer = new MarkerClusterer({
         markers: visibleMarkers,
         map: this.map
       });
       this.map.fitBounds(bounds);
-  
+
       google.maps.event.addListenerOnce(this.map, 'idle', () => {
         if (this.map.getZoom() > 12) {
           this.map.setZoom(12);
@@ -499,7 +510,6 @@ class MemberDirectory {
       this.map.setZoom(2);
     }
   }
-  
 
   /**
    * Update map markers based on the filtered members
