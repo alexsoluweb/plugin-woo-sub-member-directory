@@ -1,18 +1,21 @@
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const RemoveEmptyScriptsPlugin = require("webpack-remove-empty-scripts");
-const mode = process.argv.includes("production") ? "production" : "development";
 const { ProvidePlugin } = require("webpack");
 const BrowserSyncPlugin = require("browser-sync-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const globImporter = require("node-sass-glob-importer");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+const { WebpackManifestPlugin } = require("webpack-manifest-plugin");
+const mode = process.argv.includes("production") ? "production" : "development";
+const currentDirectory = path.basename(__dirname);
+const parentDirectory = path.basename(path.resolve(__dirname, ".."));
+const publicPath = "/wp-content/" + parentDirectory + "/" + currentDirectory + "/assets/";
 
 /**
  * Webpack configuration
- * @type {import('webpack').Configuration}
- * @see https://webpack.js.org/configuration/
+ * @type {import("webpack").Configuration}
  */
 module.exports = {
   devtool: mode === "development" ? "source-map" : false,
@@ -25,6 +28,7 @@ module.exports = {
   output: {
     filename: "js/[name].js",
     path: path.resolve(__dirname, "assets"),
+    publicPath: publicPath,
     clean: true,
   },
   resolve: {
@@ -33,7 +37,9 @@ module.exports = {
     },
   },
   plugins: [
-    // Browser Sync
+    new WebpackManifestPlugin({
+      fileName: "manifest.json",
+    }),
     new BrowserSyncPlugin(
       {
         port: 3005,
@@ -52,7 +58,6 @@ module.exports = {
         injectCss: true,
       }
     ),
-    // Copy images to assets folder
     new CopyWebpackPlugin({
       patterns: [
         {
@@ -65,13 +70,10 @@ module.exports = {
         },
       ],
     }),
-    // Remove empty scripts for style entry
     new RemoveEmptyScriptsPlugin(),
-    // Extract CSS from commonjs into seperate file
     new MiniCssExtractPlugin({
       filename: "css/[name].css",
     }),
-    // Provide plugin globally
     new ProvidePlugin({
       $: "jquery",
       jQuery: "jquery",
@@ -82,17 +84,11 @@ module.exports = {
   },
   module: {
     rules: [
-      // Style
       {
         test: /\.s?css$/i,
         use: [
           MiniCssExtractPlugin.loader,
-          {
-            loader: "css-loader",
-            options: {
-              // url: false, // Disable url() resolving
-            },
-          },
+          "css-loader",
           "postcss-loader",
           "resolve-url-loader",
           {
@@ -106,7 +102,6 @@ module.exports = {
           },
         ],
       },
-      // Fonts
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
         type: "asset/resource",
@@ -114,7 +109,6 @@ module.exports = {
           filename: "./fonts/[name][ext]",
         },
       },
-      // Images
       {
         test: /\.(png|jpe?g|gif|svg)$/i,
         type: "asset/resource",
@@ -126,7 +120,6 @@ module.exports = {
   },
   optimization: {
     minimizer: [
-      // Minimize style
       new CssMinimizerPlugin({
         minimizerOptions: {
           preset: [
@@ -137,7 +130,6 @@ module.exports = {
           ],
         },
       }),
-      // Minimize js
       new TerserPlugin({
         terserOptions: {
           format: {
@@ -149,7 +141,6 @@ module.exports = {
     ],
   },
   performance: {
-    // Control which files type for performance hints
     assetFilter: function (assetFilename) {
       return assetFilename.endsWith(".js") || assetFilename.endsWith(".css");
     },
