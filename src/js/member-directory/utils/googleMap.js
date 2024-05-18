@@ -1,4 +1,4 @@
-import mapStyles, { svgMarker } from "../../map-style";
+import mapStyles, { svgMarker } from "@src/js/map-style.js";
 import { updateMarkerClusterer, openInfoWindow } from './markerUtils';
 
 /**
@@ -16,9 +16,8 @@ export const initGoogleMap = (context) => {
     }
   });
 
+  // Set markers and bounds
   const bounds = new google.maps.LatLngBounds();
-
-  // Set markers
   context.markers = context.memberList.map(member => {
     const marker = new google.maps.Marker({
       position: {

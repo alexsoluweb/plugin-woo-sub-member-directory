@@ -6,5 +6,5 @@ import { displayMembers } from './displayMembers';
  * @returns {void}
  */
 export const loadMoreMembers = (context) => {
-  displayMembers(context, false, context.displayedMembers);
+  displayMembers(context, false);
 };

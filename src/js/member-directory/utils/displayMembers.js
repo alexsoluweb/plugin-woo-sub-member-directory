@@ -2,10 +2,9 @@
  * Display the member list
  * @param {Object} context - The context (MemberDirectory instance)
  * @param {boolean} reset - Reset the list
- * @param {Object[]} [filteredMembers] - Optional filtered member list
  * @returns {void}
  */
-export const displayMembers = (context, reset = false, filteredMembers = null) => {
+export const displayMembers = (context, reset = false) => {
   const memberListContainer = context.memberDirectory.querySelector('#wsmd-member-list-container');
   const memberList = context.memberDirectory.querySelector('#wsmd-member-list');
 
@@ -14,7 +13,7 @@ export const displayMembers = (context, reset = false, filteredMembers = null) =
     context.memberListOffset = 0;
   }
 
-  const members = filteredMembers || context.displayedMembers || context.memberList;
+  const members = context.displayedMembers;
 
   // Clear the results number
   const resultsElement = memberListContainer.querySelector('.wsmd-member-list-results');

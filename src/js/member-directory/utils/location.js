@@ -30,6 +30,7 @@ const handleGeolocationSuccess = (context, position) => {
   };
 
   context.sortMemberListByDistance(userLocation.lat, userLocation.lng);
+  context.displayedMembers = context.memberList.slice();
   context.displayMembers(true);
 
   const nearestMarker = context.getNearestMarker(userLocation.lat, userLocation.lng);
@@ -37,5 +38,3 @@ const handleGeolocationSuccess = (context, position) => {
   context.map.setZoom(12);
   context.form.classList.remove('loading');
 };
-
-

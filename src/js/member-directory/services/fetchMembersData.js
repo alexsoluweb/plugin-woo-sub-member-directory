@@ -19,6 +19,7 @@ export const fetchMembersData = (context) => {
           wsmd_id: key,
           ...data.data.members[key]
         }));
+        context.displayedMembers = context.memberList.slice(); // Initially, displayed members are the same as the member list
         document.dispatchEvent(event);
       } else {
         context.showErrorMessage(data.data.message);

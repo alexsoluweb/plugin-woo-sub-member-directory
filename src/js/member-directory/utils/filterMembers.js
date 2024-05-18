@@ -7,7 +7,7 @@ export const filterMembersByTaxonomies = (context) => {
   const selectedTaxonomies = context.taxonomiesSelect.getValue().map(Number);
 
   if (selectedTaxonomies.length === 0) {
-    context.displayedMembers = context.memberList;
+    context.displayedMembers = context.memberList.slice();
   } else {
     context.displayedMembers = context.memberList.filter(member => {
       const memberTaxonomies = member.wsmd_taxonomies || [];
@@ -24,6 +24,6 @@ export const filterMembersByTaxonomies = (context) => {
     return;
   }
 
-  context.displayMembers(true, context.displayedMembers);
-  context.updateMapMarkers(context.displayedMembers);
+  context.displayMembers(true);
+  context.updateMapMarkers();
 };
