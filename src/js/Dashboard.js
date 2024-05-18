@@ -172,7 +172,16 @@ class Dashboard {
   }
 }
 
-// Main entry point
-document.addEventListener('DOMContentLoaded', () => {
-  Dashboard.init();
-});
+// Initialize the application 
+// This provide Google Maps callback function
+// @ts-ignore
+window.WSMD = window.WSMD || {};
+WSMD.initApp = function() {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      Dashboard.init();
+    });
+  } else {
+    Dashboard.init();
+  }
+}; 

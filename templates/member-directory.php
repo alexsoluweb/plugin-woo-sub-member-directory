@@ -18,7 +18,7 @@
             <div id="wsmd-filter-or">
                 <span><?php esc_html_e('or', 'wsmd'); ?></span>
             </div>
-            <button type="button" id="wsmd-my-location" title="<?php esc_attr_e('My location', 'wsmd'); ?>">
+            <button type="button" id="wsmd-my-location" title="<?php esc_attr_e('Use my location', 'wsmd'); ?>">
                 <span class="btn-text"><?php esc_html_e('Use my location', 'wsmd'); ?></span>
                 <span class="wsmd-icon-paper-plane"></span>
             </button>

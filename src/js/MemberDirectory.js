@@ -20,7 +20,7 @@ class MemberDirectory {
   /** @type {Object[]} */
   static memberList = null;
   /** @type {Object[]} */
-  static displayedMembers = null;
+  static filteredMembers = null;
   /** @type {number} */
   static memberListOffset = 0;
   /** @type {number} */
@@ -118,9 +118,9 @@ class MemberDirectory {
 
     // If no taxonomies are selected, show all members
     if (selectedTaxonomies.length === 0) {
-      this.displayedMembers = this.memberList;
+      this.filteredMembers = this.memberList;
     } else {
-      this.displayedMembers = this.memberList.filter(member => {
+      this.filteredMembers = this.memberList.filter(member => {
         const memberTaxonomies = member.wsmd_taxonomies || [];
         // Apply OR condition
         return selectedTaxonomies.some(taxonomy => memberTaxonomies.includes(taxonomy));
@@ -128,7 +128,7 @@ class MemberDirectory {
     }
 
     // Check if there are no members to display
-    if (this.displayedMembers.length === 0) {
+    if (this.filteredMembers.length === 0) {
       this.memberDirectory.querySelector('#wsmd-member-list-container').innerHTML = this.memberDirectory.getAttribute('data-no-members-found-msg');
       this.memberDirectory.querySelector('#wsmd-member-list-load-more').style.display = 'none';
       this.markers.forEach(marker => marker.setVisible(false));
@@ -137,8 +137,8 @@ class MemberDirectory {
       return;
     }
 
-    this.displayMembers(true, this.displayedMembers);
-    this.updateMapMarkers(this.displayedMembers);
+    this.displayMembers(true);
+    this.updateMapMarkers();
   }
 
   /**
@@ -182,10 +182,9 @@ class MemberDirectory {
   /**
    * Display the member list
    * @param {boolean} reset - Reset the list
-   * @param {Object[]} [filteredMembers] - Optional filtered member list
    * @returns {void}
    */
-  static displayMembers(reset = false, filteredMembers = null) {
+  static displayMembers(reset = false) {
     const memberListContainer = this.memberDirectory.querySelector('#wsmd-member-list-container');
     const memberList = this.memberDirectory.querySelector('#wsmd-member-list');
 
@@ -194,8 +193,8 @@ class MemberDirectory {
       this.memberListOffset = 0;
     }
 
-    // Use the filtered members if available, otherwise use the displayed members or the member list
-    const members = filteredMembers || this.displayedMembers || this.memberList;
+    // Use the filtered members if available, otherwise use the member list
+    const members = this.filteredMembers || this.memberList;
 
     // Clear the results number
     const resultsElement = memberListContainer.querySelector('.wsmd-member-list-results');
@@ -208,7 +207,7 @@ class MemberDirectory {
     resultElement.classList.add('wsmd-member-list-results');
     resultElement.innerHTML = `${members.length} results`;
     memberListContainer.prepend(resultElement);
-    
+
     const start = this.memberListOffset;
     const end = this.memberListOffset + this.memberListPerPage;
     const membersToDisplay = members.slice(start, end);
@@ -306,7 +305,7 @@ class MemberDirectory {
    * @returns {void}
    */
   static loadMoreMembers() {
-    this.displayMembers(false, this.displayedMembers);
+    this.displayMembers(false);
   }
 
   /**
@@ -422,7 +421,7 @@ class MemberDirectory {
     let nearestMarker = null;
     let minDistance = Infinity;
 
-    this.markers.forEach(marker => {
+    this.getVisibleMarkers().forEach(marker => {
       const d = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(lat, lng), marker.getPosition());
       if (d < minDistance) {
         minDistance = d;
@@ -474,7 +473,7 @@ class MemberDirectory {
         },
         map: this.map,
         title: member.wsmd_company,
-        icon: svgMarker,
+        icon: svgMarker(),
       });
 
       this.memberIdToMarkerMap.set(member.wsmd_id, marker);
@@ -500,7 +499,7 @@ class MemberDirectory {
       this.markerClusterer.clearMarkers();
     }
 
-    const visibleMarkers = this.markers.filter(marker => marker.getVisible());
+    const visibleMarkers = this.getVisibleMarkers();
 
     if (visibleMarkers.length > 1) {
       this.markerClusterer = new MarkerClusterer({
@@ -525,11 +524,10 @@ class MemberDirectory {
 
   /**
    * Update map markers based on the filtered members
-   * @param {Object[]} [filteredMembers] - Optional filtered member list
    * @returns {void}
    */
-  static updateMapMarkers(filteredMembers = null) {
-    const members = filteredMembers || this.memberList;
+  static updateMapMarkers() {
+    const members = this.filteredMembers || this.memberList;
     const bounds = new google.maps.LatLngBounds();
 
     this.markers.forEach(marker => {
@@ -629,6 +627,14 @@ class MemberDirectory {
   }
 
   /**
+   * Get visible Markers
+   * @returns {google.maps.Marker[]} - The visible markers
+   */
+  static getVisibleMarkers() {
+    return this.markers.filter(marker => marker.getVisible());
+  }
+
+  /**
    * Disable form inputs
    * @returns {void}
    */
@@ -638,6 +644,16 @@ class MemberDirectory {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  MemberDirectory.init();
-});
+// Initialize the application 
+// This provide Google Maps callback function
+// @ts-ignore
+window.WSMD = window.WSMD || {};
+WSMD.initApp = function() {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      MemberDirectory.init();
+    });
+  } else {
+    MemberDirectory.init();
+  }
+}; 

@@ -46,4 +46,20 @@ class WSMD_Taxonomy {
 
         return $terms;
     }
+
+    /**
+     * Get number of members assiated with each term
+     * @return array<int, int> $terms_count Array of term ID and count
+     */
+    public static function get_terms_count() {
+        $terms_count = array();
+        $terms = self::get_terms();
+        foreach ($terms as $term) {
+            $term_id = $term->term_id;
+            $term_count = count(get_objects_in_term($term_id, 'wsmd-taxonomy'));
+            $terms_count[$term_id] = $term_count;
+        }
+
+        return $terms_count;
+    }
 }

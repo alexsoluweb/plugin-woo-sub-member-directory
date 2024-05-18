@@ -111,15 +111,18 @@ class WSMD_Woo_Dashboard {
         }
 
         if (is_account_page() && is_user_logged_in() && isset($wp->query_vars['wsmd_woo_dashboard'])) {
-            $current_site_language = WSMD_Helpers::get_current_site_language();
             $style_version = filemtime(WSMD_PATH . 'assets/css/dashboard.css');
             $script_version = filemtime(WSMD_PATH . 'assets/js/dashboard.js');
-            // Load the dashboard styles
+            $google_map_params = array(
+                'loading' => 'async',
+                'libraries' => 'places,geometry',
+                'key' => WSMD_Woo_Settings::get_settings('wsmd_google_maps_api_key'),
+                'language' => WSMD_Helpers::get_current_site_language(),
+                'callback' => 'WSMD.initApp',
+            );
             wp_enqueue_style('wsmd-dashboard', WSMD_URL . 'assets/css/dashboard.css', array(), $style_version);
-            // Load Google Maps API v3
-            wp_enqueue_script('wsmd-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . WSMD_Woo_Settings::get_settings('wsmd_google_maps_api_key') . '&libraries=places&language=' . $current_site_language, array(), null, true);
-            // Load the dashboard script
-            wp_enqueue_script('wsmd-dashboard', WSMD_URL . 'assets/js/dashboard.js', array('wsmd-google-maps'), $script_version, true);
+            wp_enqueue_script('wsmd-dashboard', WSMD_URL . 'assets/js/dashboard.js', array(), $script_version, true);
+            wp_enqueue_script('wsmd-google-maps', add_query_arg($google_map_params, 'https://maps.googleapis.com/maps/api/js'), array('wsmd-dashboard'), 'v3', true);
         }
     }
 }
