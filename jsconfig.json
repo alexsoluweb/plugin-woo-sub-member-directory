@@ -32,7 +32,7 @@
             "@src/*": ["src/*"]
         }
     },
-    "include": ["src", "../../../../_tmp/MemberDirectory.js"],
+    "include": ["src"],
     "exclude": ["node_modules", "assets"]
   }
   
