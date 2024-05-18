@@ -1,7 +1,7 @@
 {
     "$schema": "https://json.schemastore.org/jsconfig",
     "compilerOptions": {
-        "baseUrl": "assets",
+        "baseUrl": ".",
         "allowJs": true,
         "checkJs": true,
         "allowSyntheticDefaultImports": true,
