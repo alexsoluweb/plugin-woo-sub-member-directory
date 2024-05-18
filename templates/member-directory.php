@@ -28,7 +28,7 @@
             <select name="wsmd_taxonomies[]" id="wsmd_taxonomies" multiple="multiple" data-placeholder="<?php esc_attr_e('Select taxonomies', 'wsmd'); ?>">
                 <?php foreach ($args['terms'] as $term) { ?>
                     <option value="<?php echo esc_attr($term->term_id); ?>">
-                        <?php echo esc_html($term->name); ?>
+                        <?php echo esc_html($term->name); ?> - <?php echo esc_html($term->term_id); ?>
                     </option>
                 <?php } ?>
             </select>

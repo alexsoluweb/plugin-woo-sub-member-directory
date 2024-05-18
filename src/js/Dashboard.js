@@ -1,6 +1,6 @@
-import '../../scss/dashboard.scss';
-import mapStyles from '../map-style';
-import '../../scss/tomselect.scss';
+import '@src/scss/dashboard.scss';
+import mapStyles from './mapStyles';
+import '@src/scss/tomselect.scss';
 import TomSelect from 'tom-select';
 
 class Dashboard {

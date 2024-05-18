@@ -1,7 +1,7 @@
-import '../../scss/member-directory.scss';
+import '@src/scss/member-directory.scss';
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
-import mapStyles, { svgMarker } from "../map-style";
-import '../../scss/tomselect.scss';
+import mapStyles, { svgMarker } from "./mapStyles";
+import '@src/scss/tomselect.scss';
 import TomSelect from 'tom-select';
 
 class MemberDirectory {
@@ -194,6 +194,7 @@ class MemberDirectory {
       this.memberListOffset = 0;
     }
 
+    // Use the filtered members if available, otherwise use the displayed members or the member list
     const members = filteredMembers || this.displayedMembers || this.memberList;
 
     // Clear the results number

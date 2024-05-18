@@ -21,9 +21,9 @@ module.exports = {
   devtool: mode === "development" ? "source-map" : false,
   mode: mode,
   entry: {
-    "member-directory": "./src/js/member-directory/MemberDirectory.js",
-    "dashboard": "./src/js/dashboard/Dashboard.js",
-    "admin-users": "./src/js/admin/users.js",
+    "member-directory": "./src/js/MemberDirectory.js",
+    "dashboard": "./src/js/Dashboard.js",
+    "admin-users": "./src/js/adminUsers.js",
   },
   output: {
     filename: "js/[name].js",

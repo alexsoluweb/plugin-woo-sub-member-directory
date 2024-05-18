@@ -4,15 +4,20 @@ namespace WSMD;
 
 class WSMD_Dummy_Data {
     
-    // Function to get random unique term ids
-    public static function get_random_term_ids(&$term_ids, $count) {
-        shuffle($term_ids);
-        return array_splice($term_ids, 0, $count);
+    // Function to randomly select a number of term IDs from an array of term IDs
+    public static function get_random_term_ids($term_ids, $count) {
+        $copy = $term_ids;
+        shuffle($copy);
+        return array_splice($copy, 0, $count);
     }
 
     public static function get_members(){
-        // Array of term ids to use
-         $term_ids = [20, 19, 21, 38, 24, 33, 22, 23, 27, 34, 36, 39, 40, 37, 35, 26, 29, 32, 25, 41, 31, 30, 28, 42];
+
+        // Get available terms ids
+        $available_terms = WSMD_Taxonomy::get_terms();
+        $term_ids = array_map(function($term){
+            return $term->term_id;
+        }, $available_terms);
 
         return [
             '1' => [
