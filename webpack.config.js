@@ -34,6 +34,7 @@ module.exports = {
   resolve: {
     alias: {
       '@node': path.resolve(__dirname, 'node_modules'),
+      '@src': path.resolve(__dirname, 'src'),
     },
   },
   plugins: [

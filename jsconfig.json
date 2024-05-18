@@ -28,10 +28,11 @@
         * Add aliases resolution here
         */
         "paths": {
-            "@node/*": ["node_modules/*"]
+            "@node/*": ["node_modules/*"],
+            "@src/*": ["src/*"]
         }
     },
-    "include": ["src"],
+    "include": ["src", "../../../../_tmp/MemberDirectory.js"],
     "exclude": ["node_modules", "assets"]
   }
   
