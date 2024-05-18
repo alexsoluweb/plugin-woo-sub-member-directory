@@ -14,29 +14,22 @@
         align-items: flex-end;
         gap: 1rem;
 
-        &.loading {
-            #wsmd-form-message {
-                text-align: center;
-                @include loader;
-            }
-        }
-
         #wsmd-form-message {
             flex: 1 0 100%;
             width: 100%;
             margin: 0;
-            
+
             &.error {
                 padding: 0.5rem 1rem;
             }
         }
 
-        .wsmd-filter-row{
+        .wsmd-filter-row {
             display: flex;
             flex-direction: column;
             gap: 0.25rem;
 
-            label{
+            label {
                 flex-shrink: 0;
             }
 
@@ -45,7 +38,7 @@
                 max-width: 100%;
 
                 #wsmd-search-address {
-                   display: block;
+                    display: block;
                 }
             }
 
@@ -54,12 +47,12 @@
                 align-items: center;
                 gap: 1rem;
 
-                @container (max-width: 640px){
+                @container (max-width: 640px) {
                     flex-direction: column;
                     align-items: flex-start;
                     flex: 1 0 100%;
-                    
-                    #wsmd-filter-or{
+
+                    #wsmd-filter-or {
                         display: flex;
                         align-items: center;
                         justify-content: center;
@@ -67,16 +60,16 @@
                         width: 100%;
 
                         &::before,
-                        &::after{
+                        &::after {
                             content: '';
                             display: inline-block;
                             flex: 1;
                             height: 1px;
                             background-color: rgba(0, 0, 0, 0.075);
-                        }   
+                        }
                     }
 
-                    #wsmd-my-location{
+                    #wsmd-my-location {
                         width: 100%;
 
                         .btn-text {
@@ -85,11 +78,11 @@
                     }
                 }
 
-                #wsmd-filter-or{
+                #wsmd-filter-or {
                     font-size: smaller;
                 }
-                
-                #wsmd-my-location{
+
+                #wsmd-my-location {
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -99,64 +92,85 @@
                         display: none;
                     }
 
-                    .wsmd-icon-paper-plane{
+                    .wsmd-icon-paper-plane {
                         font-size: 0.75rem;
                     }
                 }
             }
 
-            &.taxonomies{
+            &.taxonomies {
                 flex: 1 0 400px;
                 max-width: 100%;
 
-                #wsmd_taxonomies{
+                #wsmd_taxonomies {
                     visibility: hidden;
                 }
 
                 #wsmd_taxonomies,
-                .ts-wrapper{
+                .ts-wrapper {
                     width: 100%;
                 }
             }
         }
     }
 
-    #wsmd-map {
-        width: 100%;
-        aspect-ratio: 16/9;
+    #wsmd-map-container {
+        position: relative;
 
-        @container (max-width: 640px){
-            aspect-ratio: 1/1;
+        #map-spinner {
+            display: none;
+            position: absolute;
+            inset: 0 0;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.75);
+
+            &.show {
+                display: flex;
+            }
+
+            @include spinner;
         }
 
-        .wsmd-map-info-window {
-            padding: 0.5rem;
+        #wsmd-map {
+            width: 100%;
+            aspect-ratio: 16/9;
 
-            .wsmd-map-info-window-header{
-                display: flex;
-                flex-direction: column;
-
-                .wsmd-map-info-window-company{
-                    font-weight: 600;
-                    margin-bottom: 0.25rem;
-                }
-                
-                .wsmd-map-info-window-occupation{
-                    font-style: italic;
-                }
+            @container (max-width: 640px) {
+                aspect-ratio: 1/1;
             }
-            .wsmd-map-info-window-body {
-                display: flex;
-                flex-direction: column;
-                gap: 0.5rem;
 
-                > * {
+            .wsmd-map-info-window {
+                padding: 0.5rem;
+
+                .wsmd-map-info-window-header {
                     display: flex;
-                    align-items: center;
+                    flex-direction: column;
+
+                    .wsmd-map-info-window-company {
+                        font-weight: 600;
+                        margin-bottom: 0.25rem;
+                    }
+
+                    .wsmd-map-info-window-occupation {
+                        font-style: italic;
+                    }
+                }
+
+                .wsmd-map-info-window-body {
+                    display: flex;
+                    flex-direction: column;
                     gap: 0.5rem;
 
-                    marker {
-                        width: 1rem;
+                    > * {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+
+                        marker {
+                            width: 1rem;
+                        }
                     }
                 }
             }
@@ -174,15 +188,15 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
 
-            @container (max-width: 1024px){
+            @container (max-width: 1024px) {
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            @container (max-width: 640px){
+            @container (max-width: 640px) {
                 grid-template-columns: 1fr;
             }
 
-            .wsmd-member-item{
+            .wsmd-member-item {
                 border: 1px solid #ccc;
                 padding: 1rem;
                 cursor: pointer;
@@ -191,16 +205,16 @@
                     background-color: #f5f5f5;
                 }
 
-                .wsmd-member-item-header{
+                .wsmd-member-item-header {
                     display: flex;
                     flex-direction: column;
-                    
-                    .wsmd-member-item-company{
+
+                    .wsmd-member-item-company {
                         font-weight: 600;
                         margin-bottom: 0.25rem;
                     }
 
-                    .wsmd-member-item-occupation{
+                    .wsmd-member-item-occupation {
                         font-style: italic;
                     }
                 }
@@ -218,13 +232,14 @@
 
                         marker {
                             width: 1rem;
+                            font-size: 0.85rem;
                         }
                     }
                 }
             }
         }
 
-        #wsmd-member-list-load-more{
+        #wsmd-member-list-load-more {
             display: none;
             margin-top: 2rem;
             align-self: center;

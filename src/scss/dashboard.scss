@@ -9,9 +9,10 @@
         flex-wrap: wrap;
         gap: 1rem;
 
-        @container (max-width: 640px){
+        @container (max-width: 640px) {
             flex-wrap: nowrap !important;
             flex-direction: column !important;
+
             > * {
                 flex: 1 0 100% !important;
             }
@@ -31,12 +32,12 @@
             width: 100%;
             aspect-ratio: 16/9;
 
-            @container (max-width: 640px){
+            @container (max-width: 640px) {
                 aspect-ratio: 1/1;
             }
         }
 
-        #wsmd-save-settings{
+        #wsmd-save-settings {
             margin-top: 1rem;
         }
 
@@ -54,7 +55,7 @@
             }
 
             &.loading {
-                @include loader;
+                @include spinner;
             }
         }
     }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Member Directory template
  * 
@@ -34,7 +35,10 @@
             </select>
         </div>
     </form>
-    <div id="wsmd-map"></div>
+    <div id="wsmd-map-container">
+        <div id="map-spinner"></div>
+        <div id="wsmd-map"></div>
+    </div>
     <div id="wsmd-member-list-container">
         <div id="wsmd-member-list">
             <!-- Member items will be dynamically populated here -->

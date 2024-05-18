@@ -1,4 +1,4 @@
-@mixin loader{
+@mixin spinner {
     &:before {
         content: '';
         display: inline-block;
