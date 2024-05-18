@@ -3,12 +3,17 @@
 namespace WSMD;
 
 class WSMD_Dummy_Data {
-    public static function get_members() {
+    
+    // Function to get random unique term ids
+    public static function get_random_term_ids(&$term_ids, $count) {
+        shuffle($term_ids);
+        return array_splice($term_ids, 0, $count);
+    }
 
-        // No results dummy data
-        // return [];
+    public static function get_members(){
+        // Array of term ids to use
+         $term_ids = [20, 19, 21, 38, 24, 33, 22, 23, 27, 34, 36, 39, 40, 37, 35, 26, 29, 32, 25, 41, 31, 30, 28, 42];
 
-        // Québec dummy data
         return [
             '1' => [
                 'wsmd_visibility' => 'default',
@@ -23,7 +28,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://creativedesigns.com',
                 'wsmd_phone' => '418-555-0101',
                 'wsmd_email' => 'info@creativedesigns.com',
-                'wsmd_taxonomies' => [3, 4, 5]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '2' => [
                 'wsmd_visibility' => 'default',
@@ -38,7 +43,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://innovatech.com',
                 'wsmd_phone' => '514-555-0192',
                 'wsmd_email' => 'contact@innovatech.com',
-                'wsmd_taxonomies' => [6, 7, 8]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 5)
             ],
             '3' => [
                 'wsmd_visibility' => 'default',
@@ -53,7 +58,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://historyquebec.com',
                 'wsmd_phone' => '819-555-0113',
                 'wsmd_email' => 'curator@historyquebec.com',
-                'wsmd_taxonomies' => [9, 10, 11]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 9)
             ],
             '4' => [
                 'wsmd_visibility' => 'default',
@@ -68,7 +73,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://lasaguenéenne.com',
                 'wsmd_phone' => '418-555-0124',
                 'wsmd_email' => 'brew@lasaguenéenne.com',
-                'wsmd_taxonomies' => [12, 13, 14]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
             ],
             '5' => [
                 'wsmd_visibility' => 'default',
@@ -83,7 +88,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://chateauetoile.com',
                 'wsmd_phone' => '819-555-0165',
                 'wsmd_email' => 'manager@chateauetoile.com',
-                'wsmd_taxonomies' => [15, 16, 17]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 4)
             ],
             '6' => [
                 'wsmd_visibility' => 'default',
@@ -98,7 +103,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://labonnefourchette.com',
                 'wsmd_phone' => '819-555-0176',
                 'wsmd_email' => 'chef@labonnefourchette.com',
-                'wsmd_taxonomies' => [18, 19, 20]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '7' => [
                 'wsmd_visibility' => 'default',
@@ -113,7 +118,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://webworks.com',
                 'wsmd_phone' => '418-555-0187',
                 'wsmd_email' => 'info@webworks.com',
-                'wsmd_taxonomies' => [21, 22, 23]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 5)
             ],
             '8' => [
                 'wsmd_visibility' => 'default',
@@ -128,7 +133,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://buildart.com',
                 'wsmd_phone' => '514-555-0112',
                 'wsmd_email' => 'contact@buildart.com',
-                'wsmd_taxonomies' => [3, 6, 9]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
             ],
             '9' => [
                 'wsmd_visibility' => 'default',
@@ -143,7 +148,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://pixelperfect.com',
                 'wsmd_phone' => '418-555-0148',
                 'wsmd_email' => 'info@pixelperfect.com',
-                'wsmd_taxonomies' => [12, 15, 18]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '10' => [
                 'wsmd_visibility' => 'default',
@@ -158,7 +163,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://marketminds.com',
                 'wsmd_phone' => '450-555-0136',
                 'wsmd_email' => 'info@marketminds.com',
-                'wsmd_taxonomies' => [21, 19, 10]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 4)
             ],
             '11' => [
                 'wsmd_visibility' => 'default',
@@ -173,7 +178,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://decorsolutions.com',
                 'wsmd_phone' => '418-555-0190',
                 'wsmd_email' => 'contact@decorsolutions.com',
-                'wsmd_taxonomies' => [11, 13, 17]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '12' => [
                 'wsmd_visibility' => 'default',
@@ -188,7 +193,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://eventmasters.com',
                 'wsmd_phone' => '514-555-0191',
                 'wsmd_email' => 'info@eventmasters.com',
-                'wsmd_taxonomies' => [7, 8, 9]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
             ],
             '13' => [
                 'wsmd_visibility' => 'default',
@@ -203,7 +208,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://financepro.com',
                 'wsmd_phone' => '418-555-0193',
                 'wsmd_email' => 'advisor@financepro.com',
-                'wsmd_taxonomies' => [14, 18, 22]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 4)
             ],
             '14' => [
                 'wsmd_visibility' => 'default',
@@ -218,7 +223,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://propertyquebec.com',
                 'wsmd_phone' => '514-555-0194',
                 'wsmd_email' => 'contact@propertyquebec.com',
-                'wsmd_taxonomies' => [15, 16, 20]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '15' => [
                 'wsmd_visibility' => 'default',
@@ -233,7 +238,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://legalexperts.com',
                 'wsmd_phone' => '418-555-0195',
                 'wsmd_email' => 'legal@legalexperts.com',
-                'wsmd_taxonomies' => [13, 19, 22]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 5)
             ],
             '16' => [
                 'wsmd_visibility' => 'default',
@@ -248,7 +253,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://consultingco.com',
                 'wsmd_phone' => '514-555-0196',
                 'wsmd_email' => 'info@consultingco.com',
-                'wsmd_taxonomies' => [10, 17, 21]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
             ],
             '17' => [
                 'wsmd_visibility' => 'default',
@@ -263,7 +268,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://marineresearch.com',
                 'wsmd_phone' => '418-555-0197',
                 'wsmd_email' => 'info@marineresearch.com',
-                'wsmd_taxonomies' => [12, 20, 23]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 4)
             ],
             '18' => [
                 'wsmd_visibility' => 'default',
@@ -278,7 +283,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://snowypeaks.com',
                 'wsmd_phone' => '450-555-0198',
                 'wsmd_email' => 'manager@snowypeaks.com',
-                'wsmd_taxonomies' => [3, 8, 14]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '19' => [
                 'wsmd_visibility' => 'default',
@@ -293,7 +298,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://vineyardestates.com',
                 'wsmd_phone' => '450-555-0199',
                 'wsmd_email' => 'info@vineyardestates.com',
-                'wsmd_taxonomies' => [9, 18, 23]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 5)
             ],
             '20' => [
                 'wsmd_visibility' => 'default',
@@ -308,7 +313,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://quebecuniversity.com',
                 'wsmd_phone' => '418-555-0200',
                 'wsmd_email' => 'professor@quebecuniversity.com',
-                'wsmd_taxonomies' => [6, 11, 17]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '21' => [
                 'wsmd_visibility' => 'default',
@@ -323,7 +328,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://techsolutions.com',
                 'wsmd_phone' => '418-555-0201',
                 'wsmd_email' => 'contact@techsolutions.com',
-                'wsmd_taxonomies' => [14, 20, 4]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 4)
             ],
             '22' => [
                 'wsmd_visibility' => 'default',
@@ -338,7 +343,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://codemasters.com',
                 'wsmd_phone' => '450-555-0202',
                 'wsmd_email' => 'info@codemasters.com',
-                'wsmd_taxonomies' => [3, 19, 22]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
             ],
             '23' => [
                 'wsmd_visibility' => 'default',
@@ -353,7 +358,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://northernmines.com',
                 'wsmd_phone' => '819-555-0203',
                 'wsmd_email' => 'engineer@northernmines.com',
-                'wsmd_taxonomies' => [10, 13, 16]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 4)
             ],
             '24' => [
                 'wsmd_visibility' => 'default',
@@ -368,7 +373,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://sherbrookdental.com',
                 'wsmd_phone' => '819-555-0204',
                 'wsmd_email' => 'info@sherbrookdental.com',
-                'wsmd_taxonomies' => [8, 15, 18]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '25' => [
                 'wsmd_visibility' => 'default',
@@ -383,7 +388,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://easterntownshipsvet.com',
                 'wsmd_phone' => '819-555-0205',
                 'wsmd_email' => 'info@easterntownshipsvet.com',
-                'wsmd_taxonomies' => [11, 17, 20]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 4)
             ],
             '26' => [
                 'wsmd_visibility' => 'default',
@@ -398,7 +403,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://saguenaylibrary.com',
                 'wsmd_phone' => '418-555-0206',
                 'wsmd_email' => 'info@saguenaylibrary.com',
-                'wsmd_taxonomies' => [3, 10, 19]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '27' => [
                 'wsmd_visibility' => 'default',
@@ -413,7 +418,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://gaspesieadventures.com',
                 'wsmd_phone' => '418-555-0207',
                 'wsmd_email' => 'info@gaspesieadventures.com',
-                'wsmd_taxonomies' => [6, 12, 16]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
             ],
             '28' => [
                 'wsmd_visibility' => 'default',
@@ -428,7 +433,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://gaspesieresort.com',
                 'wsmd_phone' => '418-555-0208',
                 'wsmd_email' => 'info@gaspesieresort.com',
-                'wsmd_taxonomies' => [9, 15, 20]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 4)
             ],
             '29' => [
                 'wsmd_visibility' => 'default',
@@ -443,7 +448,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://abitibigold.com',
                 'wsmd_phone' => '819-555-0209',
                 'wsmd_email' => 'supervisor@abitibigold.com',
-                'wsmd_taxonomies' => [12, 18, 23]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '30' => [
                 'wsmd_visibility' => 'default',
@@ -458,7 +463,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://boulangeriequebec.com',
                 'wsmd_phone' => '418-555-0210',
                 'wsmd_email' => 'info@boulangeriequebec.com',
-                'wsmd_taxonomies' => [7, 13, 17]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
             ],
             '31' => [
                 'wsmd_visibility' => 'default',
@@ -473,7 +478,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://gaspesiefisheries.com',
                 'wsmd_phone' => '418-555-0211',
                 'wsmd_email' => 'manager@gaspesiefisheries.com',
-                'wsmd_taxonomies' => [8, 15, 19]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '32' => [
                 'wsmd_visibility' => 'default',
@@ -488,7 +493,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://quebecorganicfarms.com',
                 'wsmd_phone' => '418-555-0212',
                 'wsmd_email' => 'info@quebecorganicfarms.com',
-                'wsmd_taxonomies' => [11, 14, 20]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
             ],
             '33' => [
                 'wsmd_visibility' => 'default',
@@ -503,7 +508,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://easternlogistics.com',
                 'wsmd_phone' => '613-555-0213',
                 'wsmd_email' => 'info@easternlogistics.com',
-                'wsmd_taxonomies' => [16, 19, 21]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '34' => [
                 'wsmd_visibility' => 'default',
@@ -518,7 +523,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://ottawavalleyretailers.com',
                 'wsmd_phone' => '613-555-0214',
                 'wsmd_email' => 'manager@ottawavalleyretailers.com',
-                'wsmd_taxonomies' => [14, 17, 21]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 4)
             ],
             '35' => [
                 'wsmd_visibility' => 'default',
@@ -533,7 +538,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://stlawrencehealth.com',
                 'wsmd_phone' => '613-555-0215',
                 'wsmd_email' => 'admin@stlawrencehealth.com',
-                'wsmd_taxonomies' => [7, 10, 22]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
             ],
             '36' => [
                 'wsmd_visibility' => 'default',
@@ -548,7 +553,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://ottawaresearch.com',
                 'wsmd_phone' => '613-555-0216',
                 'wsmd_email' => 'scientist@ottawaresearch.com',
-                'wsmd_taxonomies' => [15, 17, 20]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 4)
             ],
             '37' => [
                 'wsmd_visibility' => 'default',
@@ -563,7 +568,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://techinnovators.com',
                 'wsmd_phone' => '418-555-0234',
                 'wsmd_email' => 'info@techinnovators.com',
-                'wsmd_taxonomies' => [8, 12, 18]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
             ],
             '38' => [
                 'wsmd_visibility' => 'default',
@@ -578,7 +583,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://datainsights.com',
                 'wsmd_phone' => '514-555-0456',
                 'wsmd_email' => 'contact@datainsights.com',
-                'wsmd_taxonomies' => [10, 11, 19]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '39' => [
                 'wsmd_visibility' => 'default',
@@ -593,7 +598,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://marketleaders.com',
                 'wsmd_phone' => '819-555-0678',
                 'wsmd_email' => 'info@marketleaders.com',
-                'wsmd_taxonomies' => [12, 15, 18]
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
             ],
             '40' => [
                 'wsmd_visibility' => 'default',
@@ -608,8 +613,8 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://productmasters.com',
                 'wsmd_phone' => '418-555-0890',
                 'wsmd_email' => 'contact@productmasters.com',
-                'wsmd_taxonomies' => [11, 14, 17]
-            ]            
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
+            ]
         ];
     }
 }
