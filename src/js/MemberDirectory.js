@@ -40,6 +40,10 @@ class MemberDirectory
     static taxonomies = null;
     /** @type {number} */
     static maxShowMoreTags = 6;
+    /** @type {string} */
+    static filterLogicOperator = "AND";
+    /** @type {number} */
+    static maxZoomLevel = 16;
 
     /**
      * Initialize the application
@@ -70,8 +74,7 @@ class MemberDirectory
 
                 // No members found
                 if (!this.memberList.length) {
-                    this.memberDirectory.querySelector("#wsmd-member-list-container").innerHTML =
-                        this.memberDirectory.getAttribute("data-no-members-found-msg");
+                    this.displayNBResults();
                     this.disableFormInputs();
                     return;
                 }
@@ -79,6 +82,7 @@ class MemberDirectory
                 this.getTaxonomiesFromSelect();
                 this.randomizeMemberList();
                 this.displayMembers();
+                this.displayNBResults();
 
                 // Autocomplete place changed event
                 this.autocomplete.addListener("place_changed", () =>
@@ -118,12 +122,32 @@ class MemberDirectory
                     this.resetMarkerAnimation();
                     this.clearErrorMessage();
                     this.filterMembersByTaxonomies();
+                    this.displayNBResults();
                 });
             })
             .catch((error) =>
             {
                 this.showErrorMessage(error.message);
             });
+    }
+
+    /**
+     * Display the number of results
+     * @returns {void}
+     */
+    static displayNBResults()
+    {
+        const nbResultsElement = this.memberDirectory.querySelector("#wsmd-member-list-results");
+        const nbResults = this.filteredMembers ? this.filteredMembers.length : this.memberList.length;
+        const localizeStrings = JSON.parse(nbResultsElement.getAttribute('data-localize-strings'));
+
+        if (nbResults === 0) {
+            nbResultsElement.innerHTML = localizeStrings.no_results;
+        } else if (nbResults === 1) {
+            nbResultsElement.innerHTML = '1' + " " + localizeStrings.one_result;
+        } else {
+            nbResultsElement.innerHTML = nbResults + " " + localizeStrings.multiple_results;
+        }
     }
 
     /**
@@ -176,23 +200,18 @@ class MemberDirectory
             this.filteredMembers = this.memberList.filter((member) =>
             {
                 const memberTaxonomies = member.wsmd_taxonomies || [];
-                // Apply OR condition
-                return selectedTaxonomies.some((taxonomy) =>
-                    memberTaxonomies.includes(taxonomy)
-                );
+                if (this.filterLogicOperator === "OR") {
+                    // OR logic
+                    return selectedTaxonomies.some((taxonomy) =>
+                        memberTaxonomies.includes(taxonomy)
+                    );
+                } else {
+                    // AND logic
+                    return selectedTaxonomies.every((taxonomy) =>
+                        memberTaxonomies.includes(taxonomy)
+                    );
+                }
             });
-        }
-
-        // Check if there are no members to display
-        if (this.filteredMembers.length === 0) {
-            this.memberDirectory.querySelector("#wsmd-member-list-container").innerHTML =
-                this.memberDirectory.getAttribute("data-no-members-found-msg");
-            // @ts-ignore
-            this.memberDirectory.querySelector("#wsmd-member-list-load-more").style.display = "none";
-            this.markers.forEach((marker) => marker.setVisible(false));
-            this.updateMarkerClusterer(new google.maps.LatLngBounds());
-            this.markerClusterer = null;
-            return;
         }
 
         this.displayMembers(true);
@@ -227,7 +246,7 @@ class MemberDirectory
             const marker = this.memberIdToMarkerMap.get(memberId);
             if (marker) {
                 this.map.panTo(marker.getPosition());
-                this.map.setZoom(12);
+                this.map.setZoom(this.maxZoomLevel);
                 this.memberDirectory.querySelector("#wsmd-map").scrollIntoView({ behavior: "smooth" });
                 marker.setAnimation(google.maps.Animation.BOUNCE);
                 this.activeMarker = marker;
@@ -242,7 +261,6 @@ class MemberDirectory
      */
     static displayMembers(reset = false)
     {
-        const memberListContainer = this.memberDirectory.querySelector("#wsmd-member-list-container");
         const memberList = this.memberDirectory.querySelector("#wsmd-member-list");
 
         if (reset) {
@@ -252,18 +270,6 @@ class MemberDirectory
 
         // Use the filtered members if available, otherwise use the member list
         const members = this.filteredMembers || this.memberList;
-
-        // Clear the results number
-        const resultsElement = memberListContainer.querySelector(".wsmd-member-list-results");
-        if (resultsElement) {
-            resultsElement.remove();
-        }
-
-        // Add the results number to the member list container
-        const resultElement = document.createElement("div");
-        resultElement.classList.add("wsmd-member-list-results");
-        resultElement.innerHTML = `${members.length} results`;
-        memberListContainer.prepend(resultElement);
 
         const start = this.memberListOffset;
         const end = this.memberListOffset + this.memberListPerPage;
@@ -595,41 +601,6 @@ class MemberDirectory
     }
 
     /**
-     * Update the MarkerClusterer instance and set map bounds
-     * @param {google.maps.LatLngBounds} bounds - The bounds to set for the map
-     * @returns {void}
-     */
-    static updateMarkerClusterer(bounds)
-    {
-        if (this.markerClusterer) {
-            this.markerClusterer.clearMarkers();
-        }
-
-        const visibleMarkers = this.getVisibleMarkers();
-
-        if (visibleMarkers.length > 1) {
-            this.markerClusterer = new MarkerClusterer({
-                markers: visibleMarkers,
-                map: this.map,
-            });
-            this.map.fitBounds(bounds);
-
-            google.maps.event.addListenerOnce(this.map, "idle", () =>
-            {
-                if (this.map.getZoom() > 12) {
-                    this.map.setZoom(12);
-                }
-            });
-        } else if (visibleMarkers.length === 1) {
-            this.map.setCenter(visibleMarkers[0].getPosition());
-            this.map.setZoom(12);
-        } else {
-            this.map.setCenter({ lat: 0, lng: 0 });
-            this.map.setZoom(2);
-        }
-    }
-
-    /**
      * Update map markers based on the filtered members
      * @returns {void}
      */
@@ -653,6 +624,40 @@ class MemberDirectory
         });
 
         this.updateMarkerClusterer(bounds);
+    }
+
+    /**
+     * Update the MarkerClusterer instance and set map bounds
+     * @param {google.maps.LatLngBounds} bounds - The bounds to set for the map
+     * @returns {void}
+     */
+    static updateMarkerClusterer(bounds)
+    {
+        if (this.markerClusterer) {
+            this.markerClusterer.clearMarkers();
+            this.markerClusterer = null;
+        }
+
+        const visibleMarkers = this.getVisibleMarkers();
+
+        if (visibleMarkers.length >= 1) {
+            this.markerClusterer = new MarkerClusterer({
+                markers: visibleMarkers,
+                map: this.map,
+            });
+            this.map.fitBounds(bounds);
+
+            // Set max zoom level to 16
+            google.maps.event.addListenerOnce(this.map, "idle", () =>
+            {
+                if (this.map.getZoom() > this.maxZoomLevel) {
+                    this.map.setZoom(this.maxZoomLevel);
+                }
+            });
+        } else {
+            this.map.setCenter({ lat: 0, lng: 0 });
+            this.map.setZoom(2);
+        }
     }
 
     /**

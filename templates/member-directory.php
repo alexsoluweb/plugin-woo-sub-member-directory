@@ -6,8 +6,14 @@
  * @var $args['shortcode_args'] Array of shortcode arguments
  * @var $args['terms'] Array of WP_Term objects (available taxonomies)
  */
+
+$localize_strings = array(
+    'no_results' => __('No results found', 'wsmd'),
+    'one_result' => __('Result', 'wsmd'),
+    'multiple_results' => __('Results', 'wsmd'),
+);
 ?>
-<div id="wsmd-member-directory" data-no-members-found-msg="<?php esc_attr_e('No results found', 'wsmd'); ?>">
+<div id="wsmd-member-directory">
     <form id="wsmd-form" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>">
         <p id="wsmd-form-message"></p>
         <div class="wsmd-filter-row search">
@@ -40,6 +46,7 @@
         <div id="wsmd-map"></div>
     </div>
     <div id="wsmd-member-list-container">
+        <div id="wsmd-member-list-results" data-localize-strings="<?= htmlspecialchars(json_encode($localize_strings), ENT_QUOTES, 'UTF-8'); ?>"></div>
         <div id="wsmd-member-list">
             <!-- Member items will be dynamically populated here -->
         </div>
