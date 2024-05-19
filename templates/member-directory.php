@@ -4,7 +4,7 @@
  * Member Directory template
  * 
  * @var $args['shortcode_args'] Array of shortcode arguments
- * @var $args['terms'] Array of WP_Term objects (available taxonomies)
+ * @var $args['grouped_terms'] Array of WP_Term objects (available taxonomies)
  */
 
 $localize_strings = array(
@@ -32,11 +32,15 @@ $localize_strings = array(
         </div>
         <div class="wsmd-filter-row taxonomies">
             <label for="wsmd_taxonomies"><?php esc_html_e('Filter by taxonomies', 'wsmd'); ?></label>
-            <select name="wsmd_taxonomies[]" id="wsmd_taxonomies" multiple="multiple" data-placeholder="<?php esc_attr_e('Select taxonomies', 'wsmd'); ?>">
-                <?php foreach ($args['terms'] as $term) { ?>
-                    <option value="<?php echo esc_attr($term->term_id); ?>">
-                        <?php echo esc_html($term->name); ?>
-                    </option>
+            <select name="wsmd_taxonomies[]" id="wsmd_taxonomies" multiple="multiple" placeholder="<?php esc_attr_e('Select taxonomies', 'wsmd'); ?>">
+                <?php foreach ($args['grouped_terms'] as $parent_id => $group) { ?>
+                    <optgroup label="<?php echo esc_attr($group['label']); ?>">
+                        <?php foreach ($group['terms'] as $term) { ?>
+                            <option value="<?php echo esc_attr($term->term_id); ?>">
+                                <?php echo esc_html($term->name); ?>
+                            </option>
+                        <?php } ?>
+                    </optgroup>
                 <?php } ?>
             </select>
         </div>

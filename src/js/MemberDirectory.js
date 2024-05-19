@@ -175,8 +175,9 @@ class MemberDirectory
         const selectElement = document.querySelector("#wsmd_taxonomies");
         if (selectElement) {
             return new TomSelect(selectElement, {
-                placeholder: selectElement.getAttribute("data-placeholder"),
+                optgroupLabelField: 'label',
                 allowEmptyOption: true,
+                sortField: 'text',
                 plugins: ["remove_button"],
             });
         }

@@ -71,7 +71,7 @@ class WSMD_Helpers
         // If the cache is empty, perform the query and cache the results
         if ($members === false) {
 
-            
+
             // Get all users
             $users = get_users([
                 // 'role__in' => ['subscriber', 'customer'],
@@ -96,7 +96,7 @@ class WSMD_Helpers
             if (empty($users)) {
                 return [];
             }
-                    
+
             // Loop through users
             $members = [];
             foreach ($users as $user) {
@@ -114,6 +114,23 @@ class WSMD_Helpers
         return $members;
     }
 
+    /**
+     * Format terms for grouped select options (for tom-select)
+     * @param array $terms Array of WP_Term objects
+     * @return array $formatted_terms Array of formatted terms
+     */
+    public static function format_terms_for_grouped_select_options($terms)
+    {
+        $grouped_terms = [];
+
+        foreach ($terms as $term) {
+            $parent_term_id = $term->parent ? $term->parent : $term->term_id;
+            $grouped_terms[$parent_term_id]['label'] = $term->parent ? get_term($term->parent)->name : $term->name;
+            $grouped_terms[$parent_term_id]['terms'][] = $term;
+        }
+
+        return $grouped_terms;
+    }
 
     /**
      * Get the current site language

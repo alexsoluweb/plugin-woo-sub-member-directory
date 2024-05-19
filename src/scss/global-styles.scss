@@ -9,29 +9,11 @@
     input[type="url"],
     input[type="password"],
     input[type="search"],
-    select,
-    .ts-control {
-        appearance: none;
-        padding: var(--wsmd-input-padding, 0.5rem);
-        background-color: var(--wsmd-input-background-color, #fafafa);
-        color: var(--wsmd-input-color, #43454b);
-        border: var(--wsmd-input-border, 0);
-        box-sizing: var(--wsmd-input-box-sizing, border-box);
-        font-weight: var(--wsmd-input-font-weight, 400);
-        box-shadow: var(--wsmd-input-box-shadow, inset 0 0 1px rgba(0, 0, 0, .125));
-        min-height: var(--wsmd-input-min-height, 2.75rem);
-
-        .item{
-            color: var(--wsmd-ts-item-color, #43454b);
-
-            a.remove::before{
-                color: var(--wsmd-ts-remove-item-color, #43454b);
-                opacity: var(--wsmd-ts-remove-item-opacity, 0.5);
-            }
-        }
+    select {
+        @include inputs;
     }
 
-    button{
+    button {
         appearance: none;
         cursor: pointer;
         background-color: var(--wsmd-button-background-color, #eeeeee);
@@ -42,17 +24,17 @@
         font-weight: var(--wsmd-button-font-weight, 600);
         min-height: var(--wsmd-button-min-height, 2.75rem);
 
-        &:hover{
+        &:hover {
             background-color: var(--wsmd-button-hover-background-color, #dddddd);
         }
     }
 
-    #wsmd-form-message{
-        &.error{
+    #wsmd-form-message {
+        &.error {
             border: var(--wsmd-form-message-error-border, 1px solid red);
         }
 
-        &.success{
+        &.success {
             border: var(--wsmd-form-message-success-border, 1px solid green);
         }
     }

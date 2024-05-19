@@ -16,3 +16,15 @@
         }
     }
 }
+
+@mixin inputs {
+    appearance: none;
+    padding: var(--wsmd-input-padding, 0.5rem);
+    background-color: var(--wsmd-input-background-color, #fafafa);
+    color: var(--wsmd-input-color, #43454b);
+    border: var(--wsmd-input-border, 0);
+    box-sizing: var(--wsmd-input-box-sizing, border-box);
+    font-weight: var(--wsmd-input-font-weight, 400);
+    box-shadow: var(--wsmd-input-box-shadow, inset 0 0 1px rgba(0, 0, 0, .125));
+    min-height: var(--wsmd-input-min-height, 2.75rem);
+}

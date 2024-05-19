@@ -16,7 +16,7 @@ class WSMD_Shortcodes
     public function enqueue_scripts()
     {
         global $post;
-        
+
         if (!is_a($post, 'WP_Post')) {
             return;
         }
@@ -52,7 +52,9 @@ class WSMD_Shortcodes
             true,
             array(
                 'shortcode_args' => $args,
-                'terms' => WSMD_Taxonomy::get_terms(),
+                'grouped_terms' => WSMD_Helpers::format_terms_for_grouped_select_options(
+                    WSMD_Taxonomy::get_terms(),
+                ),
             ),
         );
         return ob_get_clean();

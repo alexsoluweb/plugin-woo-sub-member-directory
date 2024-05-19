@@ -1,5 +1,52 @@
+@import 'mixins.scss';
+
 $select-border-radius: var(--wsmd-ts-input-border-radius, 0);
 $select-font-size: var(--wsmd-ts-input-font-size, 1rem);
 
 // Import Tom Select styles after your custom overrides
+// @import '~tom-select/src/scss/tom-select.default.scss';
 @import '~tom-select/src/scss/tom-select.scss';
+
+#wsmd-form {
+    .ts-wrapper {
+        //
+
+        .ts-control {
+            @include inputs;
+
+            .item {
+                color: var(--wsmd-ts-item-color, #43454b);
+
+                a.remove::before {
+                    color: var(--wsmd-ts-remove-item-color, #43454b);
+                    opacity: var(--wsmd-ts-remove-item-opacity, 0.5);
+                }
+            }
+        }
+
+        .ts-dropdown {
+            //
+
+            .ts-dropdown-content {
+                //
+
+                .optgroup {
+                    //
+
+                    .optgroup-header {
+                        font-weight: 600;
+                        border-top: 1px solid var(--wsmd-ts-optgroup-header-border-color, #e5e5e5);
+                        border-bottom: 1px solid var(--wsmd-ts-optgroup-header-border-color, #e5e5e5);
+                        background-color: var(--wsmd-ts-optgroup-header-bg-color, #eeeeee);
+                        padding: 0.5rem;
+                    }
+
+                    .option {
+                        padding: 0.5rem;
+                        padding-left: 1rem;
+                    }
+                }
+            }
+        }
+    }
+}
