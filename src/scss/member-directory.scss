@@ -235,6 +235,18 @@
                             font-size: 0.85rem;
                         }
                     }
+
+                    .wsmd-member-item-taxonomies {
+                        flex-wrap: wrap;
+                        margin-top: 0.5rem;
+
+                        > * {
+                            border: 1px solid #ccc;
+                            padding: 0.15rem 0.3rem;
+                            font-size: 0.85rem;
+                        }
+
+                    }
                 }
             }
         }

@@ -93,7 +93,7 @@ class WSMD_AJAX
                 'field_validation_errors' => $save_user_settings_errors
             ));
         }
-       
+
         // Return success
         wp_send_json_success(array(
             'message' => __('Settings saved successfully', 'wsmd'),

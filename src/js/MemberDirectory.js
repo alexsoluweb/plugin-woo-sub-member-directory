@@ -36,6 +36,8 @@ class MemberDirectory
     static markerClusterer = null;
     /** @type {google.maps.places.Autocomplete} */
     static autocomplete = null;
+    /** @type {Object[]} */
+    static taxonomies = null;
 
     /**
      * Initialize the application
@@ -72,6 +74,7 @@ class MemberDirectory
                     return;
                 }
 
+                this.getTaxonomiesFromSelect();
                 this.randomizeMemberList();
                 this.displayMembers();
 
@@ -119,6 +122,21 @@ class MemberDirectory
             {
                 this.showErrorMessage(error.message);
             });
+    }
+
+    /**
+     * Get taxonomies from the select element
+     * @returns {void}
+     */
+    static getTaxonomiesFromSelect()
+    {
+        this.taxonomies = Object.keys(this.taxonomiesSelect.options).map((key) =>
+        {
+            return {
+                id: key,
+                name: this.taxonomiesSelect.options[key].$option.text,
+            };
+        });
     }
 
     /**
@@ -305,10 +323,7 @@ class MemberDirectory
         if (member.wsmd_taxonomies) {
             content += `
         <div class="wsmd-member-item-taxonomies">
-          <marker class="wsmd-icon-tag"></marker>
-          ${member.wsmd_taxonomies
-                    .map((taxonomy) => `<span class="wsmd-member-item-taxonomy">${taxonomy}</span>`)
-                    .join("")}
+          ${this.buildMemberTaxonomies(member.wsmd_taxonomies)}
         </div>`;
         }
 
@@ -317,6 +332,22 @@ class MemberDirectory
         memberItem.innerHTML = content;
 
         return memberItem;
+    }
+
+    /**
+     * Build member taxonomies
+     * @param {number[]} taxonomyIds - Taxonomy IDs
+     * @returns {string} - The taxonomies HTML
+     */
+    static buildMemberTaxonomies(taxonomyIds)
+    {
+        return taxonomyIds
+            .map((taxonomyId) =>
+            {
+                const taxonomy = this.taxonomies.find((t) => t.id === String(taxonomyId));
+                return `<span class="wsmd-taxonomy">${taxonomy ? taxonomy.name : ""}</span>`;
+            })
+            .join("");
     }
 
     /**
