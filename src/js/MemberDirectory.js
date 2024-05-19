@@ -38,6 +38,8 @@ class MemberDirectory
     static autocomplete = null;
     /** @type {Object[]} */
     static taxonomies = null;
+    /** @type {number} */
+    static maxShowMoreTags = 6;
 
     /**
      * Initialize the application
@@ -197,6 +199,7 @@ class MemberDirectory
         this.updateMapMarkers();
     }
 
+
     /**
      * Handle member item click event
      * @param {MouseEvent} event - The mouse event
@@ -204,17 +207,28 @@ class MemberDirectory
      */
     static handleMemberItemClick(event)
     {
+        // Handle "Show More" taxonomies button click
         // @ts-ignore
-        const memberItem = event.target.closest(".wsmd-member-item");
-        if (memberItem) {
+        if (event.target.classList.contains("wsmd-taxonomies-show-more")) {
+            const button = event.target;
+            // @ts-ignore
+            const remainingTaxonomyIds = button.getAttribute('data-remaining').split(',').map(Number);
+            // @ts-ignore
+            this.showMoreTaxonomies(button, remainingTaxonomyIds);
+            return;
+        }
+
+        // Handle member item click
+        // @ts-ignore
+        if (event.target.closest(".wsmd-member-item")) {
+            // @ts-ignore
+            const memberItem = event.target.closest(".wsmd-member-item");
             const memberId = memberItem.dataset.memberId;
             const marker = this.memberIdToMarkerMap.get(memberId);
             if (marker) {
                 this.map.panTo(marker.getPosition());
                 this.map.setZoom(12);
-                this.memberDirectory
-                    .querySelector("#wsmd-map")
-                    .scrollIntoView({ behavior: "smooth" });
+                this.memberDirectory.querySelector("#wsmd-map").scrollIntoView({ behavior: "smooth" });
                 marker.setAnimation(google.maps.Animation.BOUNCE);
                 this.activeMarker = marker;
             }
@@ -341,13 +355,51 @@ class MemberDirectory
      */
     static buildMemberTaxonomies(taxonomyIds)
     {
-        return taxonomyIds
+        // Limit the number of taxonomy tags to show
+        const limitedTaxonomyIds = taxonomyIds.slice(0, this.maxShowMoreTags);
+        const remainingTaxonomyIds = taxonomyIds.slice(this.maxShowMoreTags);
+
+        // Create HTML for the first few tags
+        const tagsHtml = limitedTaxonomyIds
             .map((taxonomyId) =>
             {
                 const taxonomy = this.taxonomies.find((t) => t.id === String(taxonomyId));
                 return `<span class="wsmd-taxonomy">${taxonomy ? taxonomy.name : ""}</span>`;
             })
             .join("");
+
+        // If there are more than the limit, add a "Show More" button
+        let showMoreButton = '';
+        if (remainingTaxonomyIds.length > 0) {
+            showMoreButton = `<button class="wsmd-taxonomies-show-more" data-remaining="${remainingTaxonomyIds.join(',')}">[...]</button>`;
+        }
+
+        return tagsHtml + showMoreButton;
+    }
+
+    /**
+     * Show more taxonomies
+     * @param {HTMLButtonElement} button - The "Show More" button
+     * @param {number[]} remainingTaxonomyIds - The remaining taxonomy IDs
+     * @returns {void}
+     */
+    static showMoreTaxonomies(button, remainingTaxonomyIds)
+    {
+        // Create HTML for the remaining tags
+        const remainingTagsHtml = remainingTaxonomyIds
+            .map((taxonomyId) =>
+            {
+                const taxonomy = this.taxonomies.find((t) => t.id === String(taxonomyId));
+                return `<span class="wsmd-taxonomy">${taxonomy ? taxonomy.name : ""}</span>`;
+            })
+            .join("");
+
+        // Append the remaining tags and remove the "Show More" button
+        const parent = button.parentElement;
+        if (parent) {
+            parent.insertAdjacentHTML("beforeend", remainingTagsHtml);
+            button.remove();
+        }
     }
 
     /**

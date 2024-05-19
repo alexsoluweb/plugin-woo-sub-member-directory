@@ -2,20 +2,23 @@
 
 namespace WSMD;
 
-class WSMD_Dummy_Data {
-    
+class WSMD_Dummy_Data
+{
+
     // Function to randomly select a number of term IDs from an array of term IDs
-    public static function get_random_term_ids($term_ids, $count) {
+    public static function get_random_term_ids($term_ids, $count)
+    {
         $copy = $term_ids;
         shuffle($copy);
         return array_splice($copy, 0, $count);
     }
 
-    public static function get_members(){
+    public static function get_members()
+    {
 
         // Get available terms ids
         $available_terms = WSMD_Taxonomy::get_terms();
-        $term_ids = array_map(function($term){
+        $term_ids = array_map(function ($term) {
             return $term->term_id;
         }, $available_terms);
 
@@ -33,7 +36,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://creativedesigns.com',
                 'wsmd_phone' => '418-555-0101',
                 'wsmd_email' => 'info@creativedesigns.com',
-                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 8)
             ],
             '2' => [
                 'wsmd_visibility' => 'default',
@@ -108,7 +111,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://labonnefourchette.com',
                 'wsmd_phone' => '819-555-0176',
                 'wsmd_email' => 'chef@labonnefourchette.com',
-                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 7)
             ],
             '7' => [
                 'wsmd_visibility' => 'default',
@@ -198,7 +201,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://eventmasters.com',
                 'wsmd_phone' => '514-555-0191',
                 'wsmd_email' => 'info@eventmasters.com',
-                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 10)
             ],
             '13' => [
                 'wsmd_visibility' => 'default',
@@ -258,7 +261,7 @@ class WSMD_Dummy_Data {
                 'wsmd_website' => 'http://consultingco.com',
                 'wsmd_phone' => '514-555-0196',
                 'wsmd_email' => 'info@consultingco.com',
-                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
+                'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 12)
             ],
             '17' => [
                 'wsmd_visibility' => 'default',
@@ -623,4 +626,3 @@ class WSMD_Dummy_Data {
         ];
     }
 }
-?>
