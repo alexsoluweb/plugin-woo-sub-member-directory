@@ -139,7 +139,7 @@ class MemberDirectory
     {
         const nbResultsElement = this.memberDirectory.querySelector("#wsmd-member-list-results");
         const nbResults = this.filteredMembers ? this.filteredMembers.length : this.memberList.length;
-        const localizeStrings = JSON.parse(nbResultsElement.getAttribute('data-localize-strings'));
+        const localizeStrings = JSON.parse(this.memberDirectory.getAttribute('data-localize-strings'));
 
         if (nbResults === 0) {
             nbResultsElement.innerHTML = localizeStrings.no_results;
@@ -591,7 +591,7 @@ class MemberDirectory
 
             marker.addListener("click", () =>
             {
-                this.openInfoWindow(this.infoWindow, marker, member);
+                this.toggleInfoWindow(marker, member);
             });
 
             return marker;
@@ -661,13 +661,12 @@ class MemberDirectory
     }
 
     /**
-     * Open info window with member details
-     * @param {google.maps.InfoWindow} infoWindow - The info window instance
+     * Toggle info window with member details
      * @param {google.maps.Marker} marker - The marker instance
      * @param {Object} member - Member data
      * @returns {void}
      */
-    static openInfoWindow(infoWindow, marker, member)
+    static toggleInfoWindow(marker, member)
     {
         let content = `
       <div class="wsmd-map-info-window">
@@ -708,8 +707,14 @@ class MemberDirectory
         </div>
       </div>`;
 
-        infoWindow.setContent(content);
-        infoWindow.open(this.map, marker);
+        // Toggle info window
+        if (this.infoWindow.getContent() === content) {
+            this.infoWindow.setContent("");
+            this.infoWindow.close();
+        } else {
+            this.infoWindow.setContent(content);
+            this.infoWindow.open(this.map, marker);
+        }
     }
 
     /**
