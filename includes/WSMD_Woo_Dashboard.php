@@ -5,8 +5,10 @@ namespace WSMD;
 /**
  * WooCommerce Member Directory Dashboard
  */
-class WSMD_Woo_Dashboard {
-    public function __construct(){
+class WSMD_Woo_Dashboard
+{
+    public function __construct()
+    {
         add_action('init', array(__CLASS__, 'add_endpoint'));
         add_filter('woocommerce_get_query_vars', array($this, 'add_query_vars'));
         add_filter('query_vars', array($this, 'add_query_vars'), 0);
@@ -19,21 +21,24 @@ class WSMD_Woo_Dashboard {
     /**
      * Add the Member Directory endpoint
      */
-    public static function add_endpoint() {
+    public static function add_endpoint()
+    {
         add_rewrite_endpoint('wsmd_woo_dashboard', EP_ROOT | EP_PAGES);
     }
 
     /**
      * Remove the Member Directory endpoint
      */
-    public static function remove_endpoint() {
+    public static function remove_endpoint()
+    {
         add_rewrite_endpoint('wsmd_woo_dashboard', EP_NONE);
     }
 
     /**
      * Add the Member Directory query var
      */
-    public function add_query_vars($vars) {
+    public function add_query_vars($vars)
+    {
         $vars['wsmd_woo_dashboard'] = 'wsmd_woo_dashboard';
         return $vars;
     }
@@ -41,7 +46,8 @@ class WSMD_Woo_Dashboard {
     /**
      * Add the Member Directory tab to the My Account page
      */
-    public function add_member_directory_tab($items) {
+    public function add_member_directory_tab($items)
+    {
         $logout = $items['customer-logout'];
         unset($items['customer-logout']);
         $items['wsmd_woo_dashboard'] = __('Member Directory', 'wsmd');
@@ -52,7 +58,8 @@ class WSMD_Woo_Dashboard {
     /**
      * Change the title of the Member Directory page
      */
-    public function change_endpoint_title($title) {
+    public function change_endpoint_title($title)
+    {
         global $wp_query;
         $is_member_directory = isset($wp_query->query_vars['wsmd_woo_dashboard']);
         if ($is_member_directory && is_main_query() && in_the_loop() && is_account_page()) {
@@ -66,10 +73,11 @@ class WSMD_Woo_Dashboard {
      * User is safeley logged in at this point. 
      * No need to check for user capabilities.
      */
-    public function wsmd_woo_dashboard_page() {
-        
+    public function wsmd_woo_dashboard_page()
+    {
+
         $current_user = wp_get_current_user();
-        
+
         if (!WSMD_Helpers::is_member_directory($current_user->ID)) {
             echo '<div id="wsmd-dashboard" class="not-member-directory">';
             echo '<p>' . __('You are not a Member Directory.', 'wsmd') . '<br>';
@@ -88,22 +96,26 @@ class WSMD_Woo_Dashboard {
                 echo '</ul>';
             }
             echo '</div>';
-        }else{
-            load_template(WSMD_PATH . 'templates/dashboard.php', true, 
+        } else {
+            load_template(
+                WSMD_PATH . 'templates/dashboard.php',
+                true,
                 array(
                     'current_user' => $current_user,
                     'user_settings' => WSMD_User_Settings::get_user_settings($current_user->ID),
-                    'terms' => WSMD_Taxonomy::get_terms(),
+                    'grouped_terms' => WSMD_Helpers::format_terms_for_grouped_select_options(
+                        WSMD_Taxonomy::get_terms(),
+                    ),
                 ),
             );
         }
-
     }
 
     /**
      * Enqueue scripts and styles
      */
-    public function enqueue_scripts() {
+    public function enqueue_scripts()
+    {
         global $wp;
 
         if (!is_a($wp, 'WP')) {

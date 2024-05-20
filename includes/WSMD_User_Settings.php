@@ -1,12 +1,15 @@
 <?php
+
 namespace WSMD;
 
 /**
  * User settings for the Member Directory
  */
-class WSMD_User_Settings {
+class WSMD_User_Settings
+{
 
-    public function __construct() {
+    public function __construct()
+    {
 
         // Register fields for the user
         add_action('edit_user_profile', array($this, 'add_user_fields'), 100);
@@ -31,7 +34,8 @@ class WSMD_User_Settings {
     /**
      * Enqueue scripts and styles.
      */
-    public function enqueue_scripts($hook) {
+    public function enqueue_scripts($hook)
+    {
         // Only load on user profile and edit user pages
         if ('user-edit.php' != $hook && 'profile.php' != $hook) {
             return;
@@ -49,7 +53,8 @@ class WSMD_User_Settings {
      *  - Put a check mark if the user has a subscription with the related product
      *  - Put the visibility: default, forced, removed
      */
-    public function add_user_column_content($value, $column_name, $user_id) {
+    public function add_user_column_content($value, $column_name, $user_id)
+    {
         if ($column_name === 'wsmd_active') {
             // Retrieve the user meta value or default to 'default' if it's not set
             $visibility = self::get_user_settings($user_id, 'wsmd_visibility');
@@ -75,19 +80,20 @@ class WSMD_User_Settings {
     /**
      * Add the user fields
      */
-    public function add_user_fields($user) {
+    public function add_user_fields($user)
+    {
         // Retrieve the user visibility settings
         $visibility = self::get_user_settings($user->ID, 'wsmd_visibility');
 
         // Retrieve the custom taxonomy terms
-        $terms = WSMD_Taxonomy::get_terms();
+        $grouped_terms = WSMD_Helpers::format_terms_for_grouped_select_options(WSMD_Taxonomy::get_terms());
 
         // Retrieve the user's selected terms
         $user_terms = wp_get_object_terms($user->ID, 'wsmd-taxonomy', array('fields' => 'ids'));
 
-        ?>
+?>
         <h3><?php _e('Member Directory', 'wsmd'); ?></h3>
-        <table class="form-table">
+        <table id="wsmd-form" class="form-table">
             <!-- Visibility -->
             <tr>
                 <th><label for="wsmd_visibility"><?php _e('Force this member to be listed or removed in the Member Directory', 'wsmd'); ?></label></th>
@@ -110,11 +116,15 @@ class WSMD_User_Settings {
             <tr>
                 <th><label for="wsmd_taxonomies"><?php _e('Taxonomies', 'wsmd'); ?></label></th>
                 <td>
-                    <select name="wsmd_taxonomies[]" id="wsmd_taxonomies" multiple="multiple" class="regular-text" data-placeholder="<?php esc_attr_e('Select taxonomies', 'wsmd'); ?>" disabled>
-                        <?php foreach ($terms as $term) { ?>
-                            <option value="<?php echo esc_attr($term->term_id); ?>" <?php echo in_array($term->term_id, $user_terms) ? 'selected="selected"' : ''; ?>>
-                                <?php echo esc_html($term->name); ?>
-                            </option>
+                    <select name="wsmd_taxonomies[]" id="wsmd_taxonomies" multiple="multiple" class="regular-text" placeholder="<?php esc_attr_e('Select taxonomies', 'wsmd'); ?>" disabled>
+                        <?php foreach ($grouped_terms as $parent_id => $group) { ?>
+                            <optgroup label="<?php echo esc_attr($group['label']); ?>">
+                                <?php foreach ($group['terms'] as $term) { ?>
+                                    <option value="<?php echo esc_attr($term->term_id); ?>" <?php echo in_array($term->term_id, $user_terms) ? 'selected="selected"' : ''; ?>>
+                                        <?php echo esc_html($term->name); ?>
+                                    </option>
+                                <?php } ?>
+                            </optgroup>
                         <?php } ?>
                     </select>
                     <p class="description"><?php _e('Select taxonomies for the user.', 'wsmd'); ?></p>
@@ -209,7 +219,7 @@ class WSMD_User_Settings {
                 </td>
             </tr>
         </table>
-        <?php
+<?php
     }
 
     /**
@@ -217,7 +227,8 @@ class WSMD_User_Settings {
      * 
      * @return Array Fields that are not valid
      */
-    public static function save_user_settings($user_id) {
+    public static function save_user_settings($user_id)
+    {
 
         // Init results
         $results = array();
@@ -234,22 +245,22 @@ class WSMD_User_Settings {
             $_POST['wsmd_geocode'] = sanitize_text_field(wp_unslash($_POST['wsmd_geocode']));
             if (!empty($_POST['wsmd_geocode'])) {
                 update_user_meta($user_id, 'wsmd_geocode', $_POST['wsmd_geocode']);
-            }else{
-                $results['wsmd_geocode'] = __('Geocode is required', 'wsmd'); 
+            } else {
+                $results['wsmd_geocode'] = __('Geocode is required', 'wsmd');
             }
         }
 
         // Sanitize and save the fields occupation
         if (isset($_POST['wsmd_occupation'])) {
             $_POST['wsmd_occupation'] = sanitize_text_field(wp_unslash($_POST['wsmd_occupation']));
-            if(!empty($_POST['wsmd_occupation'])){
+            if (!empty($_POST['wsmd_occupation'])) {
                 // Limit the occupation to 32 characters
                 if (strlen($_POST['wsmd_occupation']) > 32) {
                     $results['wsmd_occupation'] = __('Occupation is too long (32 characters max)', 'wsmd');
-                }else{
+                } else {
                     update_user_meta($user_id, 'wsmd_occupation', $_POST['wsmd_occupation']);
                 }
-            }else{
+            } else {
                 $results['wsmd_occupation'] = __('Occupation is required', 'wsmd');
             }
         }
@@ -257,14 +268,14 @@ class WSMD_User_Settings {
         // Sanitize and save the fields company
         if (isset($_POST['wsmd_company'])) {
             $_POST['wsmd_company'] = sanitize_text_field(wp_unslash($_POST['wsmd_company']));
-            if(!empty($_POST['wsmd_company'])){
+            if (!empty($_POST['wsmd_company'])) {
                 // Limit the company to 32 characters
                 if (strlen($_POST['wsmd_company']) > 32) {
                     $results['wsmd_company'] = __('Company is too long (32 characters max)', 'wsmd');
-                }else{
+                } else {
                     update_user_meta($user_id, 'wsmd_company', $_POST['wsmd_company']);
                 }
-            }else{
+            } else {
                 $results['wsmd_company'] = __('Company is required', 'wsmd');
             }
         }
@@ -272,9 +283,9 @@ class WSMD_User_Settings {
         // Sanitize and save the fields address
         if (isset($_POST['wsmd_address'])) {
             $_POST['wsmd_address'] = sanitize_text_field(wp_unslash($_POST['wsmd_address']));
-            if(!empty($_POST['wsmd_address'])){
+            if (!empty($_POST['wsmd_address'])) {
                 update_user_meta($user_id, 'wsmd_address', $_POST['wsmd_address']);
-            }else{
+            } else {
                 $results['wsmd_address'] = __('Address is required', 'wsmd');
             }
         }
@@ -282,9 +293,9 @@ class WSMD_User_Settings {
         // Sanitize and save the fields city
         if (isset($_POST['wsmd_city'])) {
             $_POST['wsmd_city'] = sanitize_text_field(wp_unslash($_POST['wsmd_city']));
-            if(!empty($_POST['wsmd_city'])){
+            if (!empty($_POST['wsmd_city'])) {
                 update_user_meta($user_id, 'wsmd_city', $_POST['wsmd_city']);
-            }else{
+            } else {
                 $results['wsmd_city'] = __('City is required', 'wsmd');
             }
         }
@@ -292,9 +303,9 @@ class WSMD_User_Settings {
         // Sanitize and save the fields province/state
         if (isset($_POST['wsmd_province_state'])) {
             $_POST['wsmd_province_state'] = sanitize_text_field(wp_unslash($_POST['wsmd_province_state']));
-            if(!empty($_POST['wsmd_province_state'])){
+            if (!empty($_POST['wsmd_province_state'])) {
                 update_user_meta($user_id, 'wsmd_province_state', $_POST['wsmd_province_state']);
-            }else{
+            } else {
                 $results['wsmd_province_state'] = __('Province/State is required', 'wsmd');
             }
         }
@@ -302,9 +313,9 @@ class WSMD_User_Settings {
         // Sanitize and save the fields postal code/zip
         if (isset($_POST['wsmd_postal_zip_code'])) {
             $_POST['wsmd_postal_zip_code'] = sanitize_text_field(wp_unslash($_POST['wsmd_postal_zip_code']));;
-            if(!empty($_POST['wsmd_postal_zip_code'])){
+            if (!empty($_POST['wsmd_postal_zip_code'])) {
                 update_user_meta($user_id, 'wsmd_postal_zip_code', $_POST['wsmd_postal_zip_code']);
-            }else{
+            } else {
                 $results['wsmd_postal_zip_code'] = __('Postal/Zip code is required', 'wsmd');
             }
         }
@@ -312,9 +323,9 @@ class WSMD_User_Settings {
         // Sanitize and save the fields country
         if (isset($_POST['wsmd_country'])) {
             $_POST['wsmd_country'] = sanitize_text_field(wp_unslash($_POST['wsmd_country']));
-            if(!empty($_POST['wsmd_country'])){
+            if (!empty($_POST['wsmd_country'])) {
                 update_user_meta($user_id, 'wsmd_country', $_POST['wsmd_country']);
-            }else{
+            } else {
                 $results['wsmd_country'] = __('Country is required', 'wsmd');
             }
         }
@@ -340,11 +351,11 @@ class WSMD_User_Settings {
             $_POST['wsmd_phone'] = sanitize_text_field(wp_unslash($_POST['wsmd_phone']));
             if (empty($_POST['wsmd_phone'])) {
                 update_user_meta($user_id, 'wsmd_phone', '');
-            }elseif (preg_match('/^[0-9\-\(\)\/\+\s]*$/', $_POST['wsmd_phone'])) {
+            } elseif (preg_match('/^[0-9\-\(\)\/\+\s]*$/', $_POST['wsmd_phone'])) {
                 // Replace all characters except numbers with empty string
                 $_POST['wsmd_phone'] = preg_replace('/[^0-9]/', '', $_POST['wsmd_phone']);
                 update_user_meta($user_id, 'wsmd_phone', $_POST['wsmd_phone']);
-            }else{
+            } else {
                 $results['wsmd_phone'] = __('Invalid phone number', 'wsmd');
             }
         }
@@ -354,9 +365,9 @@ class WSMD_User_Settings {
             $_POST['wsmd_email'] = sanitize_text_field(wp_unslash($_POST['wsmd_email']));
             if (empty($_POST['wsmd_email'])) {
                 update_user_meta($user_id, 'wsmd_email', '');
-            }elseif (filter_var($_POST['wsmd_email'], FILTER_VALIDATE_EMAIL)) {
+            } elseif (filter_var($_POST['wsmd_email'], FILTER_VALIDATE_EMAIL)) {
                 update_user_meta($user_id, 'wsmd_email', $_POST['wsmd_email']);
-            }else{
+            } else {
                 $results['wsmd_email'] = __('Invalid email', 'wsmd');
             }
         }
@@ -381,7 +392,8 @@ class WSMD_User_Settings {
      * @param string $taxonomy The taxonomy to validate against.
      * @return array The valid term IDs.
      */
-    public static function validate_terms($term_ids, $taxonomy) {
+    public static function validate_terms($term_ids, $taxonomy)
+    {
         $valid_terms = get_terms(array(
             'taxonomy' => $taxonomy,
             'include' => $term_ids,
@@ -399,7 +411,8 @@ class WSMD_User_Settings {
      * @param string $key The key of the user meta to retrieve.
      * @return mixed The value of the meta key or an array of all the user meta values.
      */
-    public static function get_user_settings($userID, $key = '') {
+    public static function get_user_settings($userID, $key = '')
+    {
         if (empty($key)) {
             return array(
                 'wsmd_visibility' => get_user_meta($userID, 'wsmd_visibility', true),

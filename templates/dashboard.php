@@ -10,14 +10,15 @@
 <div id="wsmd-dashboard" class="is-member-directory">
 
     <p class="wsmd-info">
-         <?php
-            _e(
-                'Please fill in your details below.'
+        <?php
+        _e(
+            'Please fill in your details below.'
                 . ' This information will be displayed in the member directory.'
                 . ' Your position on the map will be determined by the address you provide after saving your settings.'
                 . ' You can select multiple taxonomies that describe your skills and expertise.'
-                . ' You can also update your settings at any time.'
-            , 'wsmd');
+                . ' You can also update your settings at any time.',
+            'wsmd'
+        );
         ?>
     </p>
 
@@ -36,11 +37,15 @@
         <input type="text" name="wsmd_province_state" placeholder="<?php esc_attr_e('Province/State', 'wsmd'); ?>" value="<?php echo esc_attr($args['user_settings']['wsmd_province_state']); ?>">
         <input type="text" name="wsmd_postal_zip_code" placeholder="<?php esc_attr_e('Postal/Zip code', 'wsmd'); ?>" value="<?php echo esc_attr($args['user_settings']['wsmd_postal_zip_code']); ?>">
         <input type="text" name="wsmd_country" placeholder="<?php esc_attr_e('Country', 'wsmd'); ?>" value="<?php echo esc_attr($args['user_settings']['wsmd_country']); ?>">
-        <select name="wsmd_taxonomies[]" id="wsmd_taxonomies" multiple="multiple" data-placeholder="<?php esc_attr_e('Select taxonomies', 'wsmd'); ?>">
-            <?php foreach ($args['terms'] as $term) { ?>
-                <option value="<?php echo esc_attr($term->term_id); ?>" <?php echo in_array($term->term_id, $args['user_settings']['wsmd_taxonomies']) ? 'selected="selected"' : ''; ?>>
-                    <?php echo esc_html($term->name); ?>
-                </option>
+        <select name="wsmd_taxonomies[]" id="wsmd_taxonomies" multiple="multiple" placeholder="<?php esc_attr_e('Select taxonomies', 'wsmd'); ?>">
+            <?php foreach ($args['grouped_terms'] as $parent_id => $group) { ?>
+                <optgroup label="<?php echo esc_attr($group['label']); ?>">
+                    <?php foreach ($group['terms'] as $term) { ?>
+                        <option value="<?php echo esc_attr($term->term_id); ?>" <?php echo in_array($term->term_id, $args['user_settings']['wsmd_taxonomies']) ? 'selected="selected"' : ''; ?>>
+                            <?php echo esc_html($term->name); ?>
+                        </option>
+                    <?php } ?>
+                </optgroup>
             <?php } ?>
         </select>
         <div id="wsmd-map"></div>
