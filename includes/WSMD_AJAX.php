@@ -183,8 +183,8 @@ class WSMD_AJAX
      */
     public function member_directory_get_members()
     {
-        // $members = WSMD_Helpers::get_members();
-        $members = WSMD_Dummy_Data::get_members();
+        $members = WSMD_Helpers::get_members();
+        // $members = WSMD_Dummy_Data::get_members();
 
         wp_send_json_success(array(
             'members' => $members

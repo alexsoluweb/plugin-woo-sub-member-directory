@@ -15,9 +15,7 @@ class WSMD_Dummy_Data
 
     public static function get_members()
     {
-
-        // Get available terms ids
-        $available_terms = WSMD_Taxonomy::get_terms();
+        $available_terms = Wsmd_Taxonomy::get_available_terms();
         $term_ids = array_map(function ($term) {
             return $term->term_id;
         }, $available_terms);

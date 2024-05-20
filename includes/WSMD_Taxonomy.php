@@ -73,6 +73,31 @@ class WSMD_Taxonomy
     }
 
     /**
+     * Get available terms that include parent terms with no children
+     * and exclude parent terms that have children.
+     * 
+     * @return array $available_terms Array of WP_Term objects
+     */
+    public static function get_available_terms()
+    {
+        $terms = self::get_terms();
+
+        // Get term IDs of parent terms that have children
+        $parent_term_ids_with_children = array_map(function ($term) {
+            return $term->parent;
+        }, array_filter($terms, function ($term) {
+            return $term->parent !== 0;
+        }));
+
+        // Filter terms to include parent terms with no children and child terms
+        $available_terms = array_filter($terms, function ($term) use ($parent_term_ids_with_children) {
+            return ($term->parent !== 0) || !in_array($term->term_id, $parent_term_ids_with_children);
+        });
+
+        return $available_terms;
+    }
+
+    /**
      * Get number of members associated with each term
      * @return array<int, int> $terms_count Array of term ID and count
      */
