@@ -13,7 +13,7 @@ class WSMD_Taxonomy
         add_filter('manage_edit-wsmd-taxonomy_columns', array($this, 'add_custom_columns'));
         add_filter('manage_wsmd-taxonomy_custom_column', array($this, 'manage_custom_columns'), 10, 3);
         add_filter('manage_edit-wsmd-taxonomy_sortable_columns', array($this, 'add_sortable_columns'));
-        add_filter('get_terms_args', array($this, 'order_terms_by_count'), 10, 2);
+        add_filter('get_terms', array($this, 'order_terms_by_count'), 10, 3);
         add_action('set_object_terms', array($this, 'update_user_term_count'), 10, 6);
     }
 
@@ -58,26 +58,27 @@ class WSMD_Taxonomy
     /**
      * Order terms by user count custom column.
      *
-     * @param array $args The terms query arguments.
+     * @param array $terms The terms.
      * @param array $taxonomies The taxonomy array.
-     * @return array Modified query arguments.
+     * @param array $args The terms query arguments.
+     * @return array Modified terms.
      */
-    public function order_terms_by_count($args, $taxonomies)
+    public function order_terms_by_count($terms, $taxonomies, $args)
     {
-        if (in_array('wsmd-taxonomy', $taxonomies) && isset($args['orderby']) && $args['orderby'] === 'count') {
-
-            $args['meta_query'] = array(
-                array(
-                    'key' => 'user_count_wsmd-taxonomy',
-                    'type' => 'NUMERIC'
-                )
-            );
-            $args['orderby'] = 'meta_value_num';
+        if (is_admin() && in_array('wsmd-taxonomy', $taxonomies) && isset($args['orderby']) && $args['orderby'] === 'count') {
+            usort($terms, function ($a, $b) use ($args) {
+                $count_a = (int) get_term_meta($a->term_id, 'user_count_wsmd-taxonomy', true);
+                $count_b = (int) get_term_meta($b->term_id, 'user_count_wsmd-taxonomy', true);
+                if ($args['order'] === 'asc') {
+                    return $count_a - $count_b;
+                } else {
+                    return $count_b - $count_a;
+                }
+            });
         }
 
-        return $args;
+        return $terms;
     }
-
 
     /**
      * Register the custom taxonomy.
@@ -123,7 +124,7 @@ class WSMD_Taxonomy
         unset($columns['posts']);
 
         // Add a count column
-        $columns['count'] = __('Count', 'wsmd');
+        $columns['count'] = __('User Count', 'wsmd');
         return $columns;
     }
 
@@ -148,23 +149,6 @@ class WSMD_Taxonomy
             $content = $user_count === 0 ? $user_count : sprintf('<a href="%s">%d</a>', esc_url($term_link), $user_count);
         }
         return $content;
-    }
-
-    /**
-     * Order terms by user count.
-     *
-     * @param WP_Term_Query $query The WP_Term_Query instance.
-     */
-    public function order_by_user_count($query)
-    {
-        if (!is_admin() || !isset($query->query_vars['taxonomy']) || $query->query_vars['taxonomy'] !== 'wsmd-taxonomy') {
-            return;
-        }
-
-        if (isset($_GET['orderby']) && $_GET['orderby'] === 'count') {
-            $query->query_vars['orderby'] = 'meta_value_num';
-            $query->query_vars['meta_key'] = 'user_count';
-        }
     }
 
     /**
