@@ -102,7 +102,7 @@ class WSMD_Helpers
             foreach ($users as $user) {
                 $user_id = $user->ID;
                 if (self::is_member_directory($user_id)) {
-                    $members[$user_id] = WSMD_User_Settings::get_user_settings($user_id);
+                    $members[$user_id] = WSMD_Users::get_user_settings($user_id);
                 }
             }
 

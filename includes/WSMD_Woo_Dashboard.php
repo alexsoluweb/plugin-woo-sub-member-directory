@@ -102,7 +102,7 @@ class WSMD_Woo_Dashboard
                 true,
                 array(
                     'current_user' => $current_user,
-                    'user_settings' => WSMD_User_Settings::get_user_settings($current_user->ID),
+                    'user_settings' => WSMD_Users::get_user_settings($current_user->ID),
                     'grouped_terms' => WSMD_Helpers::format_terms_for_grouped_select_options(
                         WSMD_Taxonomy::get_terms(),
                     ),

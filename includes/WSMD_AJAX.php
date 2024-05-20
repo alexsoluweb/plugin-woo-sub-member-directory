@@ -84,7 +84,7 @@ class WSMD_AJAX
         $_POST['wsmd_geocode'] = $geocode_result['geocode']['lat'] . ',' . $geocode_result['geocode']['lng'];
 
         // Save user settings
-        $save_user_settings_errors = WSMD_User_Settings::save_user_settings(get_current_user_id());
+        $save_user_settings_errors = WSMD_Users::save_user_settings(get_current_user_id());
 
         // Return any save user settings errors
         if (!empty($save_user_settings_errors)) {

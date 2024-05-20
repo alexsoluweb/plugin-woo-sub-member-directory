@@ -5,7 +5,7 @@ namespace WSMD;
 /**
  * User settings for the Member Directory
  */
-class WSMD_User_Settings
+class WSMD_Users
 {
 
     public function __construct()
@@ -24,15 +24,15 @@ class WSMD_User_Settings
             return $columns;
         });
 
-        // Add the content to the new column
         add_action('manage_users_custom_column', array($this, 'add_user_column_content'), 10, 3);
-
-        // Enqueue scripts and styles
         add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('pre_get_users', array($this, 'filter_users_by_taxonomy'));
     }
 
     /**
      * Enqueue scripts and styles.
+     * @param string $hook The current admin page.
+     * @return void
      */
     public function enqueue_scripts($hook)
     {
@@ -48,10 +48,37 @@ class WSMD_User_Settings
     }
 
     /**
+     * Filter users by custom taxonomy term.
+     *
+     * @param WP_User_Query $query The WP_User_Query instance.
+     */
+    public function filter_users_by_taxonomy($query)
+    {
+        global $pagenow;
+
+        if (is_admin() && 'users.php' === $pagenow && isset($_GET['wsmd-taxonomy'])) {
+            $term_id = intval($_GET['wsmd-taxonomy']);
+            $term = get_term($term_id, 'wsmd-taxonomy');
+            if ($term && !is_wp_error($term)) {
+                $user_ids = get_objects_in_term($term_id, 'wsmd-taxonomy', array('fields' => 'ids'));
+
+                // If there are users with the term, include them in the query
+                if (!empty($user_ids)) {
+                    $query->set('include', $user_ids);
+                } else {
+                    // If there are no users with the term, include an impossible ID
+                    $query->set('include', array(0));
+                }
+            }
+        }
+    }
+
+    /**
      * Add the content to the new column.
-     * @todo
-     *  - Put a check mark if the user has a subscription with the related product
-     *  - Put the visibility: default, forced, removed
+     * @param string $value The column value.
+     * @param string $column_name The column name.
+     * @param int $user_id The user ID.
+     * @return string The modified column value.
      */
     public function add_user_column_content($value, $column_name, $user_id)
     {

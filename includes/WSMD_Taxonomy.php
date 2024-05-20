@@ -7,10 +7,82 @@ class WSMD_Taxonomy
     public function __construct()
     {
         add_action('init', array($this, 'register_taxonomy'));
-        add_action('created_wsmd-taxonomy', array($this, 'check_term_hierarchy'), 10, 2);
-        add_action('edited_wsmd-taxonomy', array($this, 'check_term_hierarchy'), 10, 2);
+        add_action('created_wsmd-taxonomy', array($this, 'limit_term_hierarchy'), 10, 2);
+        add_action('edited_wsmd-taxonomy', array($this, 'limit_term_hierarchy'), 10, 2);
+        add_action('delete_wsmd-taxonomy', array($this, 'delete_user_terms'), 10, 2);
+        add_filter('manage_edit-wsmd-taxonomy_columns', array($this, 'add_custom_columns'));
+        add_filter('manage_wsmd-taxonomy_custom_column', array($this, 'manage_custom_columns'), 10, 3);
+        add_filter('manage_edit-wsmd-taxonomy_sortable_columns', array($this, 'add_sortable_columns'));
+        add_filter('get_terms_args', array($this, 'order_terms_by_count'), 10, 2);
+        add_action('set_object_terms', array($this, 'update_user_term_count'), 10, 6);
     }
 
+    /**
+     * Update the user count meta value for the term.
+     *
+     * @param int $object_id The object ID.
+     * @param array $terms The term IDs.
+     * @param array $tt_ids The term taxonomy IDs.
+     * @param string $taxonomy The taxonomy.
+     * @param bool $append Whether to append the terms.
+     * @param array $old_tt_ids The old term taxonomy IDs.
+     */
+    public function update_user_term_count($object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids)
+    {
+        if ($taxonomy !== 'wsmd-taxonomy') {
+            return;
+        }
+
+        // Get the term IDs
+        $term_ids = array_unique(array_merge($terms, $old_tt_ids));
+
+        // Update the user count for each term
+        foreach ($term_ids as $term_id) {
+            $user_count = self::get_user_term_count($term_id);
+            update_term_meta($term_id, 'user_count_wsmd-taxonomy', $user_count);
+        }
+    }
+
+    /**
+     * Make custom columns sortable.
+     *
+     * @param array $columns The existing sortable columns.
+     * @return array Modified sortable columns.
+     */
+    public function add_sortable_columns($columns)
+    {
+        $columns['count'] = 'count';
+        return $columns;
+    }
+
+    /**
+     * Order terms by user count custom column.
+     *
+     * @param array $args The terms query arguments.
+     * @param array $taxonomies The taxonomy array.
+     * @return array Modified query arguments.
+     */
+    public function order_terms_by_count($args, $taxonomies)
+    {
+        if (in_array('wsmd-taxonomy', $taxonomies) && isset($args['orderby']) && $args['orderby'] === 'count') {
+
+            $args['meta_query'] = array(
+                array(
+                    'key' => 'user_count_wsmd-taxonomy',
+                    'type' => 'NUMERIC'
+                )
+            );
+            $args['orderby'] = 'meta_value_num';
+        }
+
+        return $args;
+    }
+
+
+    /**
+     * Register the custom taxonomy.
+     * @return void
+     */
     public function register_taxonomy()
     {
         $labels = array(
@@ -40,11 +112,67 @@ class WSMD_Taxonomy
     }
 
     /**
-     * Check the term hierarchy to ensure only one level of hierarchy.
+     * Add custom columns to the taxonomy list table.
+     *
+     * @param array $columns The existing columns.
+     * @return array Modified columns.
+     */
+    public function add_custom_columns($columns)
+    {
+        // Remove posts column
+        unset($columns['posts']);
+
+        // Add a count column
+        $columns['count'] = __('Count', 'wsmd');
+        return $columns;
+    }
+
+    /**
+     * Manage custom columns content.
+     *
+     * @param string $content The column content.
+     * @param string $column_name The column name.
+     * @param int $term_id The term ID.
+     * @return string The modified column content.
+     */
+    public function manage_custom_columns($content, $column_name, $term_id)
+    {
+        // Display the count of users associated with the term
+        if ($column_name === 'count') {
+            $user_count = $this->get_user_term_count($term_id);
+            $term_link = add_query_arg(array(
+                'wsmd-taxonomy' => $term_id
+            ), admin_url('users.php'));
+
+            // Display the count as a link to the users list if the user count is greater than 0
+            $content = $user_count === 0 ? $user_count : sprintf('<a href="%s">%d</a>', esc_url($term_link), $user_count);
+        }
+        return $content;
+    }
+
+    /**
+     * Order terms by user count.
+     *
+     * @param WP_Term_Query $query The WP_Term_Query instance.
+     */
+    public function order_by_user_count($query)
+    {
+        if (!is_admin() || !isset($query->query_vars['taxonomy']) || $query->query_vars['taxonomy'] !== 'wsmd-taxonomy') {
+            return;
+        }
+
+        if (isset($_GET['orderby']) && $_GET['orderby'] === 'count') {
+            $query->query_vars['orderby'] = 'meta_value_num';
+            $query->query_vars['meta_key'] = 'user_count';
+        }
+    }
+
+    /**
+     * Limit term hierarchy to only one level of hierarchy.
      * @param int $term_id The term ID.
      * @param int $tt_id The term taxonomy ID.
      */
-    public function check_term_hierarchy($term_id, $tt_id)
+    public function limit_term_hierarchy($term_id, $tt_id)
     {
         $term = get_term($term_id, 'wsmd-taxonomy');
         if ($term->parent) {
@@ -55,6 +183,22 @@ class WSMD_Taxonomy
                 // Display an error message
                 wp_die(__('This taxonomy cannot have more than one level of hierarchy.', 'wsmd'), __('Term Hierarchy Error', 'wsmd'), array('back_link' => true));
             }
+        }
+    }
+
+    /**
+     * Remove associated terms for users when a term is deleted
+     * @param int $term_id The term ID.
+     * @param int $tt_id The term taxonomy ID.
+     */
+    public function delete_user_terms($term_id, $tt_id)
+    {
+        // Get all users
+        $users = get_users(array('fields' => 'ID'));
+
+        // Remove the term for each user
+        foreach ($users as $user_id) {
+            wp_remove_object_terms($user_id, $term_id, 'wsmd-taxonomy');
         }
     }
 
@@ -98,19 +242,18 @@ class WSMD_Taxonomy
     }
 
     /**
-     * Get number of members associated with each term
-     * @return array<int, int> $terms_count Array of term ID and count
+     * Get the count of users associated with a term.
+     *
+     * @param int $term_id The term ID.
+     * @return int The count of users.
      */
-    public static function get_terms_count()
+    public static function get_user_term_count($term_id)
     {
-        $terms_count = array();
-        $terms = self::get_terms();
-        foreach ($terms as $term) {
-            $term_id = $term->term_id;
-            $term_count = count(get_objects_in_term($term_id, 'wsmd-taxonomy'));
-            $terms_count[$term_id] = $term_count;
-        }
-
-        return $terms_count;
+        $args = array(
+            'taxonomy' => 'wsmd-taxonomy',
+            'term_id' => $term_id,
+            'fields' => 'count'
+        );
+        return count(get_objects_in_term($term_id, 'wsmd-taxonomy', $args));
     }
 }

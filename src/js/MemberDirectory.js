@@ -281,12 +281,13 @@ class MemberDirectory
             const memberItem = this.createMemberItem(member);
             memberList.appendChild(memberItem);
 
+            // Wait for the element to be added to the DOM before animating
             setTimeout(() =>
             {
                 memberItem.style.opacity = "1";
                 memberItem.style.transform = "translateY(0)";
                 memberItem.style.transitionDelay = `${index * 0.1}s`;
-            }, 1);
+            }, 100);
         });
 
         this.memberListOffset += this.memberListPerPage;
