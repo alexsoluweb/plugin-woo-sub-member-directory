@@ -81,13 +81,13 @@ class WSMD_Woo_Dashboard
         if (!WSMD_Helpers::is_member_directory($current_user->ID)) {
             echo '<div id="wsmd-dashboard" class="not-member-directory">';
             echo '<p>' . __('You are not a Member Directory.', 'wsmd') . '<br>';
-            echo __('Please subscribe to a membership plan to access the Member Directory.', 'wsmd') . '</p>';
+            echo __('Please subscribe to a membership plan to access the member directory.', 'wsmd') . '</p>';
 
             $product_ids = WSMD_Woo_Settings::get_settings('wsmd_subscription_products');
 
             // Display the subscription products
             if ($product_ids) {
-                echo '<h3>' . esc_html__('Subscription plans:', 'wsmd') . '</h3>';
+                echo '<h3>' . esc_html__('Available membership plans:', 'wsmd') . '</h3>';
                 echo '<ul>';
                 foreach ($product_ids as $product_id) {
                     $product = wc_get_product($product_id);

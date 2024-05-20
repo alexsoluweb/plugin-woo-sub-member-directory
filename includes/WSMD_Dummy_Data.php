@@ -22,7 +22,7 @@ class WSMD_Dummy_Data
 
         return [
             '1' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '46.8138783, -71.2079809',
                 'wsmd_occupation' => 'Graphic Designer',
                 'wsmd_company' => 'Creative Designs',
@@ -37,7 +37,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 8)
             ],
             '2' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '45.5016889, -73.567256',
                 'wsmd_occupation' => 'Tech Entrepreneur',
                 'wsmd_company' => 'Innovatech',
@@ -52,7 +52,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 5)
             ],
             '3' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '45.4009928, -71.8824288',
                 'wsmd_occupation' => 'Museum Curator',
                 'wsmd_company' => 'History Québec',
@@ -67,7 +67,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 9)
             ],
             '4' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '48.4200335, -71.0524504',
                 'wsmd_occupation' => 'Brewmaster',
                 'wsmd_company' => 'La Saguenéenne',
@@ -82,7 +82,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
             ],
             '5' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '45.378789, -72.733006',
                 'wsmd_occupation' => 'Hotel Manager',
                 'wsmd_company' => 'Château Étoile',
@@ -97,7 +97,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 4)
             ],
             '6' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '46.3421266, -72.5477492',
                 'wsmd_occupation' => 'Chef',
                 'wsmd_company' => 'La Bonne Fourchette',
@@ -112,7 +112,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 7)
             ],
             '7' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '46.8059354, -71.2347079',
                 'wsmd_occupation' => 'Web Developer',
                 'wsmd_company' => 'WebWorks',
@@ -127,7 +127,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 5)
             ],
             '8' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '45.610759, -73.555878',
                 'wsmd_occupation' => 'Architect',
                 'wsmd_company' => 'BuildArt',
@@ -142,7 +142,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
             ],
             '9' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '48.423564, -71.062943',
                 'wsmd_occupation' => 'Photographer',
                 'wsmd_company' => 'Pixel Perfect',
@@ -157,7 +157,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '10' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '45.283345, -73.157935',
                 'wsmd_occupation' => 'Marketing Specialist',
                 'wsmd_company' => 'MarketMinds',
@@ -172,7 +172,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 4)
             ],
             '11' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '46.737454, -71.296968',
                 'wsmd_occupation' => 'Interior Designer',
                 'wsmd_company' => 'Decor Solutions',
@@ -187,7 +187,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '12' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '45.564601, -73.577247',
                 'wsmd_occupation' => 'Event Planner',
                 'wsmd_company' => 'Event Masters',
@@ -202,7 +202,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 10)
             ],
             '13' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '46.829853, -71.254028',
                 'wsmd_occupation' => 'Financial Advisor',
                 'wsmd_company' => 'FinancePro',
@@ -217,7 +217,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 4)
             ],
             '14' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '45.488777, -73.562457',
                 'wsmd_occupation' => 'Real Estate Agent',
                 'wsmd_company' => 'Property Quebec',
@@ -232,7 +232,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '15' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '46.805717, -71.234780',
                 'wsmd_occupation' => 'Lawyer',
                 'wsmd_company' => 'Legal Experts',
@@ -247,7 +247,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 5)
             ],
             '16' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '45.503182, -73.569806',
                 'wsmd_occupation' => 'Consultant',
                 'wsmd_company' => 'Consulting Co.',
@@ -262,7 +262,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 12)
             ],
             '17' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '47.528912, -70.354637',
                 'wsmd_occupation' => 'Marine Biologist',
                 'wsmd_company' => 'Marine Research Inc.',
@@ -277,7 +277,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 4)
             ],
             '18' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '46.030298, -74.193582',
                 'wsmd_occupation' => 'Ski Resort Manager',
                 'wsmd_company' => 'Snowy Peaks',
@@ -292,7 +292,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '19' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '45.493076, -72.148179',
                 'wsmd_occupation' => 'Winery Owner',
                 'wsmd_company' => 'Vineyard Estates',
@@ -307,7 +307,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 5)
             ],
             '20' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '46.763056, -71.288694',
                 'wsmd_occupation' => 'College Professor',
                 'wsmd_company' => 'Quebec University',
@@ -322,7 +322,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '21' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '48.606289, -71.648920',
                 'wsmd_occupation' => 'Engineer',
                 'wsmd_company' => 'Tech Solutions',
@@ -337,7 +337,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 4)
             ],
             '22' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '45.658169, -73.539448',
                 'wsmd_occupation' => 'Software Developer',
                 'wsmd_company' => 'Code Masters',
@@ -352,7 +352,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
             ],
             '23' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '48.319392, -79.028818',
                 'wsmd_occupation' => 'Mining Engineer',
                 'wsmd_company' => 'Northern Mines',
@@ -367,7 +367,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 4)
             ],
             '24' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '45.399296, -71.918942',
                 'wsmd_occupation' => 'Dentist',
                 'wsmd_company' => 'Sherbrooke Dental Care',
@@ -382,7 +382,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '25' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '45.578820, -72.003609',
                 'wsmd_occupation' => 'Veterinarian',
                 'wsmd_company' => 'Eastern Townships Vet',
@@ -397,7 +397,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 4)
             ],
             '26' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '47.379273, -72.230928',
                 'wsmd_occupation' => 'Librarian',
                 'wsmd_company' => 'Saguenay Public Library',
@@ -412,7 +412,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '27' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '48.829644, -64.485001',
                 'wsmd_occupation' => 'Tour Guide',
                 'wsmd_company' => 'Gaspésie Adventures',
@@ -427,7 +427,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
             ],
             '28' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '48.205884, -65.875380',
                 'wsmd_occupation' => 'Hotel Owner',
                 'wsmd_company' => 'Gaspésie Resort',
@@ -442,7 +442,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 4)
             ],
             '29' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '47.668715, -79.013031',
                 'wsmd_occupation' => 'Mining Supervisor',
                 'wsmd_company' => 'Abitibi Gold Mines',
@@ -457,7 +457,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '30' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '46.767028, -71.104962',
                 'wsmd_occupation' => 'Artisan Baker',
                 'wsmd_company' => 'Boulangerie Québec',
@@ -472,7 +472,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
             ],
             '31' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '48.529664, -68.525902',
                 'wsmd_occupation' => 'Fishery Manager',
                 'wsmd_company' => 'Gaspésie Fisheries',
@@ -487,7 +487,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '32' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '46.577408, -71.545173',
                 'wsmd_occupation' => 'Farm Owner',
                 'wsmd_company' => 'Quebec Organic Farms',
@@ -502,7 +502,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
             ],
             '33' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '45.028957, -74.731205',
                 'wsmd_occupation' => 'Logistics Coordinator',
                 'wsmd_company' => 'Eastern Logistics',
@@ -517,7 +517,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '34' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '45.658043, -74.514786',
                 'wsmd_occupation' => 'Retail Manager',
                 'wsmd_company' => 'Ottawa Valley Retailers',
@@ -532,7 +532,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 4)
             ],
             '35' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '45.135662, -74.549343',
                 'wsmd_occupation' => 'Healthcare Administrator',
                 'wsmd_company' => 'St. Lawrence Health',
@@ -547,7 +547,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
             ],
             '36' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '45.421530, -75.679159',
                 'wsmd_occupation' => 'Research Scientist',
                 'wsmd_company' => 'Ottawa Research Institute',
@@ -562,7 +562,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 4)
             ],
             '37' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '46.123123, -72.123123',
                 'wsmd_occupation' => 'Software Engineer',
                 'wsmd_company' => 'Tech Innovators',
@@ -577,7 +577,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
             ],
             '38' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '45.987654, -73.456789',
                 'wsmd_occupation' => 'Data Analyst',
                 'wsmd_company' => 'Data Insights',
@@ -592,7 +592,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 3)
             ],
             '39' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '45.345678, -72.234567',
                 'wsmd_occupation' => 'Marketing Manager',
                 'wsmd_company' => 'Market Leaders',
@@ -607,7 +607,7 @@ class WSMD_Dummy_Data
                 'wsmd_taxonomies' => self::get_random_term_ids($term_ids, 2)
             ],
             '40' => [
-                'wsmd_visibility' => 'default',
+                'wsmd_is_admin_allowed' => 'default',
                 'wsmd_geocode' => '46.654321, -71.876543',
                 'wsmd_occupation' => 'Product Manager',
                 'wsmd_company' => 'Product Masters',

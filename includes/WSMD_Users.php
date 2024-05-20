@@ -15,8 +15,11 @@ class WSMD_Users
         add_action('edit_user_profile', array($this, 'add_user_fields'), 100);
         add_action('show_user_profile', array($this, 'add_user_fields'), 100);
 
-        // Save the fields (Save mechanism only on frontend for now)
-        // add_action('edit_user_profile_update', array(__CLASS__, 'save_user_settings'));
+        // Save the fields
+        // Adress, geolocation can only be sat in the frontend for now.
+        // This is to prevent bad geo-coordinates from being saved with the actual mecanism in place.
+        add_action('edit_user_profile_update', array(__CLASS__, 'save_user_settings'));
+        add_action('personal_options_update', array(__CLASS__, 'save_user_settings'));
 
         // Add a new column in the user list: Member Directory
         add_filter('manage_users_columns', function ($columns) {
@@ -84,7 +87,7 @@ class WSMD_Users
     {
         if ($column_name === 'wsmd_active') {
             // Retrieve the user meta value or default to 'default' if it's not set
-            $visibility = self::get_user_settings($user_id, 'wsmd_visibility');
+            $is_admin_allowed = self::get_user_settings($user_id, 'wsmd_is_admin_allowed');
 
             echo '<div style="display: flex; align-items: center; line-height: 1;">';
 
@@ -96,8 +99,8 @@ class WSMD_Users
                 $value = '<span class="dashicons dashicons-no"></span>';
             }
 
-            // Add the visibility
-            $value .= ' | <span> ' . esc_html($visibility) . '</span>';
+            // Add the is_admin_allowed
+            $value .= ' | <span> ' . esc_html($is_admin_allowed) . '</span>';
 
             echo '</div>';
         }
@@ -109,8 +112,8 @@ class WSMD_Users
      */
     public function add_user_fields($user)
     {
-        // Retrieve the user visibility settings
-        $visibility = self::get_user_settings($user->ID, 'wsmd_visibility');
+        // Retrieve the user is_admin_allowed settings
+        $is_admin_allowed = self::get_user_settings($user->ID, 'wsmd_is_admin_allowed');
 
         // Retrieve the custom taxonomy terms
         $grouped_terms = WSMD_Helpers::format_terms_for_grouped_select_options(WSMD_Taxonomy::get_terms());
@@ -121,21 +124,21 @@ class WSMD_Users
 ?>
         <h3><?php _e('Member Directory', 'wsmd'); ?></h3>
         <table id="wsmd-form" class="form-table">
-            <!-- Visibility -->
+            <!-- is_admin_allowed -->
             <tr>
-                <th><label for="wsmd_visibility"><?php _e('Force this member to be listed or removed in the Member Directory', 'wsmd'); ?></label></th>
-                <td>
+                <th><label for="wsmd_is_admin_allowed"><?php _e('Force this member to be listed or removed in the Member Directory', 'wsmd'); ?></label></th>
+                <td style="display: flex; flex-wrap: wrap;; flex-direction: column; gap: 10px;">
                     <label style="margin-right: 10px;">
-                        <input type="radio" name="wsmd_visibility" value="default" <?php checked($visibility, 'default'); ?> disabled>
-                        <?php _e('Default (Let the subscription decide)', 'wsmd'); ?>
+                        <input type="radio" name="wsmd_is_admin_allowed" value="default" <?php checked($is_admin_allowed, 'default'); ?>>
+                        <?php _e('Default (Let the subscription products decide)', 'wsmd'); ?>
                     </label>
                     <label style="margin-right: 10px;">
-                        <input type="radio" name="wsmd_visibility" value="forced" <?php checked($visibility, 'forced'); ?> disabled>
-                        <?php _e('Force to be listed in the Member Directory', 'wsmd'); ?>
+                        <input type="radio" name="wsmd_is_admin_allowed" value="force_in" <?php checked($is_admin_allowed, 'force_in'); ?>>
+                        <?php _e('Force this member to be listed in the Member Directory', 'wsmd'); ?>
                     </label>
                     <label>
-                        <input type="radio" name="wsmd_visibility" value="removed" <?php checked($visibility, 'removed'); ?> disabled>
-                        <?php _e('Remove from the Member Directory', 'wsmd'); ?>
+                        <input type="radio" name="wsmd_is_admin_allowed" value="force_out" <?php checked($is_admin_allowed, 'force_out'); ?>>
+                        <?php _e('Force this member to be removed from the Member Directory', 'wsmd'); ?>
                     </label>
                 </td>
             </tr>
@@ -143,7 +146,7 @@ class WSMD_Users
             <tr>
                 <th><label for="wsmd_taxonomies"><?php _e('Taxonomies', 'wsmd'); ?></label></th>
                 <td>
-                    <select name="wsmd_taxonomies[]" id="wsmd_taxonomies" multiple="multiple" class="regular-text" placeholder="<?php esc_attr_e('Select taxonomies', 'wsmd'); ?>" disabled>
+                    <select name="wsmd_taxonomies[]" id="wsmd_taxonomies" multiple="multiple" class="regular-text" placeholder="<?php esc_attr_e('Select taxonomies', 'wsmd'); ?>">
                         <?php foreach ($grouped_terms as $parent_id => $group) { ?>
                             <?php if (empty($group['terms'])) { ?>
                                 <option value="<?php echo esc_attr($parent_id); ?>" <?php echo in_array($parent_id, $user_terms) ? 'selected="selected"' : ''; ?>>
@@ -164,19 +167,11 @@ class WSMD_Users
                     <p class="description"><?php _e('Select taxonomies for the user.', 'wsmd'); ?></p>
                 </td>
             </tr>
-            <!-- Geolocation coordinates -->
-            <tr>
-                <th><label for="wsmd_geocode"><?php _e('Geo-coordinates', 'wsmd'); ?></label></th>
-                <td>
-                    <input type="text" name="wsmd_geocode" id="wsmd_geocode" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_geocode', true)); ?>" class="regular-text" readonly>
-                    <p class="description"><?php _e('The geo-coordinates of the user. Example: 45.5017, -73.5673', 'wsmd'); ?></p>
-                </td>
-            </tr>
             <!-- Occupation -->
             <tr>
                 <th><label for="wsmd_occupation"><?php _e('Occupation', 'wsmd'); ?></label></th>
                 <td>
-                    <input type="text" name="wsmd_occupation" id="wsmd_occupation" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_occupation', true)); ?>" class="regular-text" readonly>
+                    <input type="text" name="wsmd_occupation" id="wsmd_occupation" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_occupation', true)); ?>" class="regular-text">
                     <p class="description"><?php _e('The occupation of the user', 'wsmd'); ?></p>
                 </td>
             </tr>
@@ -184,8 +179,40 @@ class WSMD_Users
             <tr>
                 <th><label for="wsmd_company"><?php _e('Company', 'wsmd'); ?></label></th>
                 <td>
-                    <input type="text" name="wsmd_company" id="wsmd_company" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_company', true)); ?>" class="regular-text" readonly>
+                    <input type="text" name="wsmd_company" id="wsmd_company" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_company', true)); ?>" class="regular-text">
                     <p class="description"><?php _e('The company of the user', 'wsmd'); ?></p>
+                </td>
+            </tr>
+            <!-- Website -->
+            <tr>
+                <th><label for="wsmd_website"><?php _e('Website', 'wsmd'); ?></label></th>
+                <td>
+                    <input type="text" name="wsmd_website" id="wsmd_website" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_website', true)); ?>" class="regular-text">
+                    <p class="description"><?php _e('The website of the user', 'wsmd'); ?></p>
+                </td>
+            </tr>
+            <!-- Phone -->
+            <tr>
+                <th><label for="wsmd_phone"><?php _e('Phone', 'wsmd'); ?></label></th>
+                <td>
+                    <input type="text" name="wsmd_phone" id="wsmd_phone" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_phone', true)); ?>" class="regular-text">
+                    <p class="description"><?php _e('The phone number of the user', 'wsmd'); ?></p>
+                </td>
+            </tr>
+            <!-- Email -->
+            <tr>
+                <th><label for="wsmd_email"><?php _e('Email', 'wsmd'); ?></label></th>
+                <td>
+                    <input type="text" name="wsmd_email" id="wsmd_email" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_email', true)); ?>" class="regular-text">
+                    <p class="description"><?php _e('The email of the user', 'wsmd'); ?></p>
+                </td>
+            </tr>
+            <!-- Geolocation coordinates -->
+            <tr>
+                <th><label for="wsmd_geocode"><?php _e('Geo-coordinates', 'wsmd'); ?></label></th>
+                <td>
+                    <input type="text" name="wsmd_geocode" id="wsmd_geocode" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_geocode', true)); ?>" class="regular-text" readonly>
+                    <p class="description"><?php _e('The geo-coordinates of the user. Example: 45.5017, -73.5673', 'wsmd'); ?></p>
                 </td>
             </tr>
             <!-- Address -->
@@ -228,30 +255,6 @@ class WSMD_Users
                     <p class="description"><?php _e('The country of the user', 'wsmd'); ?></p>
                 </td>
             </tr>
-            <!-- Website -->
-            <tr>
-                <th><label for="wsmd_website"><?php _e('Website', 'wsmd'); ?></label></th>
-                <td>
-                    <input type="text" name="wsmd_website" id="wsmd_website" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_website', true)); ?>" class="regular-text" readonly>
-                    <p class="description"><?php _e('The website of the user', 'wsmd'); ?></p>
-                </td>
-            </tr>
-            <!-- Phone -->
-            <tr>
-                <th><label for="wsmd_phone"><?php _e('Phone', 'wsmd'); ?></label></th>
-                <td>
-                    <input type="text" name="wsmd_phone" id="wsmd_phone" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_phone', true)); ?>" class="regular-text" readonly>
-                    <p class="description"><?php _e('The phone number of the user', 'wsmd'); ?></p>
-                </td>
-            </tr>
-            <!-- Email -->
-            <tr>
-                <th><label for="wsmd_email"><?php _e('Email', 'wsmd'); ?></label></th>
-                <td>
-                    <input type="text" name="wsmd_email" id="wsmd_email" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_email', true)); ?>" class="regular-text" readonly>
-                    <p class="description"><?php _e('The email of the user', 'wsmd'); ?></p>
-                </td>
-            </tr>
         </table>
 <?php
     }
@@ -263,16 +266,19 @@ class WSMD_Users
      */
     public static function save_user_settings($user_id)
     {
-
         // Init results
         $results = array();
 
-        // Sanitize and save the fields visibility
-        // if (isset($_POST['wsmd_visibility'])) {
-        //     $_POST['wsmd_visibility'] = sanitize_text_field(wp_unslash($_POST['wsmd_visibility']));
-        //     update_user_meta($user_id, 'wsmd_visibility', $_POST['wsmd_visibility']);
-        //     $results['wsmd_visibility']['success'] = true;
-        // }
+        // Sanitize and save the fields is_admin_allowed
+        if (isset($_POST['wsmd_is_admin_allowed'])) {
+            $_POST['wsmd_is_admin_allowed'] = sanitize_text_field(wp_unslash($_POST['wsmd_is_admin_allowed']));
+            // Check if the is_admin_allowed is valid
+            if (!in_array($_POST['wsmd_is_admin_allowed'], array('default', 'force_in', 'force_out'))) {
+                $results['wsmd_is_admin_allowed'] = __('Invalid is_admin_allowed', 'wsmd');
+            }
+            update_user_meta($user_id, 'wsmd_is_admin_allowed', $_POST['wsmd_is_admin_allowed']);
+            $results['wsmd_is_admin_allowed']['success'] = true;
+        }
 
         // Sanitize and save the fields geolocation
         if (isset($_POST['wsmd_geocode'])) {
@@ -449,7 +455,7 @@ class WSMD_Users
     {
         if (empty($key)) {
             return array(
-                'wsmd_visibility' => get_user_meta($userID, 'wsmd_visibility', true),
+                'wsmd_is_admin_allowed' => get_user_meta($userID, 'wsmd_is_admin_allowed', true),
                 'wsmd_taxonomies' => wp_get_object_terms($userID, 'wsmd-taxonomy', array('fields' => 'ids')),
                 'wsmd_geocode' => get_user_meta($userID, 'wsmd_geocode', true),
                 'wsmd_occupation' => get_user_meta($userID, 'wsmd_occupation', true),
@@ -464,9 +470,9 @@ class WSMD_Users
                 'wsmd_email' => get_user_meta($userID, 'wsmd_email', true),
             );
         } else {
-            if ($key === 'wsmd_visibility') {
-                $visibility = get_user_meta($userID, 'wsmd_visibility', true);
-                return ($visibility === '') ? 'default' : $visibility;
+            if ($key === 'wsmd_is_admin_allowed') {
+                $is_admin_allowed = get_user_meta($userID, 'wsmd_is_admin_allowed', true);
+                return ($is_admin_allowed === '') ? 'default' : $is_admin_allowed;
             } else {
                 return get_user_meta($userID, $key, true);
             }

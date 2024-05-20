@@ -88,7 +88,7 @@ class WSMD_Helpers
                         'key' => 'wsmd_geocode',
                         'value' => '',
                         'compare' => '!='
-                    ]
+                    ],
                 ]
             ]);
 
@@ -101,8 +101,23 @@ class WSMD_Helpers
             $members = [];
             foreach ($users as $user) {
                 $user_id = $user->ID;
-                if (self::is_member_directory($user_id)) {
+
+                // Check if the user is forced_in by the admin
+                if (WSMD_Users::get_user_settings($user_id, 'wsmd_is_admin_allowed') === 'force_in') {
                     $members[$user_id] = WSMD_Users::get_user_settings($user_id);
+                    continue;
+                }
+                // Check if the user is forced_out by the admin
+                elseif (WSMD_Users::get_user_settings($user_id, 'wsmd_is_admin_allowed') === 'force_out') {
+                    continue;
+                }
+                // Else, check if the user has an active subscription
+                elseif (self::is_member_directory($user_id)) {
+                    $members[$user_id] = WSMD_Users::get_user_settings($user_id);
+                }
+                // The user is not a member directory at this point
+                else {
+                    continue;
                 }
             }
 
