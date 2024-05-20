@@ -3,8 +3,6 @@
 $select-border-radius: var(--wsmd-ts-input-border-radius, 0);
 $select-font-size: var(--wsmd-ts-input-font-size, 1rem);
 
-// Import Tom Select styles after your custom overrides
-// @import '~tom-select/src/scss/tom-select.default.scss';
 @import '~tom-select/src/scss/tom-select.scss';
 
 #wsmd-form {
@@ -35,15 +33,13 @@ $select-font-size: var(--wsmd-ts-input-font-size, 1rem);
 
                     .optgroup-header {
                         font-weight: 600;
-                        border-top: 1px solid var(--wsmd-ts-optgroup-header-border-color, #e5e5e5);
-                        border-bottom: 1px solid var(--wsmd-ts-optgroup-header-border-color, #e5e5e5);
                         background-color: var(--wsmd-ts-optgroup-header-bg-color, #eeeeee);
-                        padding: 0.5rem;
+                        padding: 0.75rem;
                     }
 
                     .option {
-                        padding: 0.5rem;
-                        padding-left: 1rem;
+                        padding: 0.75rem;
+                        padding-left: 1.5rem;
                     }
                 }
             }

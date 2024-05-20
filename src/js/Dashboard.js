@@ -35,15 +35,8 @@ class Dashboard
         }
 
         this.initTomSelect();
-        this.addEventListeners();
-    }
 
-    /**
-     * Add event listeners
-     */
-    static addEventListeners()
-    {
-        // Save settings
+        // Save settings listener
         this.form.querySelector('#wsmd-save-settings').addEventListener('click', (e) =>
         {
             e.preventDefault();
