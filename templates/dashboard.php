@@ -39,13 +39,19 @@
         <input type="text" name="wsmd_country" placeholder="<?php esc_attr_e('Country', 'wsmd'); ?>" value="<?php echo esc_attr($args['user_settings']['wsmd_country']); ?>">
         <select name="wsmd_taxonomies[]" id="wsmd_taxonomies" multiple="multiple" placeholder="<?php esc_attr_e('Select taxonomies', 'wsmd'); ?>">
             <?php foreach ($args['grouped_terms'] as $parent_id => $group) { ?>
-                <optgroup label="<?php echo esc_attr($group['label']); ?>">
-                    <?php foreach ($group['terms'] as $term) { ?>
-                        <option value="<?php echo esc_attr($term->term_id); ?>" <?php echo in_array($term->term_id, $args['user_settings']['wsmd_taxonomies']) ? 'selected="selected"' : ''; ?>>
-                            <?php echo esc_html($term->name); ?>
-                        </option>
-                    <?php } ?>
-                </optgroup>
+                <?php if (empty($group['terms'])) { ?>
+                    <option value="<?php echo esc_attr($parent_id); ?>" <?php echo in_array($parent_id, $args['user_settings']['wsmd_taxonomies']) ? 'selected="selected"' : ''; ?>>
+                        <?php echo esc_html($group['label']); ?>
+                    </option>
+                <?php } else { ?>
+                    <optgroup label="<?php echo esc_attr($group['label']); ?>">
+                        <?php foreach ($group['terms'] as $term) { ?>
+                            <option value="<?php echo esc_attr($term->term_id); ?>" <?php echo in_array($term->term_id, $args['user_settings']['wsmd_taxonomies']) ? 'selected="selected"' : ''; ?>>
+                                <?php echo esc_html($term->name); ?>
+                            </option>
+                        <?php } ?>
+                    </optgroup>
+                <?php } ?>
             <?php } ?>
         </select>
         <div id="wsmd-map"></div>

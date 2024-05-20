@@ -118,15 +118,22 @@ class WSMD_User_Settings
                 <td>
                     <select name="wsmd_taxonomies[]" id="wsmd_taxonomies" multiple="multiple" class="regular-text" placeholder="<?php esc_attr_e('Select taxonomies', 'wsmd'); ?>" disabled>
                         <?php foreach ($grouped_terms as $parent_id => $group) { ?>
-                            <optgroup label="<?php echo esc_attr($group['label']); ?>">
-                                <?php foreach ($group['terms'] as $term) { ?>
-                                    <option value="<?php echo esc_attr($term->term_id); ?>" <?php echo in_array($term->term_id, $user_terms) ? 'selected="selected"' : ''; ?>>
-                                        <?php echo esc_html($term->name); ?>
-                                    </option>
-                                <?php } ?>
-                            </optgroup>
+                            <?php if (empty($group['terms'])) { ?>
+                                <option value="<?php echo esc_attr($parent_id); ?>" <?php echo in_array($parent_id, $user_terms) ? 'selected="selected"' : ''; ?>>
+                                    <?php echo esc_html($group['label']); ?>
+                                </option>
+                            <?php } else { ?>
+                                <optgroup label="<?php echo esc_attr($group['label']); ?>">
+                                    <?php foreach ($group['terms'] as $term) { ?>
+                                        <option value="<?php echo esc_attr($term->term_id); ?>" <?php echo in_array($term->term_id, $user_terms) ? 'selected="selected"' : ''; ?>>
+                                            <?php echo esc_html($term->name); ?>
+                                        </option>
+                                    <?php } ?>
+                                </optgroup>
+                            <?php } ?>
                         <?php } ?>
                     </select>
+
                     <p class="description"><?php _e('Select taxonomies for the user.', 'wsmd'); ?></p>
                 </td>
             </tr>

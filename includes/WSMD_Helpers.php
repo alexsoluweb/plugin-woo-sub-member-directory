@@ -115,7 +115,10 @@ class WSMD_Helpers
     }
 
     /**
-     * Format terms for grouped select options (for tom-select)
+     * Format terms for grouped select options (for tom-select).
+     * This function groups terms by parent term and returns an array of formatted terms.
+     * It only supports one level of hierarchy.
+     * 
      * @param array $terms Array of WP_Term objects
      * @return array $formatted_terms Array of formatted terms
      */
@@ -124,9 +127,24 @@ class WSMD_Helpers
         $grouped_terms = [];
 
         foreach ($terms as $term) {
-            $parent_term_id = $term->parent ? $term->parent : $term->term_id;
-            $grouped_terms[$parent_term_id]['label'] = $term->parent ? get_term($term->parent)->name : $term->name;
-            $grouped_terms[$parent_term_id]['terms'][] = $term;
+            if ($term->parent) {
+                $parent_term_id = $term->parent;
+                $parent_term = get_term($parent_term_id);
+                if (!isset($grouped_terms[$parent_term_id])) {
+                    $grouped_terms[$parent_term_id] = [
+                        'label' => $parent_term->name,
+                        'terms' => []
+                    ];
+                }
+                $grouped_terms[$parent_term_id]['terms'][] = $term;
+            } else {
+                if (!isset($grouped_terms[$term->term_id])) {
+                    $grouped_terms[$term->term_id] = [
+                        'label' => $term->name,
+                        'terms' => []
+                    ];
+                }
+            }
         }
 
         return $grouped_terms;

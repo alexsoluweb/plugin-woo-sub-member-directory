@@ -34,13 +34,19 @@ $localize_strings = array(
             <label for="wsmd_taxonomies"><?php esc_html_e('Filter by taxonomies', 'wsmd'); ?></label>
             <select name="wsmd_taxonomies[]" id="wsmd_taxonomies" multiple="multiple" placeholder="<?php esc_attr_e('Select taxonomies', 'wsmd'); ?>">
                 <?php foreach ($args['grouped_terms'] as $parent_id => $group) { ?>
-                    <optgroup label="<?php echo esc_attr($group['label']); ?>">
-                        <?php foreach ($group['terms'] as $term) { ?>
-                            <option value="<?php echo esc_attr($term->term_id); ?>">
-                                <?php echo esc_html($term->name); ?>
-                            </option>
-                        <?php } ?>
-                    </optgroup>
+                    <?php if (empty($group['terms'])) { ?>
+                        <option value="<?php echo esc_attr($parent_id); ?>">
+                            <?php echo esc_html($group['label']); ?>
+                        </option>
+                    <?php } else { ?>
+                        <optgroup label="<?php echo esc_attr($group['label']); ?>">
+                            <?php foreach ($group['terms'] as $term) { ?>
+                                <option value="<?php echo esc_attr($term->term_id); ?>">
+                                    <?php echo esc_html($term->name); ?>
+                                </option>
+                            <?php } ?>
+                        </optgroup>
+                    <?php } ?>
                 <?php } ?>
             </select>
         </div>

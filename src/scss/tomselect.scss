@@ -33,13 +33,12 @@ $select-font-size: var(--wsmd-ts-input-font-size, 1rem);
 
                     .optgroup-header {
                         font-weight: 600;
-                        background-color: var(--wsmd-ts-optgroup-header-bg-color, #eeeeee);
                         padding: 0.75rem;
                     }
 
                     .option {
                         padding: 0.75rem;
-                        padding-left: 1.5rem;
+                        padding-left: 3rem;
                     }
                 }
             }
