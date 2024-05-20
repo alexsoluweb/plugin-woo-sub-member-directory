@@ -1,0 +1,445 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Woo Sub Member Directory\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-05-20 22:57+0000\n"
+"PO-Revision-Date: 2024-05-20 23:46+0000\n"
+"Last-Translator: \n"
+"Language-Team: French (France)\n"
+"Language: fr_FR\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.6.9; wp-6.5.3\n"
+"X-Domain: wsmd\n"
+"X-Loco-Fallback: fr_CA\n"
+"X-Loco-Template: languages/wsmd-fr_CA.po\n"
+"X-Loco-Template-Mode: PO,JSON"
+
+#. Description of the plugin
+msgid "A plugin to create a member directory for Woo Subscriptions"
+msgstr "Un plugin pour créer un répertoire de membres pour les abonnements woo"
+
+#: includes/WSMD_Taxonomy.php:98
+msgid "Add New Member Directory taxonomy"
+msgstr "Ajouter un nouveau répertoire de membres Taxonomy"
+
+#: templates/dashboard.php:31 includes/WSMD_Users.php:230
+msgid "Address"
+msgstr "Adresse"
+
+#: includes/WSMD_Users.php:360
+msgid "Address is required"
+msgstr "L'adresse est requise"
+
+#. Author of the plugin
+msgid "Alexsoluweb"
+msgstr "Alexsoluweb"
+
+#: includes/WSMD_Taxonomy.php:93
+msgid "All Member Directory taxonomy"
+msgstr "Tous les répertoires des membres Taxonomy"
+
+#: includes/WSMD_Woo_Dashboard.php:90
+msgid "Available membership plans:"
+msgstr "Régimes d'adhésion disponibles :"
+
+#: templates/dashboard.php:32 includes/WSMD_Users.php:238
+msgid "City"
+msgstr "Ville"
+
+#: includes/WSMD_Users.php:370
+msgid "City is required"
+msgstr "La ville est requise"
+
+#: templates/dashboard.php:27 includes/WSMD_Users.php:190
+msgid "Company"
+msgstr "Société"
+
+#: includes/WSMD_Users.php:345
+msgid "Company is required"
+msgstr "L'entreprise est requise"
+
+#: includes/WSMD_Users.php:349
+msgid "Company is too long (32 characters max)"
+msgstr "L'entreprise est trop longue (32 caractères Max)"
+
+#: templates/dashboard.php:35 includes/WSMD_Users.php:262
+msgid "Country"
+msgstr "Pays"
+
+#: includes/WSMD_Users.php:400
+msgid "Country is required"
+msgstr "Le pays est requis"
+
+#: includes/WSMD_Users.php:133
+msgid "Default (Let the subscription products decide)"
+msgstr "Par défaut (que les produits d'abonnement décident)"
+
+#: includes/WSMD_Woo_Settings.php:69
+msgid "Edit here"
+msgstr "Modifier ici"
+
+#: includes/WSMD_Taxonomy.php:96
+msgid "Edit Member Directory taxonomy"
+msgstr "Modifier le répertoire des membres Taxonomie"
+
+#: templates/dashboard.php:30 includes/WSMD_Users.php:214
+msgid "Email"
+msgstr "Courriel"
+
+#: templates/member-directory.php:22
+msgid "Enter a location"
+msgstr "Saisissez un emplacement"
+
+#: includes/WSMD_Woo_Settings.php:61
+msgid "Enter your Google Maps API Key."
+msgstr "Saisissez votre clé API Google Maps."
+
+#: includes/WSMD_AJAX.php:126
+msgid "Failed to contact Google Places API."
+msgstr "Impossible de contacter l'API des lieux Google."
+
+#: templates/member-directory.php:34
+msgid "Filter by taxonomies"
+msgstr "Filtrer par Taxonomies"
+
+#: templates/member-directory.php:21
+msgid "Find the nearest members"
+msgstr "Trouvez les membres les plus proches"
+
+#: includes/WSMD_Users.php:137
+msgid ""
+"Force this member to be listed in the Member Directory (This has no effect "
+"if the user has a hidden profile)."
+msgstr ""
+"Forcez ce membre à être listé dans le répertoire des membres (ceci n'a aucun "
+"effet si l'utilisateur a un profil caché)."
+
+#: includes/WSMD_Users.php:129
+msgid "Force this member to be listed or removed in the Member Directory"
+msgstr ""
+"Forcer ce membre à être listé ou supprimé dans le répertoire des membres"
+
+#: includes/WSMD_Users.php:141
+msgid "Force this member to be removed from the Member Directory"
+msgstr "Forcer ce membre à être retiré du répertoire des membres"
+
+#: includes/WSMD_Users.php:222
+msgid "Geo-coordinates"
+msgstr "Géo-Coordonnées"
+
+#: includes/WSMD_Users.php:320
+msgid "Geocode is required"
+msgstr "Géocode est requis"
+
+#: includes/WSMD_AJAX.php:118
+msgid "Google Map API key is not set."
+msgstr "Google map API clé n'est pas défini."
+
+#: includes/WSMD_Woo_Settings.php:58
+msgid "Google Maps API Key"
+msgstr "Google maps API clé"
+
+#: templates/dashboard.php:55
+msgid "Hide my profile from the public member directory"
+msgstr "Cacher mon profil dans l'annuaire des membres du public"
+
+#: includes/WSMD_Users.php:147
+msgid "Hide profile"
+msgstr "Masquer le profil"
+
+#. Author URI of the plugin
+msgid "https://alexsoluweb.ca"
+msgstr "Https: //Alexsoluweb.Ca"
+
+#: includes/WSMD_AJAX.php:59
+msgid "Invalid address"
+msgstr "Adresse non valide"
+
+#: includes/WSMD_AJAX.php:62
+msgid "Invalid city"
+msgstr "Ville non valide"
+
+#: includes/WSMD_AJAX.php:68
+msgid "Invalid country"
+msgstr "Pays invalide"
+
+#: includes/WSMD_Users.php:444
+msgid "Invalid email"
+msgstr "Courriel non valide"
+
+#: includes/WSMD_Users.php:310
+msgid "Invalid hide_profile"
+msgstr "Fichier_cache_invalide"
+
+#: includes/WSMD_Users.php:296
+msgid "Invalid is_admin_allowed"
+msgstr "Invalidité _Admin_Autorisée"
+
+#: includes/WSMD_AJAX.php:22
+msgid "Invalid nonce"
+msgstr "Nonce non valide"
+
+#: includes/WSMD_Users.php:432
+msgid "Invalid phone number"
+msgstr "Numéro de téléphone non valide"
+
+#: includes/WSMD_AJAX.php:65
+msgid "Invalid province/state"
+msgstr "Province/État invalide"
+
+#: includes/WSMD_Users.php:418
+msgid "Invalid Website URL"
+msgstr "Site Web non valide Url"
+
+#: templates/member-directory.php:63
+msgid "Load more"
+msgstr "Charger plus"
+
+#: includes/WSMD_Woo_Settings.php:14 includes/WSMD_Users.php:26
+#: includes/WSMD_Users.php:125 includes/WSMD_Woo_Dashboard.php:53
+#: includes/WSMD_Woo_Dashboard.php:66
+msgid "Member Directory"
+msgstr "Répertoire des membres"
+
+#: includes/WSMD_Woo_Settings.php:37
+msgid "Member Directory Settings"
+msgstr "Paramètres du répertoire des membres"
+
+#: includes/WSMD_Taxonomy.php:90 includes/WSMD_Taxonomy.php:91
+#: includes/WSMD_Taxonomy.php:100
+msgid "Member Directory taxonomy"
+msgstr "Annuaire des membres Taxonomie"
+
+#: includes/WSMD_Taxonomy.php:99
+msgid "New Member Directory taxonomy Name"
+msgstr "Nouveau répertoire des membres Taxonomy nom"
+
+#: templates/member-directory.php:11
+msgid "No results found"
+msgstr "Aucun résultat trouvé"
+
+#: templates/dashboard.php:26 includes/WSMD_Users.php:182
+msgid "Occupation"
+msgstr "Profession"
+
+#: includes/WSMD_Users.php:330
+msgid "Occupation is required"
+msgstr "Profession requise"
+
+#: includes/WSMD_Users.php:334
+msgid "Occupation is too long (32 characters max)"
+msgstr "L'occupation est trop longue (32 caractères Max)"
+
+#: templates/member-directory.php:26
+msgid "or"
+msgstr "ou"
+
+#: includes/WSMD_Taxonomy.php:94
+msgid "Parent Member Directory taxonomy"
+msgstr "Répertoire des membres parents Taxonomie"
+
+#: includes/WSMD_Taxonomy.php:95
+msgid "Parent Member Directory taxonomy:"
+msgstr "Répertoire des membres parents Taxonomie:"
+
+#: templates/dashboard.php:29 includes/WSMD_Users.php:206
+msgid "Phone"
+msgstr "Téléphone"
+
+#: templates/dashboard.php:14
+msgid ""
+"Please fill in your details below. This information will be displayed in the "
+"member directory. Your position on the map will be automatically determined "
+"by the coordinates you enter after saving your settings. You can select "
+"multiple taxonomies that describe your skills and expertise. You can also "
+"update your settings at any time."
+msgstr ""
+"Veuillez remplir vos coordonnées ci-dessous. Ces informations seront "
+"affichées dans le répertoire des membres. Votre position sur la carte sera "
+"automatiquement déterminée par les coordonnées que vous entrez après "
+"l'enregistrement de vos paramètres. Vous pouvez sélectionner plusieurs "
+"taxonomies qui décrivent vos compétences et votre expertise. Vous pouvez "
+"également mettre à jour vos paramètres à tout moment."
+
+#: includes/WSMD_Woo_Dashboard.php:84
+msgid "Please subscribe to a membership plan to access the member directory."
+msgstr ""
+"Veuillez vous abonner à un plan d'adhésion pour accéder au répertoire des "
+"membres."
+
+#: templates/dashboard.php:34 includes/WSMD_Users.php:254
+msgid "Postal/Zip code"
+msgstr "Code postal/zip"
+
+#: includes/WSMD_Users.php:390
+msgid "Postal/Zip code is required"
+msgstr "Code postal/zip requis"
+
+#: templates/dashboard.php:33 includes/WSMD_Users.php:246
+msgid "Province/State"
+msgstr "Province/État"
+
+#: includes/WSMD_Users.php:380
+msgid "Province/State is required"
+msgstr "Province/État requis"
+
+#: templates/member-directory.php:12
+msgid "Result"
+msgstr "Résultat"
+
+#: templates/member-directory.php:13
+msgid "Results"
+msgstr "Résultats"
+
+#: templates/dashboard.php:58
+msgid "Save Settings"
+msgstr "Enregistrer les paramètres"
+
+#: includes/WSMD_Taxonomy.php:92
+msgid "Search Member Directory taxonomy"
+msgstr "Annuaire des membres de la recherche Taxonomy"
+
+#: includes/WSMD_Woo_Settings.php:51
+msgid "Select subscription products"
+msgstr "Sélectionnez les produits d'abonnement"
+
+#: templates/member-directory.php:35 templates/dashboard.php:36
+#: includes/WSMD_Users.php:159
+msgid "Select taxonomies"
+msgstr "Sélectionner les taxonomies"
+
+#: includes/WSMD_Users.php:177
+msgid "Select taxonomies for the user."
+msgstr "Sélectionnez Taxonomies pour l'utilisateur."
+
+#: includes/WSMD_Woo_Settings.php:47
+msgid ""
+"Select the product subscription(s) that will be considered for the Member "
+"Directory."
+msgstr ""
+"Sélectionnez l'abonnement (s) du produit qui sera considéré pour le "
+"répertoire des membres."
+
+#: index.php:30
+msgid "Settings"
+msgstr "Paramètres"
+
+#: includes/WSMD_AJAX.php:99
+msgid "Settings saved successfully"
+msgstr "Paramètres sauvegardés avec succès"
+
+#: includes/WSMD_Woo_Settings.php:43
+msgid "Subscription Products"
+msgstr "Produits d'abonnement"
+
+#: includes/WSMD_Woo_Settings.php:66 includes/WSMD_Users.php:157
+msgid "Taxonomies"
+msgstr "Taxonomies"
+
+#: includes/WSMD_Taxonomy.php:168
+msgid "Term Hierarchy Error"
+msgstr "Erreur de hiérarchie des termes"
+
+#: includes/WSMD_Users.php:233
+msgid "The address of the user"
+msgstr "L'adresse de l'utilisateur"
+
+#: includes/WSMD_Users.php:241
+msgid "The city of the user"
+msgstr "La ville de l'utilisateur"
+
+#: includes/WSMD_Users.php:193
+msgid "The company of the user"
+msgstr "La société de l'utilisateur"
+
+#: includes/WSMD_Users.php:265
+msgid "The country of the user"
+msgstr "Le pays de l'utilisateur"
+
+#: includes/WSMD_Users.php:217
+msgid "The email of the user"
+msgstr "L'email de l'utilisateur"
+
+#: includes/WSMD_Users.php:225
+msgid "The geo-coordinates of the user. Example: 45.5017, -73.5673"
+msgstr ""
+"Les coordonnées géographiques de l'utilisateur. Exemple : 45.5017, -73.5673"
+
+#: includes/WSMD_Users.php:185
+msgid "The occupation of the user"
+msgstr "La profession de l'utilisateur"
+
+#: includes/WSMD_Users.php:209
+msgid "The phone number of the user"
+msgstr "Le numéro de téléphone de l'utilisateur"
+
+#: includes/WSMD_Users.php:257
+msgid "The postal/zip code of the user"
+msgstr "Le code postal/zip de l'utilisateur"
+
+#: includes/WSMD_Users.php:249
+msgid "The province/state of the user"
+msgstr "Province/État de l'utilisateur"
+
+#: includes/WSMD_Users.php:151
+msgid "The user has hidden his profile"
+msgstr "L'utilisateur a caché son profil"
+
+#: includes/WSMD_Users.php:201
+msgid "The website of the user"
+msgstr "Le Site de l'utilisateur"
+
+#: includes/WSMD_Taxonomy.php:168
+msgid "This taxonomy cannot have more than one level of hierarchy."
+msgstr "Cette taxonomie ne peut pas avoir plus d'un niveau de hiérarchie."
+
+#: includes/WSMD_Taxonomy.php:97
+msgid "Update Member Directory taxonomy"
+msgstr "Mettre à jour le répertoire des membres Taxonomy"
+
+#: templates/member-directory.php:28 templates/member-directory.php:29
+msgid "Use my location"
+msgstr "Utilisez mon emplacement"
+
+#: includes/WSMD_Taxonomy.php:127
+msgid "User Count"
+msgstr "Nombre d'utilisateurs"
+
+#: templates/dashboard.php:28 includes/WSMD_Users.php:198
+msgid "Website"
+msgstr "Site Web"
+
+#. Name of the plugin
+msgid "Woo Sub Member Directory"
+msgstr "Répertoire des sous-membres Woo"
+
+#: includes/WSMD.php:88
+msgid ""
+"Woo Sub Member Directory requires WooCommerce Subscriptions to be installed "
+"and activated."
+msgstr ""
+"Le sous-annuaire des membres Woo exige que les abonnements Woocommerce "
+"soient installés et activés."
+
+#: includes/WSMD.php:76
+msgid ""
+"Woo Sub Member Directory requires WooCommerce to be installed and activated."
+msgstr ""
+"Le répertoire des sous-membres Woo nécessite l'installation et l'activation "
+"de Woocommerce."
+
+#: includes/WSMD_Woo_Dashboard.php:83
+msgid "You are not a Member Directory."
+msgstr "Vous n'êtes pas un répertoire membre."
+
+#: includes/WSMD_Users.php:292
+msgid "You do not have permission to edit this user"
+msgstr "Vous n'avez pas la permission de modifier cet utilisateur"
+
+#: includes/WSMD_AJAX.php:29
+msgid "You must be logged in to save settings"
+msgstr "Vous devez être connecté pour enregistrer les paramètres"
