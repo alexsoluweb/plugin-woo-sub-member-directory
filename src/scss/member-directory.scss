@@ -1,3 +1,4 @@
+@import 'variables.scss';
 @import 'mixins.scss';
 @import 'global-styles.scss';
 
@@ -65,7 +66,7 @@
                             display: inline-block;
                             flex: 1;
                             height: 1px;
-                            background-color: rgba(0, 0, 0, 0.075);
+                            background-color: $border-color;
                         }
                     }
 
@@ -148,6 +149,10 @@
                     display: flex;
                     flex-direction: column;
 
+                    hr {
+                        background-color: $border-color;
+                    }
+
                     .wsmd-map-info-window-company {
                         font-weight: 600;
                         margin-bottom: 0.25rem;
@@ -197,12 +202,16 @@
             }
 
             .wsmd-member-item {
-                border: 1px solid #ccc;
+                border: 1px solid $border-color;
                 padding: 1rem;
                 cursor: pointer;
 
                 &:hover {
-                    background-color: #f5f5f5;
+                    background-color: $primary-color
+                }
+
+                hr {
+                    background-color: $border-color;
                 }
 
                 .wsmd-member-item-header {
@@ -241,7 +250,7 @@
                         margin-top: 0.5rem;
 
                         > * {
-                            border: 1px solid #ccc;
+                            border: 1px solid $border-color;
                             padding: 0.15rem 0.3rem;
                             font-size: 0.85rem;
                         }

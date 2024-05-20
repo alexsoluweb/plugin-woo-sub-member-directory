@@ -124,7 +124,7 @@ class WSMD_Users
 ?>
         <h3><?php _e('Member Directory', 'wsmd'); ?></h3>
         <table id="wsmd-form" class="form-table">
-            <!-- is_admin_allowed -->
+            <!-- is_admin_allowed (admin only) -->
             <tr>
                 <th><label for="wsmd_is_admin_allowed"><?php _e('Force this member to be listed or removed in the Member Directory', 'wsmd'); ?></label></th>
                 <td style="display: flex; flex-wrap: wrap;; flex-direction: column; gap: 10px;">
@@ -134,11 +134,21 @@ class WSMD_Users
                     </label>
                     <label style="margin-right: 10px;">
                         <input type="radio" name="wsmd_is_admin_allowed" value="force_in" <?php checked($is_admin_allowed, 'force_in'); ?>>
-                        <?php _e('Force this member to be listed in the Member Directory', 'wsmd'); ?>
+                        <?php _e('Force this member to be listed in the Member Directory (This has no effect if the user has a hidden profile).', 'wsmd'); ?>
                     </label>
                     <label>
                         <input type="radio" name="wsmd_is_admin_allowed" value="force_out" <?php checked($is_admin_allowed, 'force_out'); ?>>
                         <?php _e('Force this member to be removed from the Member Directory', 'wsmd'); ?>
+                    </label>
+                </td>
+            </tr>
+            <!-- Hide profile -->
+            <tr>
+                <th><label for="wsmd_hide_profile"><?php _e('Hide profile', 'wsmd'); ?></label></th>
+                <td>
+                    <label>
+                        <input type="checkbox" name="wsmd_hide_profile" value="1" <?php echo get_user_meta($user->ID, 'wsmd_hide_profile', true) ? 'checked="checked"' : ''; ?> disabled>
+                        <?php _e('The user has hidden his profile', 'wsmd'); ?>
                     </label>
                 </td>
             </tr>
@@ -261,6 +271,11 @@ class WSMD_Users
 
     /**
      * Save the user settings.
+     * IMPORTANT: This method is used on the public and admin side.
+     * The nonce is automatically checked by WordPress in the admin side.
+     * On the public side, the nonce must be checked before calling this method.
+     * For admin fields, the user must have the 'edit_user' capability and need to be checked in this method
+     * since this method is also used on the public side.
      * 
      * @return Array Fields that are not valid
      */
@@ -269,104 +284,122 @@ class WSMD_Users
         // Init results
         $results = array();
 
-        // Sanitize and save the fields is_admin_allowed
+        // Sanitize and save the fields is_admin_allowed (admin only)
         if (isset($_POST['wsmd_is_admin_allowed'])) {
             $_POST['wsmd_is_admin_allowed'] = sanitize_text_field(wp_unslash($_POST['wsmd_is_admin_allowed']));
-            // Check if the is_admin_allowed is valid
-            if (!in_array($_POST['wsmd_is_admin_allowed'], array('default', 'force_in', 'force_out'))) {
-                $results['wsmd_is_admin_allowed'] = __('Invalid is_admin_allowed', 'wsmd');
+            // Check if the current user can edit the user
+            if (!current_user_can('edit_user', $user_id)) {
+                $results['wsmd_is_admin_allowed'] = __('You do not have permission to edit this user', 'wsmd');
             }
-            update_user_meta($user_id, 'wsmd_is_admin_allowed', $_POST['wsmd_is_admin_allowed']);
-            $results['wsmd_is_admin_allowed']['success'] = true;
+            // Check if the is_admin_allowed field is valid
+            elseif (!in_array($_POST['wsmd_is_admin_allowed'], array('default', 'force_in', 'force_out'))) {
+                $results['wsmd_is_admin_allowed'] = __('Invalid is_admin_allowed', 'wsmd');
+            } else {
+                update_user_meta($user_id, 'wsmd_is_admin_allowed', $_POST['wsmd_is_admin_allowed']);
+            }
+        }
+
+        // Sanitize and save the fields hide_profile
+        if (isset($_POST['wsmd_hide_profile'])) {
+            $_POST['wsmd_hide_profile'] = sanitize_text_field(wp_unslash($_POST['wsmd_hide_profile']));
+
+            // Check if the hide_profile field is valid
+            if (in_array($_POST['wsmd_hide_profile'], array('0', '1'), true)) {
+                update_user_meta($user_id, 'wsmd_hide_profile', $_POST['wsmd_hide_profile']);
+            } else {
+                $results['wsmd_hide_profile'] = __('Invalid hide_profile', 'wsmd');
+            }
+        } else {
+            update_user_meta($user_id, 'wsmd_hide_profile', '0');
         }
 
         // Sanitize and save the fields geolocation
         if (isset($_POST['wsmd_geocode'])) {
             $_POST['wsmd_geocode'] = sanitize_text_field(wp_unslash($_POST['wsmd_geocode']));
-            if (!empty($_POST['wsmd_geocode'])) {
-                update_user_meta($user_id, 'wsmd_geocode', $_POST['wsmd_geocode']);
-            } else {
+            if (empty($_POST['wsmd_geocode'])) {
                 $results['wsmd_geocode'] = __('Geocode is required', 'wsmd');
+            } else {
+                update_user_meta($user_id, 'wsmd_geocode', $_POST['wsmd_geocode']);
             }
         }
 
         // Sanitize and save the fields occupation
         if (isset($_POST['wsmd_occupation'])) {
             $_POST['wsmd_occupation'] = sanitize_text_field(wp_unslash($_POST['wsmd_occupation']));
-            if (!empty($_POST['wsmd_occupation'])) {
+            if (empty($_POST['wsmd_occupation'])) {
+                $results['wsmd_occupation'] = __('Occupation is required', 'wsmd');
+            } else {
                 // Limit the occupation to 32 characters
                 if (strlen($_POST['wsmd_occupation']) > 32) {
                     $results['wsmd_occupation'] = __('Occupation is too long (32 characters max)', 'wsmd');
                 } else {
                     update_user_meta($user_id, 'wsmd_occupation', $_POST['wsmd_occupation']);
                 }
-            } else {
-                $results['wsmd_occupation'] = __('Occupation is required', 'wsmd');
             }
         }
 
         // Sanitize and save the fields company
         if (isset($_POST['wsmd_company'])) {
             $_POST['wsmd_company'] = sanitize_text_field(wp_unslash($_POST['wsmd_company']));
-            if (!empty($_POST['wsmd_company'])) {
+            if (empty($_POST['wsmd_company'])) {
+                $results['wsmd_company'] = __('Company is required', 'wsmd');
+            } else {
                 // Limit the company to 32 characters
                 if (strlen($_POST['wsmd_company']) > 32) {
                     $results['wsmd_company'] = __('Company is too long (32 characters max)', 'wsmd');
                 } else {
                     update_user_meta($user_id, 'wsmd_company', $_POST['wsmd_company']);
                 }
-            } else {
-                $results['wsmd_company'] = __('Company is required', 'wsmd');
             }
         }
 
         // Sanitize and save the fields address
         if (isset($_POST['wsmd_address'])) {
             $_POST['wsmd_address'] = sanitize_text_field(wp_unslash($_POST['wsmd_address']));
-            if (!empty($_POST['wsmd_address'])) {
-                update_user_meta($user_id, 'wsmd_address', $_POST['wsmd_address']);
-            } else {
+            if (empty($_POST['wsmd_address'])) {
                 $results['wsmd_address'] = __('Address is required', 'wsmd');
+            } else {
+                update_user_meta($user_id, 'wsmd_address', $_POST['wsmd_address']);
             }
         }
 
         // Sanitize and save the fields city
         if (isset($_POST['wsmd_city'])) {
             $_POST['wsmd_city'] = sanitize_text_field(wp_unslash($_POST['wsmd_city']));
-            if (!empty($_POST['wsmd_city'])) {
-                update_user_meta($user_id, 'wsmd_city', $_POST['wsmd_city']);
-            } else {
+            if (empty($_POST['wsmd_city'])) {
                 $results['wsmd_city'] = __('City is required', 'wsmd');
+            } else {
+                update_user_meta($user_id, 'wsmd_city', $_POST['wsmd_city']);
             }
         }
 
         // Sanitize and save the fields province/state
         if (isset($_POST['wsmd_province_state'])) {
             $_POST['wsmd_province_state'] = sanitize_text_field(wp_unslash($_POST['wsmd_province_state']));
-            if (!empty($_POST['wsmd_province_state'])) {
-                update_user_meta($user_id, 'wsmd_province_state', $_POST['wsmd_province_state']);
-            } else {
+            if (empty($_POST['wsmd_province_state'])) {
                 $results['wsmd_province_state'] = __('Province/State is required', 'wsmd');
+            } else {
+                update_user_meta($user_id, 'wsmd_province_state', $_POST['wsmd_province_state']);
             }
         }
 
         // Sanitize and save the fields postal code/zip
         if (isset($_POST['wsmd_postal_zip_code'])) {
             $_POST['wsmd_postal_zip_code'] = sanitize_text_field(wp_unslash($_POST['wsmd_postal_zip_code']));;
-            if (!empty($_POST['wsmd_postal_zip_code'])) {
-                update_user_meta($user_id, 'wsmd_postal_zip_code', $_POST['wsmd_postal_zip_code']);
-            } else {
+            if (empty($_POST['wsmd_postal_zip_code'])) {
                 $results['wsmd_postal_zip_code'] = __('Postal/Zip code is required', 'wsmd');
+            } else {
+                update_user_meta($user_id, 'wsmd_postal_zip_code', $_POST['wsmd_postal_zip_code']);
             }
         }
 
         // Sanitize and save the fields country
         if (isset($_POST['wsmd_country'])) {
             $_POST['wsmd_country'] = sanitize_text_field(wp_unslash($_POST['wsmd_country']));
-            if (!empty($_POST['wsmd_country'])) {
-                update_user_meta($user_id, 'wsmd_country', $_POST['wsmd_country']);
-            } else {
+            if (empty($_POST['wsmd_country'])) {
                 $results['wsmd_country'] = __('Country is required', 'wsmd');
+            } else {
+                update_user_meta($user_id, 'wsmd_country', $_POST['wsmd_country']);
             }
         }
 
@@ -456,6 +489,7 @@ class WSMD_Users
         if (empty($key)) {
             return array(
                 'wsmd_is_admin_allowed' => get_user_meta($userID, 'wsmd_is_admin_allowed', true),
+                'wsmd_hide_profile' => get_user_meta($userID, 'wsmd_hide_profile', true),
                 'wsmd_taxonomies' => wp_get_object_terms($userID, 'wsmd-taxonomy', array('fields' => 'ids')),
                 'wsmd_geocode' => get_user_meta($userID, 'wsmd_geocode', true),
                 'wsmd_occupation' => get_user_meta($userID, 'wsmd_occupation', true),

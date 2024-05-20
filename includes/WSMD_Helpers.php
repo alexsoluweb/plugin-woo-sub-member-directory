@@ -102,8 +102,12 @@ class WSMD_Helpers
             foreach ($users as $user) {
                 $user_id = $user->ID;
 
+                // Check if the user has hidden their profile
+                if (WSMD_Users::get_user_settings($user_id, 'wsmd_hide_profile')) {
+                    continue;
+                }
                 // Check if the user is forced_in by the admin
-                if (WSMD_Users::get_user_settings($user_id, 'wsmd_is_admin_allowed') === 'force_in') {
+                elseif (WSMD_Users::get_user_settings($user_id, 'wsmd_is_admin_allowed') === 'force_in') {
                     $members[$user_id] = WSMD_Users::get_user_settings($user_id);
                     continue;
                 }

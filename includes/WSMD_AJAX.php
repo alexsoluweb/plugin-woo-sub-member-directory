@@ -130,7 +130,13 @@ class WSMD_AJAX
         $data = json_decode($body, true);
 
         if ($data['status'] !== 'OK') {
-            return array('success' => false, 'message' => __('Geocode was not successful for the following reason: ', 'wsmd') . $data['status']);
+            return array(
+                'success' => false,
+                'message' => __(sprintf(
+                    'Geocode was not successful for the following reason: %s. Please check the accuracy of all coordinate fields.',
+                    $data['status']
+                ), 'wsmd')
+            );
         }
 
         $location = $data['results'][0]['geometry']['location'];

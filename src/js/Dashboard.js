@@ -25,9 +25,10 @@ class Dashboard
         this.form = dashboard.querySelector('#wsmd-form');
         this.formMessage = this.form.querySelector('#wsmd-form-message');
         const geocodeValue = this.form.querySelector('input[name="wsmd_geocode"]').value;
-        const userLat = parseFloat(geocodeValue.split(',')[0]) || 46.8139;
-        const userLng = parseFloat(geocodeValue.split(',')[1]) || -71.2080;
-        this.map = this.createMap(userLat, userLng);
+        const userLat = parseFloat(geocodeValue.split(',')[0]) || 0;
+        const userLng = parseFloat(geocodeValue.split(',')[1]) || 0;
+        const zoomLevel = userLat && userLng ? 12 : 2;
+        this.map = this.initGoogleMap(userLat, userLng, zoomLevel);
 
         // Only create marker if geocode is set
         if (geocodeValue) {
@@ -75,6 +76,7 @@ class Dashboard
                     const newLocation = { lat: parseFloat(lat), lng: parseFloat(lng) };
                     this.form.querySelector('input[name="wsmd_geocode"]').value = `${lat}, ${lng}`;
                     this.map.setCenter(newLocation);
+                    this.map.setZoom(12);
 
                     // Update the marker position
                     if (!this.marker) {
@@ -116,16 +118,17 @@ class Dashboard
     }
 
     /**
-     * Create Google Map
+     * Init Google Map
      * @param {number} lat - Latitude
      * @param {number} lng - Longitude
+     * @param {number} zoomLevel - Zoom level
      * @returns {google.maps.Map} - Google Map instance
      */
-    static createMap(lat, lng)
+    static initGoogleMap(lat, lng, zoomLevel = 2)
     {
         return new google.maps.Map(this.form.querySelector('#wsmd-map'), {
             center: { lat, lng },
-            zoom: 6,
+            zoom: zoomLevel,
             styles: mapStyles,
             mapTypeControlOptions: {
                 mapTypeIds: ['roadmap']

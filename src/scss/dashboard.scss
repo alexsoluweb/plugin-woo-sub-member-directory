@@ -1,8 +1,14 @@
+@import 'variables.scss';
 @import 'mixins.scss';
 @import 'global-styles.scss';
 
 #wsmd-dashboard {
     container-type: inline-size;
+
+    #wsmd-user-info {
+        background-color: $primary-color;
+        padding: 1rem;
+    }
 
     #wsmd-form {
         display: flex;
@@ -22,12 +28,18 @@
             flex: 1 0 calc(50% - 1rem);
         }
 
-        .ts-wrapper {
+        > #wsmd-hide-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        > .ts-wrapper {
             flex: 1 0 100%;
             width: 100%;
         }
 
-        #wsmd-map {
+        > #wsmd-map {
             flex: 1 0 100%;
             width: 100%;
             aspect-ratio: 16/9;
@@ -37,11 +49,11 @@
             }
         }
 
-        #wsmd-save-settings {
+        > #wsmd-save-settings {
             margin-top: 1rem;
         }
 
-        #wsmd-form-message {
+        > #wsmd-form-message {
             flex: 1 0 100%;
             display: flex;
             flex-direction: column;
