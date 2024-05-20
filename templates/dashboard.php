@@ -12,11 +12,7 @@
     <p id="wsmd-user-info">
         <?php
         _e(
-            'Please fill in your details below.'
-                . ' This information will be displayed in the member directory.'
-                . ' Your position on the map will be automatically determined by the coordinates you enter after saving your settings.'
-                . ' You can select multiple taxonomies that describe your skills and expertise.'
-                . ' You can also update your settings at any time.',
+            'Please fill in your details below. This information will be displayed in the member directory. Your position on the map will be automatically determined by the coordinates you enter after saving your settings. You can select multiple taxonomies that describe your skills and expertise. You can also update your settings at any time.',
             'wsmd'
         );
         ?>
@@ -56,7 +52,7 @@
         </select>
         <label id="wsmd-hide-profile">
             <input type="checkbox" name="wsmd_hide_profile" value="1" <?php echo $args['user_settings']['wsmd_hide_profile'] ? 'checked="checked"' : ''; ?>>
-            <?php esc_html_e('Remove my profile from the public member directory', 'wsmd'); ?>
+            <?php esc_html_e('Hide my profile from the public member directory', 'wsmd'); ?>
         </label>
         <div id="wsmd-map"></div>
         <button id="wsmd-save-settings" type="button" class="button"><?php _e('Save Settings', 'wsmd'); ?></button>
