@@ -38,6 +38,8 @@ class WSMD
         new WSMD_Shortcodes();
         // Taxonomy class
         new WSMD_Taxonomy();
+        // Documentation class
+        new WSMD_Docs();
     }
 
     /**

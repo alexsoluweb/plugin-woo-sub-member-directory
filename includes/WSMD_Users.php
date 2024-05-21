@@ -125,7 +125,7 @@ class WSMD_Users
         // Retrieve the user is_admin_allowed settings
         $is_admin_allowed = self::get_user_settings($user->ID, 'wsmd_is_admin_allowed');
 
-        // Retrieve the custom taxonomy terms
+        // Retrieve the custom taxonomy grouped by parent
         $grouped_terms = WSMD_Helpers::format_terms_for_grouped_select_options(WSMD_Taxonomy::get_terms());
 
         // Retrieve the user's selected terms
@@ -311,7 +311,7 @@ class WSMD_Users
             }
         }
 
-        // Sanitize and save the fields hide_profile
+        // Sanitize and save the fields hide_profile (frontend only)
         if (isset($_POST['wsmd_hide_profile'])) {
             $_POST['wsmd_hide_profile'] = sanitize_text_field(wp_unslash($_POST['wsmd_hide_profile']));
 
@@ -323,7 +323,7 @@ class WSMD_Users
             }
         }
 
-        // Sanitize and save the fields geolocation
+        // Sanitize and save the fields geolocation (frontend only)
         if (isset($_POST['wsmd_geocode'])) {
             $_POST['wsmd_geocode'] = sanitize_text_field(wp_unslash($_POST['wsmd_geocode']));
             if (empty($_POST['wsmd_geocode'])) {
@@ -363,7 +363,7 @@ class WSMD_Users
             }
         }
 
-        // Sanitize and save the fields address
+        // Sanitize and save the fields address (frontend only)
         if (isset($_POST['wsmd_address'])) {
             $_POST['wsmd_address'] = sanitize_text_field(wp_unslash($_POST['wsmd_address']));
             if (empty($_POST['wsmd_address'])) {
@@ -373,7 +373,7 @@ class WSMD_Users
             }
         }
 
-        // Sanitize and save the fields city
+        // Sanitize and save the fields city (frontend only)
         if (isset($_POST['wsmd_city'])) {
             $_POST['wsmd_city'] = sanitize_text_field(wp_unslash($_POST['wsmd_city']));
             if (empty($_POST['wsmd_city'])) {
@@ -383,7 +383,7 @@ class WSMD_Users
             }
         }
 
-        // Sanitize and save the fields province/state
+        // Sanitize and save the fields province/state (frontend only)
         if (isset($_POST['wsmd_province_state'])) {
             $_POST['wsmd_province_state'] = sanitize_text_field(wp_unslash($_POST['wsmd_province_state']));
             if (empty($_POST['wsmd_province_state'])) {
@@ -393,7 +393,7 @@ class WSMD_Users
             }
         }
 
-        // Sanitize and save the fields postal code/zip
+        // Sanitize and save the fields postal/zip code (frontend only)
         if (isset($_POST['wsmd_postal_zip_code'])) {
             $_POST['wsmd_postal_zip_code'] = sanitize_text_field(wp_unslash($_POST['wsmd_postal_zip_code']));;
             if (empty($_POST['wsmd_postal_zip_code'])) {
@@ -403,7 +403,7 @@ class WSMD_Users
             }
         }
 
-        // Sanitize and save the fields country
+        // Sanitize and save the fields country (frontend only)
         if (isset($_POST['wsmd_country'])) {
             $_POST['wsmd_country'] = sanitize_text_field(wp_unslash($_POST['wsmd_country']));
             if (empty($_POST['wsmd_country'])) {
