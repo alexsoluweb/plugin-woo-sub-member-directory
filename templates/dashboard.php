@@ -33,6 +33,7 @@
         <input type="text" name="wsmd_province_state" placeholder="<?php esc_attr_e('Province/State', 'wsmd'); ?>" value="<?php echo esc_attr($args['user_settings']['wsmd_province_state']); ?>">
         <input type="text" name="wsmd_postal_zip_code" placeholder="<?php esc_attr_e('Postal/Zip code', 'wsmd'); ?>" value="<?php echo esc_attr($args['user_settings']['wsmd_postal_zip_code']); ?>">
         <input type="text" name="wsmd_country" placeholder="<?php esc_attr_e('Country', 'wsmd'); ?>" value="<?php echo esc_attr($args['user_settings']['wsmd_country']); ?>">
+        <input type="hidden" name="wsmd_taxonomies[]" value="">
         <select name="wsmd_taxonomies[]" id="wsmd_taxonomies" multiple="multiple" placeholder="<?php esc_attr_e('Select taxonomies', 'wsmd'); ?>">
             <?php foreach ($args['grouped_terms'] as $parent_id => $group) { ?>
                 <?php if (empty($group['terms'])) { ?>
@@ -51,6 +52,7 @@
             <?php } ?>
         </select>
         <label id="wsmd-hide-profile">
+            <input type="hidden" name="wsmd_hide_profile" value="0">
             <input type="checkbox" name="wsmd_hide_profile" value="1" <?php echo $args['user_settings']['wsmd_hide_profile'] ? 'checked="checked"' : ''; ?>>
             <?php esc_html_e('Hide my profile from the public member directory', 'wsmd'); ?>
         </label>

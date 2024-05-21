@@ -78,7 +78,19 @@ class WSMD_Woo_Dashboard
 
         $current_user = wp_get_current_user();
 
-        if (!WSMD_Helpers::is_member_directory($current_user->ID)) {
+        if (WSMD_Helpers::is_member_directory_user($current_user->ID, false)) {
+            load_template(
+                WSMD_PATH . 'templates/dashboard.php',
+                true,
+                array(
+                    'current_user' => $current_user,
+                    'user_settings' => WSMD_Users::get_user_settings($current_user->ID),
+                    'grouped_terms' => WSMD_Helpers::format_terms_for_grouped_select_options(
+                        WSMD_Taxonomy::get_terms(),
+                    ),
+                ),
+            );
+        } else {
             echo '<div id="wsmd-dashboard" class="not-member-directory">';
             echo '<p>' . __('You are not a Member Directory.', 'wsmd') . '<br>';
             echo __('Please subscribe to a membership plan to access the member directory.', 'wsmd') . '</p>';
@@ -96,18 +108,6 @@ class WSMD_Woo_Dashboard
                 echo '</ul>';
             }
             echo '</div>';
-        } else {
-            load_template(
-                WSMD_PATH . 'templates/dashboard.php',
-                true,
-                array(
-                    'current_user' => $current_user,
-                    'user_settings' => WSMD_Users::get_user_settings($current_user->ID),
-                    'grouped_terms' => WSMD_Helpers::format_terms_for_grouped_select_options(
-                        WSMD_Taxonomy::get_terms(),
-                    ),
-                ),
-            );
         }
     }
 

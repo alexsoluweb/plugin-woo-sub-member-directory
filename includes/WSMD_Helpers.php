@@ -31,13 +31,13 @@ class WSMD_Helpers
     }
 
     /**
-     * Check if a user is a Member Directory
+     * Check if a user has an active subscription for the Member Directory
      * 
      * @param int $user_id The user ID to check
      * 
-     * @return bool True if the user is a Member Directory, false otherwise
+     * @return bool True if the user has an active subscription, false otherwise
      */
-    public static function is_member_directory($user_id)
+    public static function is_active_member_subscription($user_id)
     {
         // Retrieve settings and the specific subscription products considered for the Member Directory
         $settings = WSMD_Woo_Settings::get_settings();
@@ -56,6 +56,38 @@ class WSMD_Helpers
         }
 
         return false;
+    }
+
+    /**
+     * Check if a user is a member of the Member Directory
+     * 
+     * @param int $user_id The user ID to check
+     * @param bool $check_profile Whether to check if the user has hidden their profile
+     * 
+     * @return bool True if the user is a member of the Member Directory, false otherwise
+     */
+    public static function is_member_directory_user($user_id, $check_profile = true)
+    {
+        // Check if the user has hidden their profile
+        if (WSMD_Users::get_user_settings($user_id, 'wsmd_hide_profile') && $check_profile) {
+            return false;
+        }
+        // Check if the user is forced_in by the admin
+        elseif (WSMD_Users::get_user_settings($user_id, 'wsmd_is_admin_allowed') === 'force_in') {
+            return true;
+        }
+        // Check if the user is forced_out by the admin
+        elseif (WSMD_Users::get_user_settings($user_id, 'wsmd_is_admin_allowed') === 'force_out') {
+            return false;
+        }
+        // Else, check if the user has an active subscription
+        elseif (self::is_active_member_subscription($user_id)) {
+            return true;
+        }
+        // The user is not a member directory at this point
+        else {
+            return false;
+        }
     }
 
     /**
@@ -102,26 +134,9 @@ class WSMD_Helpers
             foreach ($users as $user) {
                 $user_id = $user->ID;
 
-                // Check if the user has hidden their profile
-                if (WSMD_Users::get_user_settings($user_id, 'wsmd_hide_profile')) {
-                    continue;
-                }
-                // Check if the user is forced_in by the admin
-                elseif (WSMD_Users::get_user_settings($user_id, 'wsmd_is_admin_allowed') === 'force_in') {
+                // Check if the user is a member of the Member Directory
+                if (self::is_member_directory_user($user_id)) {
                     $members[$user_id] = WSMD_Users::get_user_settings($user_id);
-                    continue;
-                }
-                // Check if the user is forced_out by the admin
-                elseif (WSMD_Users::get_user_settings($user_id, 'wsmd_is_admin_allowed') === 'force_out') {
-                    continue;
-                }
-                // Else, check if the user has an active subscription
-                elseif (self::is_member_directory($user_id)) {
-                    $members[$user_id] = WSMD_Users::get_user_settings($user_id);
-                }
-                // The user is not a member directory at this point
-                else {
-                    continue;
                 }
             }
 

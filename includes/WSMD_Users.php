@@ -86,23 +86,33 @@ class WSMD_Users
     public function add_user_column_content($value, $column_name, $user_id)
     {
         if ($column_name === 'wsmd_active') {
-            // Retrieve the user meta value or default to 'default' if it's not set
-            $is_admin_allowed = self::get_user_settings($user_id, 'wsmd_is_admin_allowed');
-
-            echo '<div style="display: flex; align-items: center; line-height: 1;">';
+            $value = '<div style="display: flex; align-items: center; line-height: 1; gap: 5px;">';
 
             // Check if the user is a Member Directory
-            $is_member_directory = WSMD_Helpers::is_member_directory($user_id);
-            if ($is_member_directory) {
-                $value = '<span class="dashicons dashicons-yes"></span>';
+            if (WSMD_Helpers::is_member_directory_user($user_id)) {
+                $value .= '<span class="dashicons dashicons-yes"></span>';
             } else {
-                $value = '<span class="dashicons dashicons-no"></span>';
+                $value .= '<span class="dashicons dashicons-no"></span>';
             }
 
-            // Add the is_admin_allowed
-            $value .= ' | <span> ' . esc_html($is_admin_allowed) . '</span>';
+            $value .= '<div style="display: flex; flex-direction: column; gap: 5px;">';
 
-            echo '</div>';
+            // Add the is_admin_allowed
+            $is_admin_allowed = self::get_user_settings($user_id, 'wsmd_is_admin_allowed');
+            if (get_user_meta($user_id, 'wsmd_is_admin_allowed', true) && $is_admin_allowed !== 'default') {
+                if ($is_admin_allowed === 'force_in') {
+                    $value .= '<small>' . __('Forced in', 'wsmd') . '</small>';
+                } elseif ($is_admin_allowed === 'force_out') {
+                    $value .= '<small>' . __('Forced out', 'wsmd') . '</small>';
+                }
+            }
+
+            // Add the hidden profile
+            if (get_user_meta($user_id, 'wsmd_hide_profile', true)) {
+                $value .= '<small>' . __('Hidden profile', 'wsmd') . '</small>';
+            }
+
+            $value .= '</div></div>';
         }
         return $value;
     }
@@ -138,7 +148,7 @@ class WSMD_Users
                     </label>
                     <label>
                         <input type="radio" name="wsmd_is_admin_allowed" value="force_out" <?php checked($is_admin_allowed, 'force_out'); ?>>
-                        <?php _e('Force this member to be removed from the Member Directory', 'wsmd'); ?>
+                        <?php _e('Force this member to be hidden from the Member Directory', 'wsmd'); ?>
                     </label>
                 </td>
             </tr>
@@ -147,7 +157,8 @@ class WSMD_Users
                 <th><label for="wsmd_hide_profile"><?php _e('Hide profile', 'wsmd'); ?></label></th>
                 <td>
                     <label>
-                        <input type="checkbox" name="wsmd_hide_profile" value="1" <?php echo get_user_meta($user->ID, 'wsmd_hide_profile', true) ? 'checked="checked"' : ''; ?> disabled>
+                        <input type="hidden" name="wsmd_hide_profile" value="<?php echo esc_attr(get_user_meta($user->ID, 'wsmd_hide_profile', true)); ?>">
+                        <input type="checkbox" <?php echo get_user_meta($user->ID, 'wsmd_hide_profile', true) ? 'checked="checked"' : ''; ?> disabled>
                         <?php _e('The user has hidden his profile', 'wsmd'); ?>
                     </label>
                 </td>
@@ -156,6 +167,7 @@ class WSMD_Users
             <tr>
                 <th><label for="wsmd_taxonomies"><?php _e('Taxonomies', 'wsmd'); ?></label></th>
                 <td>
+                    <input type="hidden" name="wsmd_taxonomies[]" value="">
                     <select name="wsmd_taxonomies[]" id="wsmd_taxonomies" multiple="multiple" class="regular-text" placeholder="<?php esc_attr_e('Select taxonomies', 'wsmd'); ?>">
                         <?php foreach ($grouped_terms as $parent_id => $group) { ?>
                             <?php if (empty($group['terms'])) { ?>
@@ -309,8 +321,6 @@ class WSMD_Users
             } else {
                 $results['wsmd_hide_profile'] = __('Invalid hide_profile', 'wsmd');
             }
-        } else {
-            update_user_meta($user_id, 'wsmd_hide_profile', '0');
         }
 
         // Sanitize and save the fields geolocation
@@ -450,31 +460,33 @@ class WSMD_Users
             $term_ids = array_map('intval', $_POST['wsmd_taxonomies']);
             $valid_term_ids = self::validate_terms($term_ids, 'wsmd-taxonomy');
             wp_set_object_terms($user_id, $valid_term_ids, 'wsmd-taxonomy', false);
-        } else {
-            // If no terms are selected, clear the terms
-            wp_set_object_terms($user_id, array(), 'wsmd-taxonomy', false);
         }
 
         return $results;
     }
 
     /**
-     * Validate terms against the taxonomy.
+     * Validate terms against the available terms.
      *
      * @param array $term_ids The term IDs to validate.
-     * @param string $taxonomy The taxonomy to validate against.
-     * @return array The valid term IDs.
+     * @return array The valid term IDs, or empty array if none are valid or empty.
      */
-    public static function validate_terms($term_ids, $taxonomy)
+    public static function validate_terms($term_ids)
     {
-        $valid_terms = get_terms(array(
-            'taxonomy' => $taxonomy,
-            'include' => $term_ids,
-            'hide_empty' => false,
-        ));
+        // Exclude the dummy array(0) that is added to force the frontend to send this field
+        // This is when the user has no terms selected
+        $term_ids = array_diff($term_ids, array(0));
 
-        $valid_term_ids = wp_list_pluck($valid_terms, 'term_id');
-        return $valid_term_ids;
+        // Get all available terms
+        $available_terms = WSMD_Taxonomy::get_available_terms();
+
+        //Retrieve/pluck the term IDs from the objects array (available terms)
+        $available_term_ids = wp_list_pluck($available_terms, 'term_id');
+
+        // Return only the term IDs that are available
+        $valid_term_ids = array_intersect($term_ids, $available_term_ids);
+
+        return empty($valid_term_ids) ? array() : $valid_term_ids;
     }
 
     /**
@@ -504,12 +516,7 @@ class WSMD_Users
                 'wsmd_email' => get_user_meta($userID, 'wsmd_email', true),
             );
         } else {
-            if ($key === 'wsmd_is_admin_allowed') {
-                $is_admin_allowed = get_user_meta($userID, 'wsmd_is_admin_allowed', true);
-                return ($is_admin_allowed === '') ? 'default' : $is_admin_allowed;
-            } else {
-                return get_user_meta($userID, $key, true);
-            }
+            return get_user_meta($userID, $key, true);
         }
     }
 }
