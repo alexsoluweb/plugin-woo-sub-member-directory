@@ -1,7 +1,8 @@
+@import 'variables.scss';
 @import 'mixins.scss';
 
-$select-border-radius: var(--wsmd-ts-input-border-radius, 0);
-$select-font-size: var(--wsmd-ts-input-font-size, 1rem);
+$select-border-radius: 0;
+$select-font-size: 1rem;
 
 @import '~tom-select/src/scss/tom-select.scss';
 
@@ -13,11 +14,11 @@ $select-font-size: var(--wsmd-ts-input-font-size, 1rem);
             @include inputs;
 
             .item {
-                color: var(--wsmd-ts-item-color, #43454b);
+                color: $black-light-color;
 
                 a.remove::before {
-                    color: var(--wsmd-ts-remove-item-color, #43454b);
-                    opacity: var(--wsmd-ts-remove-item-opacity, 0.5);
+                    color: $black-light-color;
+                    opacity: 0.5;
                 }
             }
         }
