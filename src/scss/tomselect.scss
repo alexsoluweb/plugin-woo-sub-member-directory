@@ -8,7 +8,10 @@ $select-font-size: 1rem;
 
 #wsmd-form {
     .ts-wrapper {
-        //
+
+        &:has(#wsmd_taxonomies-ts-control:focus) {
+            outline: 1px solid $border-color;
+        }
 
         .ts-control {
             @include inputs;
