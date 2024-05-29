@@ -15,19 +15,7 @@
     }
 
     button {
-        appearance: none;
-        cursor: pointer;
-        background-color: $primary-color;
-        border: 0;
-        padding: .5rem 1.5rem;
-        border-radius: 0;
-        font-weight: 600;
-        min-height: 2.75rem;
-        color: $text-color;
-
-        &:hover {
-            background-color: $primary-color-dark;
-        }
+        @include buttons;
     }
 
     #wsmd-form-message {
