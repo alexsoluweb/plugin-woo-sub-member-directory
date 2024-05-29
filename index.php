@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Woo Sub Member Directory
  * Description: A plugin to create a member directory for Woo Subscriptions
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Alexsoluweb
  * Author URI: https://alexsoluweb.ca
  * Text Domain: wsmd
