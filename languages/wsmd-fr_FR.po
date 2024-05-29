@@ -3,9 +3,9 @@ msgstr ""
 "Project-Id-Version: Woo Sub Member Directory\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-05-20 22:57+0000\n"
-"PO-Revision-Date: 2024-05-20 23:46+0000\n"
+"PO-Revision-Date: 2024-05-29 05:05+0000\n"
 "Last-Translator: \n"
-"Language-Team: French (France)\n"
+"Language-Team: Français\n"
 "Language: fr_FR\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "MIME-Version: 1.0\n"
@@ -24,7 +24,7 @@ msgstr "Un plugin pour créer un répertoire de membres pour les abonnements woo
 
 #: includes/WSMD_Taxonomy.php:98
 msgid "Add New Member Directory taxonomy"
-msgstr "Ajouter un nouveau répertoire de membres Taxonomy"
+msgstr "Ajouter une nouvelle taxonomie pour le répertoire des membres"
 
 #: templates/dashboard.php:31 includes/WSMD_Users.php:230
 msgid "Address"
@@ -212,7 +212,7 @@ msgstr "Paramètres du répertoire des membres"
 #: includes/WSMD_Taxonomy.php:90 includes/WSMD_Taxonomy.php:91
 #: includes/WSMD_Taxonomy.php:100
 msgid "Member Directory taxonomy"
-msgstr "Annuaire des membres Taxonomie"
+msgstr "Taxonomie du répertoire des membres"
 
 #: includes/WSMD_Taxonomy.php:99
 msgid "New Member Directory taxonomy Name"
@@ -240,11 +240,11 @@ msgstr "ou"
 
 #: includes/WSMD_Taxonomy.php:94
 msgid "Parent Member Directory taxonomy"
-msgstr "Répertoire des membres parents Taxonomie"
+msgstr "Taxonomie parente"
 
 #: includes/WSMD_Taxonomy.php:95
 msgid "Parent Member Directory taxonomy:"
-msgstr "Répertoire des membres parents Taxonomie:"
+msgstr "Taxonomie parente"
 
 #: templates/dashboard.php:29 includes/WSMD_Users.php:206
 msgid "Phone"
@@ -415,21 +415,21 @@ msgstr "Site Web"
 
 #. Name of the plugin
 msgid "Woo Sub Member Directory"
-msgstr "Répertoire des sous-membres Woo"
+msgstr "Répertoire des membres Woo Sub"
 
 #: includes/WSMD.php:88
 msgid ""
 "Woo Sub Member Directory requires WooCommerce Subscriptions to be installed "
 "and activated."
 msgstr ""
-"Le sous-annuaire des membres Woo exige que les abonnements Woocommerce "
-"soient installés et activés."
+"Le répertoire des membres Woo Sub nécessite l'installation et l'activation "
+"de Woocommerce Subscription."
 
 #: includes/WSMD.php:76
 msgid ""
 "Woo Sub Member Directory requires WooCommerce to be installed and activated."
 msgstr ""
-"Le répertoire des sous-membres Woo nécessite l'installation et l'activation "
+"Le répertoire des membres Woo Sub nécessite l'installation et l'activation "
 "de Woocommerce."
 
 #: includes/WSMD_Woo_Dashboard.php:83
