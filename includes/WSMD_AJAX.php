@@ -110,10 +110,10 @@ class WSMD_AJAX
      */
     private function geocode_address($address, $language = 'en')
     {
-        // Retrieve the Google Places API key
-        $api_key = WSMD_Woo_Settings::get_settings('wsmd_google_maps_api_key');
+        // Retrieve the Google API key from the settings (backend)
+        $api_key = WSMD_Woo_Settings::get_settings('wsmd_google_maps_api_key_backend');
 
-        // Check if Google Places API key is set
+        // Check if Google API key is set
         if (empty($api_key)) {
             return array('success' => false, 'message' => __('Google Map API key is not set.', 'wsmd'));
         }

@@ -128,7 +128,7 @@ class WSMD_Woo_Dashboard
             $google_map_params = array(
                 'loading' => 'async',
                 'libraries' => 'places,geometry',
-                'key' => WSMD_Woo_Settings::get_settings('wsmd_google_maps_api_key'),
+                'key' => WSMD_Woo_Settings::get_settings('wsmd_google_maps_api_key_frontend'),
                 'language' => WSMD_Helpers::get_current_site_language(),
                 'callback' => 'WSMD.initApp',
             );

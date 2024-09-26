@@ -79,7 +79,15 @@ class WSMD_Docs
 <p>
     The plugin settings can be found in the WooCommerce settings page under the <a href="https://localhost/wp-admin/admin.php?page=wc-settings&tab=wsmd" target="_blank">Member Directory</a> tab. 
     Here, you can configure the taxonomies available for members to select and the subscription products that grant access to the member directory.
-    This is also the place where you need to set your Google Maps API key.
+    This is also the place where you need to set your Google Maps API keys.
+</p>
+
+<p>
+    You need two separate API keys for this plugin:
+    <ul>
+        <li><strong>Geocoding API Key (Backend Use):</strong> This key is used for server-side geocoding requests to convert addresses into geographic coordinates.</li>
+        <li><strong>Google Maps API Key (Frontend Use):</strong> This key is used for rendering maps and location-based features on the frontend, like showing member locations on a map or using the Places API for address autocomplete.</li>
+    </ul>
 </p>
 
 <p>
@@ -88,13 +96,11 @@ class WSMD_Docs
 </p>
 
 <p>
-    The plugin requires the following Google APIs:
+    <strong>API Key Restrictions:</strong> 
     <ul>
-        <li><strong>Geocoding API:</strong> Converts addresses into geographic coordinates.</li>
-        <li><strong>Places API:</strong> Retrieves coordinates of the locations entered by members.</li>
-        <li><strong>Geometry API:</strong> Calculates the distance between two coordinates.</li>
+        <li>The <strong>Geocoding API Key</strong> should be either unrestricted or restricted by your server's IP address.</li>
+        <li>The <strong>Google Maps API Key</strong> for frontend use should be restricted by HTTP referrer to your website's domain to prevent unauthorized use.</li>
     </ul>
-    <strong>It is highly recommended to restrict your API key to your website domain to prevent unauthorized use.</strong>
 </p>
 
 <h2>User Administration</h2>
